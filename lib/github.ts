@@ -133,6 +133,105 @@ export function getRepoUrl(): string {
 // $FED token address on Solana
 const FED_TOKEN_ADDRESS = '132STreShuLRNgkyF1QECv37yP9Cdp8JBAgnKBgKafed';
 
+export interface TierDistribution {
+  chairman: number;
+  governor: number;
+  director: number;
+  member: number;
+  citizen: number;
+  total: number;
+}
+
+// Tier thresholds (in raw token units, assuming 6 decimals)
+const TIER_THRESHOLDS = {
+  chairman: 50_000_000 * 1e6,  // 50M
+  governor: 10_000_000 * 1e6,  // 10M
+  director: 1_000_000 * 1e6,   // 1M
+  member: 100_000 * 1e6,       // 100K
+};
+
+export async function fetchTierDistribution(): Promise<TierDistribution | null> {
+  try {
+    const heliusKey = process.env.HELIUS_API;
+    if (!heliusKey) {
+      console.error('HELIUS_API not set');
+      return null;
+    }
+
+    const distribution: TierDistribution = {
+      chairman: 0,
+      governor: 0,
+      director: 0,
+      member: 0,
+      citizen: 0,
+      total: 0,
+    };
+
+    let cursor: string | undefined;
+    const limit = 1000;
+
+    do {
+      const params: Record<string, unknown> = {
+        mint: FED_TOKEN_ADDRESS,
+        limit,
+        options: { showZeroBalance: false },
+      };
+
+      if (cursor) {
+        params.cursor = cursor;
+      }
+
+      const response = await fetch(
+        `https://mainnet.helius-rpc.com/?api-key=${heliusKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            id: 1,
+            method: 'getTokenAccounts',
+            params,
+          }),
+          next: { revalidate: 300 },
+        }
+      );
+
+      if (!response.ok) {
+        console.error('Helius API error:', response.status);
+        break;
+      }
+
+      const data = await response.json();
+      const accounts = data?.result?.token_accounts || [];
+
+      for (const account of accounts) {
+        const amount = parseInt(account.amount || '0', 10);
+        distribution.total++;
+
+        if (amount >= TIER_THRESHOLDS.chairman) {
+          distribution.chairman++;
+        } else if (amount >= TIER_THRESHOLDS.governor) {
+          distribution.governor++;
+        } else if (amount >= TIER_THRESHOLDS.director) {
+          distribution.director++;
+        } else if (amount >= TIER_THRESHOLDS.member) {
+          distribution.member++;
+        } else {
+          distribution.citizen++;
+        }
+      }
+
+      cursor = data?.result?.cursor;
+      if (accounts.length < limit) break;
+    } while (cursor);
+
+    return distribution.total > 0 ? distribution : null;
+  } catch (error) {
+    console.error('Failed to fetch tier distribution:', error);
+    return null;
+  }
+}
+
 export async function fetchHolderCount(): Promise<number | null> {
   try {
     const heliusKey = process.env.HELIUS_API;

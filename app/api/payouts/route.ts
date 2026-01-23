@@ -29,58 +29,83 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Use Helius API to fetch transaction history (remove type filter to get all)
-    const response = await fetch(
-      `https://api.helius.xyz/v0/addresses/${address}/transactions?api-key=${heliusApiKey}`,
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Helius API error:', response.status, errorText);
-      throw new Error(`Helius API error: ${response.status}`);
-    }
-
-    const transactions = await response.json();
-    console.log(`Found ${transactions.length} transactions for ${address}`);
-
-    // Filter for USD1 transfers where user is the recipient
     const usd1Transfers: Transfer[] = [];
     let totalReceived = 0;
-    const allMints = new Set<string>();
+    let lastSignature: string | undefined;
+    let pageCount = 0;
+    const maxPages = 20;
 
-    for (const tx of transactions) {
-      if (tx.tokenTransfers && tx.tokenTransfers.length > 0) {
-        for (const transfer of tx.tokenTransfers) {
-          allMints.add(transfer.mint);
+    // Use Helius to get detailed transaction data with individual transfer amounts
+    while (pageCount < maxPages) {
+      const url: URL = new URL(`https://api.helius.xyz/v0/addresses/${address}/transactions`);
+      url.searchParams.set('api-key', heliusApiKey);
+      if (lastSignature) {
+        url.searchParams.set('before', lastSignature);
+      }
 
-          if (
-            transfer.mint === USD1_MINT &&
-            transfer.toUserAccount === address
-          ) {
-            const amount = transfer.tokenAmount || 0;
-            totalReceived += amount;
-            usd1Transfers.push({
-              signature: tx.signature,
-              timestamp: tx.timestamp * 1000,
-              amount,
-              from: transfer.fromUserAccount || 'Unknown',
-            });
+      const response = await fetch(url.toString());
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Helius API error:', response.status, errorText);
+        throw new Error(`Helius API error: ${response.status}`);
+      }
+
+      const transactions = await response.json();
+      console.log(`Page ${pageCount + 1}: Found ${transactions.length} transactions`);
+
+      if (transactions.length === 0) {
+        break;
+      }
+
+      // Process each transaction
+      for (const tx of transactions) {
+        // Check tokenTransfers for the specific amount sent TO this address
+        if (tx.tokenTransfers && tx.tokenTransfers.length > 0) {
+          for (const transfer of tx.tokenTransfers) {
+            // Only count if:
+            // 1. It's the USD1 token
+            // 2. The recipient (toUserAccount) is the queried address
+            // 3. Amount is greater than 0
+            if (
+              transfer.mint === USD1_MINT &&
+              transfer.toUserAccount === address &&
+              transfer.tokenAmount > 0
+            ) {
+              // This is the specific amount this address received in this transfer
+              const amount = transfer.tokenAmount;
+              totalReceived += amount;
+
+              usd1Transfers.push({
+                signature: tx.signature,
+                timestamp: tx.timestamp * 1000,
+                amount,
+                from: transfer.fromUserAccount || 'Distribution',
+              });
+            }
           }
         }
       }
+
+      lastSignature = transactions[transactions.length - 1].signature;
+      pageCount++;
+
+      if (transactions.length < 100) {
+        break;
+      }
     }
 
-    console.log('All token mints found:', Array.from(allMints));
-    console.log('Looking for USD1:', USD1_MINT);
-    console.log('USD1 transfers found:', usd1Transfers.length);
+    console.log(`Total pages fetched: ${pageCount}`);
+    console.log(`Total USD1 transfers to ${address}: ${usd1Transfers.length}`);
+    console.log(`Total USD1 received by ${address}: ${totalReceived}`);
 
-    // Sort by timestamp descending
+    // Sort by timestamp descending (most recent first)
     usd1Transfers.sort((a, b) => b.timestamp - a.timestamp);
 
     return NextResponse.json({
       totalReceived,
       transferCount: usd1Transfers.length,
-      transfers: usd1Transfers.slice(0, 20),
+      transfers: usd1Transfers.slice(0, 50),
     });
   } catch (error) {
     console.error('Payout lookup error:', error);
