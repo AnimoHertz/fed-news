@@ -1,9 +1,9 @@
 'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
 import { useState } from 'react';
+import Link from 'next/link';
 import { formatCurrency } from '@/lib/utils';
+import { Header } from '@/components/layout/Header';
 
 interface Transfer {
   signature: string;
@@ -91,35 +91,9 @@ export default function PayoutsPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
-      <header className="border-b border-gray-800">
-        <div className="max-w-3xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-              <Image src="/logoseal.png" alt="FED logo" width={120} height={120} />
-              <span className="text-xl font-medium">Fed News</span>
-            </Link>
-            <div className="flex gap-4 text-sm text-gray-400">
-              <Link href="/roles" className="hover:text-white transition-colors">
-                Roles
-              </Link>
-              <Link href="/manifesto" className="hover:text-white transition-colors">
-                Manifesto
-              </Link>
-              <a
-                href="https://github.com/snark-tank/ralph"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-white transition-colors"
-              >
-                GitHub
-              </a>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
-      <main className="max-w-3xl mx-auto px-4 py-16">
+      <main className="max-w-5xl mx-auto px-4 py-16">
         {/* Title */}
         <section className="mb-12">
           <p className="text-sm text-gray-500 uppercase tracking-wide mb-4">Payouts</p>
@@ -299,7 +273,7 @@ export default function PayoutsPage() {
 
       {/* Footer */}
       <footer className="border-t border-gray-800 mt-16">
-        <div className="max-w-3xl mx-auto px-4 py-6 space-y-2">
+        <div className="max-w-5xl mx-auto px-4 py-6 space-y-2">
           <p className="text-sm text-gray-600">
             Data from{' '}
             <a

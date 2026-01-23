@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { fetchAllRecentCommits, fetchHolderCount } from '@/lib/github';
 import { parseCommit, filterCommits, getLatestStats } from '@/lib/commits';
@@ -8,6 +7,7 @@ import { getCommentCounts } from '@/lib/update-comments';
 import { CommitList } from '@/components/commits/CommitList';
 import { CopyAddress } from '@/components/ui/CopyAddress';
 import { FAQ } from '@/components/home/FAQ';
+import { Header } from '@/components/layout/Header';
 
 export const revalidate = 60;
 
@@ -26,45 +26,9 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
-      <header className="border-b border-gray-800">
-        <div className="max-w-3xl mx-auto px-4 py-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Image src="/logoseal.png" alt="FED logo" width={120} height={120} />
-              <h1 className="text-xl font-medium">Fed News</h1>
-            </div>
-            <div className="flex gap-4 text-sm text-gray-400">
-              <Link href="/holders" className="hover:text-white transition-colors">
-                Holders
-              </Link>
-              <Link href="/incentives" className="hover:text-white transition-colors">
-                Incentives
-              </Link>
-              <Link href="/roles" className="hover:text-white transition-colors">
-                Roles
-              </Link>
-              <Link href="/payouts" className="hover:text-white transition-colors">
-                Payouts
-              </Link>
-              <Link href="/growth" className="hover:text-white transition-colors">
-                Growth
-              </Link>
-              <Link href="/forum" className="hover:text-white transition-colors">
-                Forum
-              </Link>
-              <Link href="/social" className="hover:text-white transition-colors">
-                Social
-              </Link>
-              <Link href="/manifesto" className="hover:text-white transition-colors">
-                Manifesto
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
-      <main className="max-w-3xl mx-auto px-4 py-12">
+      <main className="max-w-5xl mx-auto px-4 py-12">
         {/* Hero */}
         <section className="mb-16">
           <p className="text-gray-400 mb-4">Autonomous USD1 distribution on Solana</p>
@@ -169,7 +133,7 @@ export default async function HomePage() {
 
       {/* Footer */}
       <footer className="border-t border-gray-800 mt-16">
-        <div className="max-w-3xl mx-auto px-4 py-6 space-y-3">
+        <div className="max-w-5xl mx-auto px-4 py-6 space-y-3">
           <div className="flex items-center gap-4">
             <p className="text-sm text-gray-600">
               Data from{' '}

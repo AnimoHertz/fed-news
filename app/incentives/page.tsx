@@ -1,5 +1,5 @@
-import Image from 'next/image';
 import Link from 'next/link';
+import { Header } from '@/components/layout/Header';
 
 export const metadata = {
   title: 'Incentives | Fed News',
@@ -9,27 +9,9 @@ export const metadata = {
 export default function IncentivesPage() {
   return (
     <div className="min-h-screen">
-      {/* Header */}
-      <header className="border-b border-gray-800">
-        <div className="max-w-3xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-              <Image src="/logoseal.png" alt="FED logo" width={120} height={120} />
-              <span className="text-xl font-medium">Fed News</span>
-            </Link>
-            <div className="flex gap-4 text-sm text-gray-400">
-              <Link href="/payouts" className="hover:text-white transition-colors">
-                Payouts
-              </Link>
-              <Link href="/manifesto" className="hover:text-white transition-colors">
-                Manifesto
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
-      <main className="max-w-3xl mx-auto px-4 py-16">
+      <main className="max-w-5xl mx-auto px-4 py-16">
         {/* Title */}
         <header className="mb-16">
           <p className="text-sm text-gray-500 uppercase tracking-wide mb-4">Incentives</p>
