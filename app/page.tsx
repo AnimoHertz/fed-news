@@ -1,65 +1,96 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { fetchAllRecentCommits } from '@/lib/github';
+import { parseCommit, filterCommits, getLatestStats } from '@/lib/commits';
+import { formatCurrency, formatNumber } from '@/lib/utils';
+import { CommitList } from '@/components/commits/CommitList';
 
-export default function Home() {
+export const revalidate = 60;
+
+export default async function HomePage() {
+  const rawCommits = await fetchAllRecentCommits(100);
+  const commits = rawCommits.map(parseCommit);
+  const stats = getLatestStats(commits);
+  const recentCommits = filterCommits(commits, { hideStats: true }).slice(0, 15);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="min-h-screen">
+      {/* Header */}
+      <header className="border-b border-gray-800">
+        <div className="max-w-3xl mx-auto px-4 py-6">
+          <div className="flex items-center justify-between">
+            <h1 className="text-xl font-medium">Fed News</h1>
+            <div className="flex gap-4 text-sm text-gray-400">
+              <Link href="/manifesto" className="hover:text-white transition-colors">
+                Manifesto
+              </Link>
+              <Link href="/docs" className="hover:text-white transition-colors">
+                Docs
+              </Link>
+              <a
+                href="https://github.com/snark-tank/ralph"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors"
+              >
+                GitHub
+              </a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-3xl mx-auto px-4 py-12">
+        {/* Hero */}
+        <section className="mb-16">
+          <p className="text-gray-400 mb-4">Autonomous USD1 distribution on Solana</p>
+
+          {stats && (
+            <div className="flex gap-8 font-mono text-2xl">
+              <div>
+                <span className="text-white">{formatCurrency(stats.distributed)}</span>
+                <span className="text-gray-500 text-sm ml-2">distributed</span>
+              </div>
+              <div>
+                <span className="text-white">{formatNumber(stats.distributions)}</span>
+                <span className="text-gray-500 text-sm ml-2">distributions</span>
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* Updates */}
+        <section>
+          <h2 className="text-sm text-gray-500 uppercase tracking-wide mb-6">
+            Recent Updates
+          </h2>
+
+          <CommitList commits={recentCommits} />
+
+          <div className="mt-8">
+            <Link
+              href="/commits"
+              className="text-sm text-gray-400 hover:text-white transition-colors"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
+              View all updates →
+            </Link>
+          </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-gray-800 mt-16">
+        <div className="max-w-3xl mx-auto px-4 py-6">
+          <p className="text-sm text-gray-600">
+            Data from{' '}
             <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              href="https://github.com/snark-tank/ralph"
+              className="text-gray-400 hover:text-white"
             >
-              Learning
-            </a>{" "}
-            center.
+              snark-tank/ralph
+            </a>
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </footer>
     </div>
   );
 }
