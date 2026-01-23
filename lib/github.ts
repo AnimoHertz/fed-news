@@ -129,3 +129,70 @@ export async function fetchReadme(): Promise<string> {
 export function getRepoUrl(): string {
   return `https://github.com/${REPO_OWNER}/${REPO_NAME}`;
 }
+
+// $FED token address on Solana
+const FED_TOKEN_ADDRESS = '132STreShuLRNgkyF1QECv37yP9Cdp8JBAgnKBgKafed';
+
+export async function fetchHolderCount(): Promise<number | null> {
+  try {
+    const heliusKey = process.env.HELIUS_API;
+    if (!heliusKey) {
+      console.error('HELIUS_API not set');
+      return null;
+    }
+
+    // Paginate through all token accounts to count holders
+    let totalHolders = 0;
+    let cursor: string | undefined;
+    const limit = 1000;
+
+    do {
+      const params: Record<string, unknown> = {
+        mint: FED_TOKEN_ADDRESS,
+        limit,
+        options: { showZeroBalance: false },
+      };
+
+      if (cursor) {
+        params.cursor = cursor;
+      }
+
+      const response = await fetch(
+        `https://mainnet.helius-rpc.com/?api-key=${heliusKey}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            jsonrpc: '2.0',
+            id: 1,
+            method: 'getTokenAccounts',
+            params,
+          }),
+          next: { revalidate: 300 },
+        }
+      );
+
+      if (!response.ok) {
+        console.error('Helius API error:', response.status);
+        break;
+      }
+
+      const data = await response.json();
+      const accounts = data?.result?.token_accounts || [];
+      totalHolders += accounts.length;
+      cursor = data?.result?.cursor;
+
+      // Stop if we got fewer results than the limit (last page)
+      if (accounts.length < limit) {
+        break;
+      }
+    } while (cursor);
+
+    return totalHolders > 0 ? totalHolders : null;
+  } catch (error) {
+    console.error('Failed to fetch holder count:', error);
+    return null;
+  }
+}

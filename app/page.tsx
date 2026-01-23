@@ -1,14 +1,18 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { fetchAllRecentCommits } from '@/lib/github';
+import { fetchAllRecentCommits, fetchHolderCount } from '@/lib/github';
 import { parseCommit, filterCommits, getLatestStats } from '@/lib/commits';
 import { formatCurrency, formatNumber } from '@/lib/utils';
 import { CommitList } from '@/components/commits/CommitList';
+import { CopyAddress } from '@/components/ui/CopyAddress';
 
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const rawCommits = await fetchAllRecentCommits(100);
+  const [rawCommits, holderCount] = await Promise.all([
+    fetchAllRecentCommits(100),
+    fetchHolderCount(),
+  ]);
   const commits = rawCommits.map(parseCommit);
   const stats = getLatestStats(commits);
   const recentCommits = filterCommits(commits, { hideStats: true }).slice(0, 15);
@@ -20,7 +24,7 @@ export default async function HomePage() {
         <div className="max-w-3xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Image src="/logo.png" alt="FED logo" width={40} height={40} className="rounded-full" />
+              <Image src="/logoseal.png" alt="FED logo" width={120} height={120} />
               <h1 className="text-xl font-medium">Fed News</h1>
             </div>
             <div className="flex gap-4 text-sm text-gray-400">
@@ -29,9 +33,6 @@ export default async function HomePage() {
               </Link>
               <Link href="/manifesto" className="hover:text-white transition-colors">
                 Manifesto
-              </Link>
-              <Link href="/docs" className="hover:text-white transition-colors">
-                Docs
               </Link>
               <a
                 href="https://github.com/snark-tank/ralph"
@@ -51,18 +52,34 @@ export default async function HomePage() {
         <section className="mb-16">
           <p className="text-gray-400 mb-4">Autonomous USD1 distribution on Solana</p>
 
-          {stats && (
-            <div className="flex gap-8 font-mono text-2xl">
-              <div>
-                <span className="text-white">{formatCurrency(stats.distributed)}</span>
-                <span className="text-gray-500 text-sm ml-2">distributed</span>
-              </div>
-              <div>
-                <span className="text-white">{formatNumber(stats.distributions)}</span>
-                <span className="text-gray-500 text-sm ml-2">distributions</span>
-              </div>
+          {(stats || holderCount) && (
+            <div className="flex flex-wrap gap-8 font-mono text-2xl mb-8">
+              {stats && (
+                <>
+                  <div>
+                    <span className="text-white">{formatCurrency(stats.distributed)}</span>
+                    <span className="text-gray-500 text-sm ml-2">distributed</span>
+                  </div>
+                  <div>
+                    <span className="text-white">{formatNumber(stats.distributions)}</span>
+                    <span className="text-gray-500 text-sm ml-2">distributions</span>
+                  </div>
+                </>
+              )}
+              {holderCount && (
+                <div>
+                  <span className="text-white">{formatNumber(holderCount)}</span>
+                  <span className="text-gray-500 text-sm ml-2">holders</span>
+                </div>
+              )}
             </div>
           )}
+
+          <p className="text-gray-400 leading-relaxed">
+            $FED is the first crypto project built entirely by AI in real-time. An autonomous agent runs 24/7,
+            writing code, making decisions, and distributing stablecoin rewards to holders every 2 minutes.
+            No human team. No roadmap delays. Just a machine that never stops building.
+          </p>
         </section>
 
         {/* Updates */}
@@ -96,6 +113,7 @@ export default async function HomePage() {
               snark-tank/ralph
             </a>
           </p>
+          <CopyAddress address="132STreShuLRNgkyF1QECv37yP9Cdp8JBAgnKBgKafed" label="$FED Token" />
           <p className="text-xs text-gray-600">
             This site was developed by a third party and is not affiliated with or endorsed by the $FED project.
           </p>

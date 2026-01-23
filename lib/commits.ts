@@ -25,15 +25,23 @@ export function categorizeCommit(message: string): CommitCategory {
   return 'other';
 }
 
-export function extractStats(message: string): { distributed: number; distributions: number } | undefined {
+export function extractStats(message: string): { distributed: number; distributions: number; holders?: number } | undefined {
   // Pattern: "website: update stats ($59,707 distributed, 579 distributions)"
   const match = message.match(/\$([0-9,]+)\s+distributed,\s+(\d+)\s+distributions/i);
 
   if (match) {
-    return {
+    const stats: { distributed: number; distributions: number; holders?: number } = {
       distributed: parseFloat(match[1].replace(/,/g, '')),
       distributions: parseInt(match[2], 10),
     };
+
+    // Try to extract holders if present (e.g., "123 holders" or "123 holder")
+    const holdersMatch = message.match(/(\d+)\s+holders?/i);
+    if (holdersMatch) {
+      stats.holders = parseInt(holdersMatch[1], 10);
+    }
+
+    return stats;
   }
 
   return undefined;

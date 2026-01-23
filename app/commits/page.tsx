@@ -35,11 +35,11 @@ export default async function CommitsPage({ searchParams }: PageProps) {
               Fed News
             </Link>
             <div className="flex gap-4 text-sm text-gray-400">
+              <Link href="/payouts" className="hover:text-white transition-colors">
+                Payouts
+              </Link>
               <Link href="/manifesto" className="hover:text-white transition-colors">
                 Manifesto
-              </Link>
-              <Link href="/docs" className="hover:text-white transition-colors">
-                Docs
               </Link>
               <a
                 href="https://github.com/snark-tank/ralph"

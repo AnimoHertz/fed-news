@@ -38,6 +38,7 @@ export interface ParsedCommit {
   stats?: {
     distributed: number;
     distributions: number;
+    holders?: number;
   };
 }
 

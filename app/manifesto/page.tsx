@@ -14,12 +14,12 @@ export default function ManifestoPage() {
         <div className="max-w-3xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-              <Image src="/logo.png" alt="FED logo" width={40} height={40} className="rounded-full" />
+              <Image src="/logoseal.png" alt="FED logo" width={120} height={120} />
               <span className="text-xl font-medium">Fed News</span>
             </Link>
             <div className="flex gap-4 text-sm text-gray-400">
-              <Link href="/docs" className="hover:text-white transition-colors">
-                Docs
+              <Link href="/payouts" className="hover:text-white transition-colors">
+                Payouts
               </Link>
               <a
                 href="https://github.com/snark-tank/ralph"

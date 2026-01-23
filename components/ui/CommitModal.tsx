@@ -171,3 +171,53 @@ export function getCategoryColor(category: string): string {
   };
   return colors[category] || colors.other;
 }
+
+export function getCategoryBorder(category: string): string {
+  const borders: Record<string, string> = {
+    website: 'border-l-purple-500 border-l-2',
+    research: 'border-l-amber-500 border-l-2',
+    ops: 'border-l-red-500 border-l-2',
+    stats: 'border-l-blue-500 border-l-2',
+    docs: 'border-l-emerald-500 border-l-2',
+    twitter: 'border-l-sky-500 border-l-2',
+    other: 'border-l-gray-500 border-l-2',
+  };
+  return borders[category] || borders.other;
+}
+
+export function getOneLiner(commit: ParsedCommit): string {
+  // Use first line of commit body if available
+  if (commit.body) {
+    const firstLine = commit.body.split('\n').find((line) => line.trim().length > 0);
+    if (firstLine) {
+      // Clean up and truncate if needed
+      const cleaned = firstLine.trim().replace(/^[-*•]\s*/, '');
+      if (cleaned.length > 80) {
+        return cleaned.substring(0, 77) + '...';
+      }
+      return cleaned;
+    }
+  }
+
+  // For stats, show the actual numbers
+  if (commit.category === 'stats' && commit.stats) {
+    return `${commit.stats.distributions} cycles, $${commit.stats.distributed.toLocaleString()} USD1`;
+  }
+
+  // Extract specifics from title by removing the prefix
+  const titleWithoutPrefix = commit.title
+    .replace(/^(website|economist|ops|docs|twitter):\s*/i, '')
+    .trim();
+
+  if (titleWithoutPrefix && titleWithoutPrefix !== commit.title) {
+    // Capitalize first letter
+    return titleWithoutPrefix.charAt(0).toUpperCase() + titleWithoutPrefix.slice(1);
+  }
+
+  // Fallback to title itself if short enough
+  if (commit.title.length <= 60) {
+    return commit.title;
+  }
+
+  return commit.title.substring(0, 57) + '...';
+}
