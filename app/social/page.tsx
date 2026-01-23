@@ -127,26 +127,48 @@ export default function SocialPage() {
           <h2 className="text-sm text-gray-500 uppercase tracking-wide mb-6">
             See What People Are Saying
           </h2>
-          <a
-            href="https://x.com/search?q=%24FED%20solana&src=typed_query&f=live"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block p-6 rounded-lg border border-gray-800 bg-gray-900/30 hover:bg-gray-900/70 hover:border-gray-700 transition-all"
-          >
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-medium text-white mb-1">Search $FED on X</h3>
-                <p className="text-sm text-gray-500">
-                  View the latest posts and discussions about $FED
-                </p>
+          <div className="space-y-3">
+            <a
+              href="https://x.com/search?q=%24FED&src=typed_query&f=top"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block p-6 rounded-lg border border-gray-800 bg-gray-900/30 hover:bg-gray-900/70 hover:border-gray-700 transition-all"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-medium text-white mb-1">Top Tweets</h3>
+                  <p className="text-sm text-gray-500">
+                    Most popular posts about $FED
+                  </p>
+                </div>
+                <div className="text-gray-400">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                  </svg>
+                </div>
               </div>
-              <div className="text-gray-400">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
+            </a>
+            <a
+              href="https://x.com/search?q=%24FED&src=typed_query&f=live"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block p-6 rounded-lg border border-gray-800 bg-gray-900/30 hover:bg-gray-900/70 hover:border-gray-700 transition-all"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-medium text-white mb-1">Latest Tweets</h3>
+                  <p className="text-sm text-gray-500">
+                    Real-time posts and discussions
+                  </p>
+                </div>
+                <div className="text-gray-400">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
               </div>
-            </div>
-          </a>
+            </a>
+          </div>
         </section>
 
         {/* Community Links */}

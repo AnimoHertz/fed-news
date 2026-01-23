@@ -6,11 +6,9 @@ import { ChatMessage } from '@/types/chat';
 interface MessageInputProps {
   walletAddress: string;
   onMessageSent: (message: ChatMessage) => void;
-  replyingTo?: { id: string; username: string } | null;
-  onCancelReply?: () => void;
 }
 
-export function MessageInput({ walletAddress, onMessageSent, replyingTo, onCancelReply }: MessageInputProps) {
+export function MessageInput({ walletAddress, onMessageSent }: MessageInputProps) {
   const [content, setContent] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -29,7 +27,6 @@ export function MessageInput({ walletAddress, onMessageSent, replyingTo, onCance
         body: JSON.stringify({
           walletAddress,
           content: content.trim(),
-          parentId: replyingTo?.id || null,
         }),
       });
 
@@ -42,7 +39,6 @@ export function MessageInput({ walletAddress, onMessageSent, replyingTo, onCance
 
       setContent('');
       onMessageSent(data.message);
-      if (onCancelReply) onCancelReply();
     } catch {
       setError('Failed to send message');
     } finally {
@@ -52,25 +48,10 @@ export function MessageInput({ walletAddress, onMessageSent, replyingTo, onCance
 
   return (
     <form onSubmit={handleSubmit} className="space-y-2">
-      {replyingTo && (
-        <div className="flex items-center justify-between px-3 py-2 bg-gray-800/50 rounded-lg border border-gray-700">
-          <span className="text-sm text-gray-400">
-            Replying to <span className="text-white">{replyingTo.username}</span>
-          </span>
-          <button
-            type="button"
-            onClick={onCancelReply}
-            className="text-xs text-gray-500 hover:text-white transition-colors"
-          >
-            Cancel
-          </button>
-        </div>
-      )}
-
       <textarea
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder={replyingTo ? `Reply to ${replyingTo.username}...` : 'Write a message...'}
+        placeholder="Write a message..."
         maxLength={500}
         rows={3}
         className="w-full px-4 py-3 rounded-lg border border-gray-700 bg-gray-800 text-white placeholder-gray-500 focus:border-gray-600 focus:outline-none resize-none"
@@ -91,7 +72,7 @@ export function MessageInput({ walletAddress, onMessageSent, replyingTo, onCance
           disabled={loading || !content.trim()}
           className="px-4 py-2 text-sm font-medium rounded-lg bg-white text-black hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? 'Sending...' : replyingTo ? 'Reply' : 'Send'}
+          {loading ? 'Sending...' : 'Send'}
         </button>
       </div>
     </form>

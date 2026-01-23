@@ -16,7 +16,7 @@ export function ChatForum() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [editingUsername, setEditingUsername] = useState(false);
-  const [replyingTo, setReplyingTo] = useState<{ id: string; username: string } | null>(null);
+  const [replyingToId, setReplyingToId] = useState<string | null>(null);
 
   const walletAddress = publicKey?.toBase58() || null;
 
@@ -91,18 +91,11 @@ export function ChatForum() {
 
   const handleMessageSent = (message: ChatMessageType) => {
     setMessages((prev) => [message, ...prev]);
-    setReplyingTo(null);
+    setReplyingToId(null);
   };
 
   const handleMessageDeleted = (messageId: string) => {
     setMessages((prev) => prev.filter((m) => m.id !== messageId && m.parentId !== messageId));
-  };
-
-  const handleReply = (parentId: string) => {
-    const parent = messages.find((m) => m.id === parentId);
-    if (parent) {
-      setReplyingTo({ id: parentId, username: parent.username });
-    }
   };
 
   const handleRefresh = () => {
@@ -182,8 +175,6 @@ export function ChatForum() {
         <MessageInput
           walletAddress={walletAddress}
           onMessageSent={handleMessageSent}
-          replyingTo={replyingTo}
-          onCancelReply={() => setReplyingTo(null)}
         />
       )}
 
@@ -212,7 +203,9 @@ export function ChatForum() {
               message={message}
               currentWallet={walletAddress}
               onDelete={handleMessageDeleted}
-              onReply={handleReply}
+              onMessageSent={handleMessageSent}
+              replyingToId={replyingToId}
+              onSetReplyingTo={setReplyingToId}
             />
           ))
         )}

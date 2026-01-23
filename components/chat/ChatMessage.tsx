@@ -9,13 +9,28 @@ interface ChatMessageProps {
   message: ChatMessageType;
   currentWallet?: string | null;
   onDelete?: (messageId: string) => void;
-  onReply?: (parentId: string) => void;
+  onMessageSent?: (message: ChatMessageType) => void;
   isReply?: boolean;
+  replyingToId?: string | null;
+  onSetReplyingTo?: (id: string | null) => void;
 }
 
-export function ChatMessage({ message, currentWallet, onDelete, onReply, isReply = false }: ChatMessageProps) {
+export function ChatMessage({
+  message,
+  currentWallet,
+  onDelete,
+  onMessageSent,
+  isReply = false,
+  replyingToId,
+  onSetReplyingTo,
+}: ChatMessageProps) {
   const [deleting, setDeleting] = useState(false);
+  const [replyContent, setReplyContent] = useState('');
+  const [replyLoading, setReplyLoading] = useState(false);
+  const [replyError, setReplyError] = useState('');
+
   const timeAgo = formatDistanceToNow(new Date(message.createdAt), { addSuffix: true });
+  const isReplying = replyingToId === message.id;
 
   const isOwner = currentWallet &&
     message.walletAddress.toLowerCase() === currentWallet.toLowerCase();
@@ -44,6 +59,53 @@ export function ChatMessage({ message, currentWallet, onDelete, onReply, isReply
     }
   };
 
+  const handleReplySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!replyContent.trim() || !currentWallet) return;
+
+    setReplyError('');
+    setReplyLoading(true);
+
+    try {
+      const response = await fetch('/api/chat/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          walletAddress: currentWallet,
+          content: replyContent.trim(),
+          parentId: message.id,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setReplyError(data.error || 'Failed to send reply');
+        return;
+      }
+
+      setReplyContent('');
+      if (onMessageSent) onMessageSent(data.message);
+      if (onSetReplyingTo) onSetReplyingTo(null);
+    } catch {
+      setReplyError('Failed to send reply');
+    } finally {
+      setReplyLoading(false);
+    }
+  };
+
+  const handleReplyClick = () => {
+    if (onSetReplyingTo) {
+      onSetReplyingTo(message.id);
+    }
+  };
+
+  const handleCancelReply = () => {
+    setReplyContent('');
+    setReplyError('');
+    if (onSetReplyingTo) onSetReplyingTo(null);
+  };
+
   return (
     <div className={`p-4 rounded-lg border border-gray-800 bg-gray-900/30 ${isReply ? 'ml-8 border-l-2 border-l-gray-700' : ''}`}>
       <div className="flex items-start justify-between gap-2 mb-2">
@@ -53,9 +115,9 @@ export function ChatMessage({ message, currentWallet, onDelete, onReply, isReply
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-gray-500 whitespace-nowrap">{timeAgo}</span>
-          {currentWallet && onReply && !isReply && (
+          {currentWallet && !isReply && !isReplying && (
             <button
-              onClick={() => onReply(message.id)}
+              onClick={handleReplyClick}
               className="px-2 py-1 text-xs text-gray-400 border border-gray-700 rounded hover:bg-gray-800 transition-colors"
             >
               Reply
@@ -75,6 +137,47 @@ export function ChatMessage({ message, currentWallet, onDelete, onReply, isReply
       </div>
       <p className="text-gray-300 whitespace-pre-wrap break-words">{message.content}</p>
 
+      {/* Inline reply input */}
+      {isReplying && currentWallet && (
+        <form onSubmit={handleReplySubmit} className="mt-4 ml-4 pl-4 border-l-2 border-gray-700">
+          <textarea
+            value={replyContent}
+            onChange={(e) => setReplyContent(e.target.value)}
+            placeholder={`Reply to ${message.username}...`}
+            maxLength={500}
+            rows={2}
+            autoFocus
+            className="w-full px-3 py-2 rounded-lg border border-gray-700 bg-gray-800 text-white placeholder-gray-500 focus:border-gray-600 focus:outline-none resize-none text-sm"
+          />
+          <div className="flex items-center justify-between mt-2">
+            <div className="flex items-center gap-2">
+              {replyError && (
+                <p className="text-xs text-red-400">{replyError}</p>
+              )}
+              <span className="text-xs text-gray-500">
+                {replyContent.length}/500
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleCancelReply}
+                className="px-3 py-1.5 text-xs text-gray-400 hover:text-white transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={replyLoading || !replyContent.trim()}
+                className="px-3 py-1.5 text-xs font-medium rounded bg-white text-black hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {replyLoading ? 'Sending...' : 'Reply'}
+              </button>
+            </div>
+          </div>
+        </form>
+      )}
+
       {/* Render replies */}
       {message.replies && message.replies.length > 0 && (
         <div className="mt-4 space-y-3">
@@ -84,6 +187,7 @@ export function ChatMessage({ message, currentWallet, onDelete, onReply, isReply
               message={reply}
               currentWallet={currentWallet}
               onDelete={onDelete}
+              onMessageSent={onMessageSent}
               isReply={true}
             />
           ))}
