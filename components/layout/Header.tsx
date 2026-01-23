@@ -17,14 +17,11 @@ export function Header() {
             <Link href="/incentives" className="hover:text-white transition-colors">
               Incentives
             </Link>
-            <Link href="/roles" className="hover:text-white transition-colors">
-              Roles
-            </Link>
             <Link href="/payouts" className="hover:text-white transition-colors">
               Payouts
             </Link>
             <Link href="/growth" className="hover:text-white transition-colors">
-              Growth
+              Members
             </Link>
             <Link href="/forum" className="hover:text-white transition-colors">
               Forum

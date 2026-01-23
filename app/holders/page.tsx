@@ -1,8 +1,7 @@
 'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { Header } from '@/components/layout/Header';
 
 interface Transaction {
   signature: string;
@@ -188,45 +187,13 @@ export default function HoldersPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a]">
-      {/* Header */}
-      <header className="border-b border-gray-800/50">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                <Image src="/logoseal.png" alt="FED logo" width={48} height={48} />
-                <div className="flex items-baseline gap-2">
-                  <span className="text-emerald-400 font-semibold text-2xl">$FED</span>
-                  <span className="text-white text-xl">- Federal Reserve</span>
-                </div>
-              </Link>
-            </div>
-            <div className="flex items-center gap-4 text-sm text-gray-400">
-              <Link href="/incentives" className="hover:text-white transition-colors">
-                Incentives
-              </Link>
-              <Link href="/roles" className="hover:text-white transition-colors">
-                Roles
-              </Link>
-              <Link href="/payouts" className="hover:text-white transition-colors">
-                Payouts
-              </Link>
-              <Link href="/forum" className="hover:text-white transition-colors">
-                Forum
-              </Link>
-              <Link href="/manifesto" className="hover:text-white transition-colors">
-                Manifesto
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen">
+      <Header />
 
       {/* Stats Bar */}
       {data && (
         <div className="border-b border-gray-800/50">
-          <div className="max-w-7xl mx-auto px-6 py-2">
+          <div className="max-w-5xl mx-auto px-4 py-2">
             <div className="flex items-center gap-6 text-sm">
               <div className="flex items-center gap-1">
                 <span className="text-gray-500">Market Cap:</span>
@@ -251,7 +218,7 @@ export default function HoldersPage() {
         </div>
       )}
 
-      <main className="max-w-7xl mx-auto px-6 py-4">
+      <main className="max-w-5xl mx-auto px-4 py-4">
         {loading && (
           <div className="flex items-center justify-center py-24">
             <div className="flex items-center gap-3 text-gray-400">
@@ -357,7 +324,7 @@ export default function HoldersPage() {
 
       {/* Footer */}
       <footer className="border-t border-gray-800/50 mt-8">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
           <p className="text-sm text-gray-600">
             Data from{' '}
             <a
