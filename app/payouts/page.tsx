@@ -16,6 +16,27 @@ interface PayoutData {
   totalReceived: number;
   transferCount: number;
   transfers: Transfer[];
+  fedBalance: number;
+  tier: string;
+  tierName: string;
+  tierColor: string;
+  tierMultiplier: number;
+}
+
+const bonusMultipliers = [
+  { name: 'Diamond Hands', description: 'Hold continuously without selling', max: '1.25x' },
+  { name: 'Engagement', description: 'Participate and earn XP', max: '1.2x' },
+  { name: 'Time Lock', description: 'Voluntarily lock your tokens', max: '2.0x' },
+];
+
+function formatBalance(balance: number): string {
+  if (balance >= 1_000_000) {
+    return `${(balance / 1_000_000).toFixed(2)}M`;
+  }
+  if (balance >= 1_000) {
+    return `${(balance / 1_000).toFixed(1)}K`;
+  }
+  return balance.toLocaleString();
 }
 
 export default function PayoutsPage() {
@@ -135,7 +156,7 @@ export default function PayoutsPage() {
           <section>
             {/* Stats */}
             <div className="border border-gray-800 rounded-lg p-6 mb-8 bg-gray-900/50">
-              <div className="flex gap-8 font-mono text-2xl">
+              <div className="flex flex-wrap gap-8 font-mono text-2xl">
                 <div>
                   <span className="text-white">{formatCurrency(data.totalReceived)}</span>
                   <span className="text-gray-500 text-sm ml-2">received</span>
@@ -143,6 +164,65 @@ export default function PayoutsPage() {
                 <div>
                   <span className="text-white">{data.transferCount}</span>
                   <span className="text-gray-500 text-sm ml-2">distributions</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Your Multipliers */}
+            <div className="mb-8">
+              <h2 className="text-sm text-gray-500 uppercase tracking-wide mb-4">
+                Your Multipliers
+              </h2>
+
+              {/* Current Tier */}
+              <div className={`p-4 rounded-lg border mb-4 ${
+                data.tier === 'chairman' ? 'bg-yellow-500/10 border-yellow-500/30' :
+                data.tier === 'governor' ? 'bg-purple-500/10 border-purple-500/30' :
+                data.tier === 'director' ? 'bg-blue-500/10 border-blue-500/30' :
+                data.tier === 'member' ? 'bg-emerald-500/10 border-emerald-500/30' :
+                data.tier === 'citizen' ? 'bg-gray-500/10 border-gray-500/30' :
+                'bg-gray-800/30 border-gray-700/30'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="flex items-center gap-3">
+                      <span className={`font-medium ${data.tierColor}`}>{data.tierName}</span>
+                      <span className="text-xs text-gray-500 bg-gray-800/50 px-2 py-0.5 rounded font-mono">
+                        {formatBalance(data.fedBalance)} $FED
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-500 mt-1">Your current tier based on holdings</p>
+                  </div>
+                  <div className={`text-2xl font-mono ${data.tierColor}`}>
+                    {data.tierMultiplier}x
+                  </div>
+                </div>
+              </div>
+
+              {/* Bonus Multipliers */}
+              <div className="space-y-2">
+                {bonusMultipliers.map((bonus) => (
+                  <div
+                    key={bonus.name}
+                    className="p-3 rounded-lg border border-gray-800 bg-gray-900/30 flex items-center justify-between"
+                  >
+                    <div>
+                      <span className="text-gray-300 text-sm">{bonus.name}</span>
+                      <span className="text-gray-600 text-sm ml-2">·</span>
+                      <span className="text-gray-500 text-sm ml-2">{bonus.description}</span>
+                    </div>
+                    <span className="text-gray-400 font-mono text-sm">up to {bonus.max}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Max Potential */}
+              <div className="mt-4 p-3 rounded-lg border border-gray-700 bg-gray-800/30">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-gray-400">Your max potential multiplier (with all bonuses)</span>
+                  <span className="text-white font-mono">
+                    {(data.tierMultiplier * 1.25 * 1.2 * 2.0).toFixed(1)}x
+                  </span>
                 </div>
               </div>
             </div>

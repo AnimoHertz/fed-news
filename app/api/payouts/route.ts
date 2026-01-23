@@ -1,7 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { fetchTokenBalance, getTierFromBalance, getTierInfo } from '@/lib/token';
 
 // USD1 token mint address on Solana
 const USD1_MINT = 'USD1ttGY1N17NEEHLmELoaybftRBUSErhqYiQzvEmuB';
+
+// FED distribution wallet - only transfers from this address count as rewards
+const FED_DISTRIBUTION_WALLET = '4Br5iKfRkYMk8WMj6w8YASynuq7Eoas16rkyvWsAdL4P';
+
+// Tier multipliers matching roles page
+const TIER_MULTIPLIERS: Record<string, number> = {
+  chairman: 1.5,
+  governor: 1.25,
+  director: 1.1,
+  member: 1.05,
+  citizen: 1.0,
+  none: 0,
+};
 
 interface Transfer {
   signature: string;
@@ -23,12 +37,17 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid Solana address format' }, { status: 400 });
   }
 
-  const heliusApiKey = process.env.HELIUS_API;
+  const heliusApiKey = process.env.HELIUS_API_KEY || process.env.HELIUS_API;
   if (!heliusApiKey) {
     return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
   }
 
   try {
+    // Fetch FED token balance to determine tier
+    const fedBalance = await fetchTokenBalance(address);
+    const tier = getTierFromBalance(fedBalance);
+    const tierInfo = getTierInfo(tier);
+    const tierMultiplier = TIER_MULTIPLIERS[tier] || 1.0;
     const usd1Transfers: Transfer[] = [];
     let totalReceived = 0;
     let lastSignature: string | undefined;
@@ -62,17 +81,17 @@ export async function GET(request: NextRequest) {
         // Check tokenTransfers for the specific amount sent TO this address
         if (tx.tokenTransfers && tx.tokenTransfers.length > 0) {
           for (const transfer of tx.tokenTransfers) {
-            // Only count INCOMING transfers:
+            // Only count transfers from the FED distribution wallet:
             // 1. It's the USD1 token
             // 2. The recipient (toUserAccount) is the queried address
-            // 3. The sender (fromUserAccount) is NOT the queried address (not outgoing)
+            // 3. The sender is the FED distribution wallet
             // 4. Amount is greater than 0
             const isUSD1 = transfer.mint === USD1_MINT;
             const isRecipient = transfer.toUserAccount === address;
-            const isNotSender = transfer.fromUserAccount !== address;
+            const isFromDistributionWallet = transfer.fromUserAccount === FED_DISTRIBUTION_WALLET;
             const hasAmount = transfer.tokenAmount > 0;
 
-            if (isUSD1 && isRecipient && isNotSender && hasAmount) {
+            if (isUSD1 && isRecipient && isFromDistributionWallet && hasAmount) {
               const amount = transfer.tokenAmount;
               totalReceived += amount;
 
@@ -102,6 +121,12 @@ export async function GET(request: NextRequest) {
       totalReceived,
       transferCount: usd1Transfers.length,
       transfers: usd1Transfers.slice(0, 50),
+      // Tier info
+      fedBalance,
+      tier: tier,
+      tierName: tierInfo.name,
+      tierColor: tierInfo.color,
+      tierMultiplier,
     });
   } catch (error) {
     console.error('Payout lookup error:', error);
