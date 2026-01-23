@@ -59,3 +59,33 @@ body {
 ::-webkit-scrollbar-thumb {
   background: var(--gray-700);
 }
+
+/* Solana Wallet Adapter Overrides */
+.wallet-adapter-modal-wrapper {
+  background: var(--gray-900) !important;
+}
+
+.wallet-adapter-modal {
+  background: var(--gray-900) !important;
+}
+
+.wallet-adapter-modal-title {
+  color: var(--white) !important;
+}
+
+.wallet-adapter-modal-list li {
+  background: var(--gray-800) !important;
+}
+
+.wallet-adapter-modal-list li:hover {
+  background: var(--gray-700) !important;
+}
+
+.wallet-adapter-button {
+  background: var(--gray-800) !important;
+  color: var(--white) !important;
+}
+
+.wallet-adapter-button:hover {
+  background: var(--gray-700) !important;
+}

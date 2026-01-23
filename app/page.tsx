@@ -6,6 +6,7 @@ import { formatCurrency, formatNumber } from '@/lib/utils';
 import { fetchTokenPrice, formatPrice, formatLargeNumber, JUPITER_SWAP_URL, DEXSCREENER_URL } from '@/lib/price';
 import { CommitList } from '@/components/commits/CommitList';
 import { CopyAddress } from '@/components/ui/CopyAddress';
+import { FAQ } from '@/components/home/FAQ';
 
 export const revalidate = 60;
 
@@ -33,11 +34,14 @@ export default async function HomePage() {
               <Link href="/incentives" className="hover:text-white transition-colors">
                 Incentives
               </Link>
-              <Link href="/payouts" className="hover:text-white transition-colors">
-                Payouts
-              </Link>
               <Link href="/roles" className="hover:text-white transition-colors">
                 Roles
+              </Link>
+              <Link href="/growth" className="hover:text-white transition-colors">
+                Growth
+              </Link>
+              <Link href="/forum" className="hover:text-white transition-colors">
+                Forum
               </Link>
               <Link href="/social" className="hover:text-white transition-colors">
                 Social
@@ -150,6 +154,14 @@ export default async function HomePage() {
               View all updates →
             </Link>
           </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="mt-16">
+          <h2 className="text-sm text-gray-500 uppercase tracking-wide mb-6">
+            Frequently Asked Questions
+          </h2>
+          <FAQ />
         </section>
       </main>
 
