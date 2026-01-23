@@ -10,14 +10,6 @@ interface TokenAccount {
   amount: string;
 }
 
-interface Transaction {
-  signature: string;
-  timestamp: number;
-  type: 'buy' | 'sell';
-  amount: number;
-  price?: number;
-}
-
 interface HolderData {
   address: string;
   balance: number;
@@ -25,91 +17,113 @@ interface HolderData {
   valueUsd: number;
   pnl: number;
   pnlMultiple: number;
-  status: 'Buying' | 'Holding' | 'Flipping';
-  statusDuration: string;
-  transactions: Transaction[];
 }
 
-function formatDuration(ms: number): string {
-  const hours = Math.floor(ms / (1000 * 60 * 60));
-  if (hours < 24) {
-    return `${hours}h`;
-  }
-  const days = Math.floor(hours / 24);
-  return `${days}d`;
+interface Transaction {
+  type: 'buy' | 'sell';
+  amount: number;
+  solAmount: number;
 }
 
-function determineStatus(
-  transactions: Transaction[]
-): { status: 'Buying' | 'Holding' | 'Flipping'; since: number } {
-  if (transactions.length === 0) {
-    return { status: 'Holding', since: Date.now() - 1000 * 60 * 60 * 24 };
+async function fetchSolPrice(): Promise<number> {
+  try {
+    const response = await fetch(
+      'https://api.dexscreener.com/latest/dex/tokens/So11111111111111111111111111111111111111112'
+    );
+    if (!response.ok) return 200;
+    const data = await response.json();
+    return parseFloat(data.pairs?.[0]?.priceUsd) || 200;
+  } catch {
+    return 200;
   }
-
-  const recentTxs = transactions.slice(0, 10);
-  const buys = recentTxs.filter((t) => t.type === 'buy');
-  const sells = recentTxs.filter((t) => t.type === 'sell');
-
-  // Check for flipping (both buy and sell in recent transactions)
-  if (buys.length > 0 && sells.length > 0) {
-    const lastActivity = Math.max(...recentTxs.map((t) => t.timestamp));
-    return { status: 'Flipping', since: lastActivity };
-  }
-
-  // Check if mostly buying
-  if (buys.length > sells.length) {
-    const lastBuy = Math.max(...buys.map((t) => t.timestamp));
-    return { status: 'Buying', since: lastBuy };
-  }
-
-  // Default to holding
-  const lastActivity = transactions[0]?.timestamp || Date.now();
-  return { status: 'Holding', since: lastActivity };
 }
 
-function calculatePnL(
-  transactions: Transaction[],
-  currentBalance: number,
-  currentPrice: number
-): { pnl: number; multiple: number } {
-  if (transactions.length === 0 || currentBalance === 0) {
-    return { pnl: 0, multiple: 1 };
-  }
+async function fetchWalletTransactions(
+  walletAddress: string,
+  heliusApiKey: string,
+  solPrice: number
+): Promise<{ pnl: number; multiple: number; costBasis: number }> {
+  try {
+    const response = await fetch(
+      `https://api.helius.xyz/v0/addresses/${walletAddress}/transactions?api-key=${heliusApiKey}&limit=100`
+    );
 
-  // Calculate weighted average buy price
-  let totalBought = 0;
-  let totalCost = 0;
-
-  for (const tx of transactions) {
-    if (tx.type === 'buy' && tx.price && tx.price > 0) {
-      totalBought += tx.amount;
-      totalCost += tx.amount * tx.price;
+    if (!response.ok) {
+      return { pnl: 0, multiple: 1, costBasis: 0 };
     }
+
+    const txData = await response.json();
+    const transactions: Transaction[] = [];
+
+    for (const tx of txData) {
+      if (tx.tokenTransfers) {
+        for (const transfer of tx.tokenTransfers) {
+          if (transfer.mint === FED_TOKEN_MINT) {
+            const isBuy = transfer.toUserAccount === walletAddress;
+            const amount = transfer.tokenAmount || 0;
+
+            // Find corresponding SOL transfer
+            let solAmount = 0;
+            if (tx.nativeTransfers && tx.nativeTransfers.length > 0) {
+              const solTransfer = tx.nativeTransfers.find(
+                (nt: { fromUserAccount: string; toUserAccount: string; amount: number }) =>
+                  (isBuy && nt.fromUserAccount === walletAddress) ||
+                  (!isBuy && nt.toUserAccount === walletAddress)
+              );
+              if (solTransfer) {
+                solAmount = solTransfer.amount / 1e9;
+              }
+            }
+
+            if (amount > 0 && solAmount > 0) {
+              transactions.push({
+                type: isBuy ? 'buy' : 'sell',
+                amount,
+                solAmount,
+              });
+            }
+          }
+        }
+      }
+    }
+
+    // Calculate cost basis from buys
+    let totalBought = 0;
+    let totalSolSpent = 0;
+
+    for (const tx of transactions) {
+      if (tx.type === 'buy') {
+        totalBought += tx.amount;
+        totalSolSpent += tx.solAmount;
+      }
+    }
+
+    if (totalBought === 0 || totalSolSpent === 0) {
+      return { pnl: 0, multiple: 1, costBasis: 0 };
+    }
+
+    const costBasis = totalSolSpent * solPrice;
+
+    return { pnl: 0, multiple: 1, costBasis };
+  } catch (error) {
+    console.error(`Failed to fetch transactions for ${walletAddress}:`, error);
+    return { pnl: 0, multiple: 1, costBasis: 0 };
   }
-
-  if (totalBought === 0 || totalCost === 0) {
-    return { pnl: 0, multiple: 1 };
-  }
-
-  const avgBuyPrice = totalCost / totalBought;
-  const currentValue = currentBalance * currentPrice;
-  const costBasis = currentBalance * avgBuyPrice;
-  const pnl = currentValue - costBasis;
-  const multiple = avgBuyPrice > 0 ? currentPrice / avgBuyPrice : 1;
-
-  return { pnl, multiple };
 }
 
 export async function GET() {
   const heliusApiKey = process.env.HELIUS_API_KEY || process.env.HELIUS_API;
 
   if (!heliusApiKey) {
-    return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
+    return NextResponse.json({ error: 'Helius API key not configured' }, { status: 500 });
   }
 
   try {
-    // Fetch current token price
-    const priceData = await fetchTokenPrice();
+    // Fetch current token price and SOL price in parallel
+    const [priceData, solPrice] = await Promise.all([
+      fetchTokenPrice(),
+      fetchSolPrice(),
+    ]);
     const currentPrice = priceData?.priceUsd || 0;
     const marketCap = priceData?.marketCap || 0;
 
@@ -175,68 +189,16 @@ export async function GET() {
     const top10Balance = sortedHolders.slice(0, 10).reduce((sum, h) => sum + h.balance, 0);
     const top10Percentage = (top10Balance / TOTAL_SUPPLY) * 100;
 
-    // Fetch transaction history for each top holder
+    // Fetch transaction data and calculate PnL for each holder
     const holderData: HolderData[] = await Promise.all(
       sortedHolders.map(async (holder) => {
-        const transactions: Transaction[] = [];
-
-        try {
-          // Fetch transactions for this holder
-          const txResponse = await fetch(
-            `https://api.helius.xyz/v0/addresses/${holder.owner}/transactions?api-key=${heliusApiKey}&limit=50`
-          );
-
-          if (txResponse.ok) {
-            const txData = await txResponse.json();
-
-            for (const tx of txData) {
-              // Look for token transfers involving FED
-              if (tx.tokenTransfers) {
-                for (const transfer of tx.tokenTransfers) {
-                  if (transfer.mint === FED_TOKEN_MINT) {
-                    const isBuy = transfer.toUserAccount === holder.owner;
-                    const amount = transfer.tokenAmount || 0;
-
-                    // Try to estimate price from native transfers
-                    let price: number | undefined;
-                    if (tx.nativeTransfers && tx.nativeTransfers.length > 0) {
-                      const solTransfer = tx.nativeTransfers.find(
-                        (nt: { fromUserAccount: string; toUserAccount: string; amount: number }) =>
-                          (isBuy && nt.fromUserAccount === holder.owner) ||
-                          (!isBuy && nt.toUserAccount === holder.owner)
-                      );
-                      if (solTransfer && amount > 0) {
-                        // Estimate SOL price (rough approximation)
-                        const solAmount = solTransfer.amount / 1e9;
-                        const solPrice = 150; // Approximate SOL price
-                        price = (solAmount * solPrice) / amount;
-                      }
-                    }
-
-                    transactions.push({
-                      signature: tx.signature,
-                      timestamp: tx.timestamp * 1000,
-                      type: isBuy ? 'buy' : 'sell',
-                      amount,
-                      price,
-                    });
-                  }
-                }
-              }
-            }
-          }
-        } catch (error) {
-          console.error(`Failed to fetch transactions for ${holder.owner}:`, error);
-        }
-
-        // Sort transactions by timestamp descending
-        transactions.sort((a, b) => b.timestamp - a.timestamp);
-
         const percentage = (holder.balance / TOTAL_SUPPLY) * 100;
         const valueUsd = holder.balance * currentPrice;
-        const { status, since } = determineStatus(transactions);
-        const statusDuration = formatDuration(Date.now() - since);
-        const { pnl, multiple } = calculatePnL(transactions, holder.balance, currentPrice);
+        const { costBasis } = await fetchWalletTransactions(holder.owner, heliusApiKey, solPrice);
+
+        // Calculate PnL: current value - cost basis
+        const pnl = costBasis > 0 ? valueUsd - costBasis : 0;
+        const multiple = costBasis > 0 ? valueUsd / costBasis : 1;
 
         return {
           address: holder.owner,
@@ -245,9 +207,6 @@ export async function GET() {
           valueUsd,
           pnl,
           pnlMultiple: multiple,
-          status,
-          statusDuration,
-          transactions,
         };
       })
     );

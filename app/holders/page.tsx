@@ -73,6 +73,19 @@ function formatMarketCap(value: number): string {
   return value.toFixed(0);
 }
 
+function formatTokens(balance: number): string {
+  if (balance >= 1_000_000_000) {
+    return `${(balance / 1_000_000_000).toFixed(1)}B`;
+  }
+  if (balance >= 1_000_000) {
+    return `${(balance / 1_000_000).toFixed(1)}M`;
+  }
+  if (balance >= 1_000) {
+    return `${(balance / 1_000).toFixed(0)}K`;
+  }
+  return balance.toFixed(0);
+}
+
 export default function HoldersPage() {
   const [data, setData] = useState<HoldersResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -167,6 +180,7 @@ export default function HoldersPage() {
                 <tr className="text-left text-sm text-gray-500 border-b border-gray-800/50">
                   <th className="pb-3 font-medium">Rank</th>
                   <th className="pb-3 font-medium">Holder</th>
+                  <th className="pb-3 font-medium">Tokens</th>
                   <th className="pb-3 font-medium">% of Supply</th>
                   <th className="pb-3 font-medium">Value</th>
                   <th className="pb-3 font-medium">PnL</th>
@@ -192,6 +206,9 @@ export default function HoldersPage() {
                         >
                           {formatAddress(holder.address)}
                         </a>
+                      </td>
+                      <td className="py-2">
+                        <span className="font-mono text-gray-400">{formatTokens(holder.balance)}</span>
                       </td>
                       <td className="py-2">
                         <span className="font-mono text-white">{holder.percentage.toFixed(2)}%</span>
