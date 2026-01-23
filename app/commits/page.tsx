@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import { fetchAllRecentCommits } from '@/lib/github';
 import { parseCommit, filterCommits } from '@/lib/commits';
+import { getCommentCounts } from '@/lib/update-comments';
 import { CommitFilters } from '@/components/commits/CommitFilters';
 import { CommitList } from '@/components/commits/CommitList';
 import type { CommitCategory } from '@/types';
@@ -24,6 +25,9 @@ export default async function CommitsPage({ searchParams }: PageProps) {
   const hideStats = params.hideStats !== 'false';
 
   const filteredCommits = filterCommits(allCommits, { category, hideStats });
+
+  // Fetch comment counts for displayed commits
+  const commentCounts = await getCommentCounts(filteredCommits.map(c => c.sha));
 
   return (
     <div className="min-h-screen">
@@ -72,7 +76,7 @@ export default async function CommitsPage({ searchParams }: PageProps) {
         </p>
 
         {/* List */}
-        <CommitList commits={filteredCommits} />
+        <CommitList commits={filteredCommits} commentCounts={commentCounts} />
       </main>
     </div>
   );
