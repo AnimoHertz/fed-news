@@ -25,6 +25,9 @@ export default function ForumPage() {
               <Link href="/roles" className="hover:text-white transition-colors">
                 Roles
               </Link>
+              <Link href="/payouts" className="hover:text-white transition-colors">
+                Payouts
+              </Link>
               <Link href="/growth" className="hover:text-white transition-colors">
                 Growth
               </Link>

@@ -100,6 +100,9 @@ export default function PayoutsPage() {
               <span className="text-xl font-medium">Fed News</span>
             </Link>
             <div className="flex gap-4 text-sm text-gray-400">
+              <Link href="/roles" className="hover:text-white transition-colors">
+                Roles
+              </Link>
               <Link href="/manifesto" className="hover:text-white transition-colors">
                 Manifesto
               </Link>
