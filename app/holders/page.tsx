@@ -3,13 +3,6 @@
 import { useState, useEffect } from 'react';
 import { Header } from '@/components/layout/Header';
 
-interface Transaction {
-  signature: string;
-  timestamp: number;
-  type: 'buy' | 'sell';
-  amount: number;
-}
-
 interface HolderData {
   address: string;
   balance: number;
@@ -17,9 +10,6 @@ interface HolderData {
   valueUsd: number;
   pnl: number;
   pnlMultiple: number;
-  status: 'Buying' | 'Holding' | 'Flipping';
-  statusDuration: string;
-  transactions: Transaction[];
 }
 
 interface HoldersResponse {
@@ -81,85 +71,6 @@ function formatMarketCap(value: number): string {
     return `${(value / 1_000).toFixed(0)}K`;
   }
   return value.toFixed(0);
-}
-
-// Buy/Sell Timeline Component
-function BuySellTimeline({ transactions }: { transactions: Transaction[] }) {
-  // Get time range (last 3 days)
-  const now = Date.now();
-  const threeDaysAgo = now - 3 * 24 * 60 * 60 * 1000;
-  const startTime = threeDaysAgo;
-  const timeRange = now - startTime;
-
-  // Group transactions into time buckets (40 buckets across the timeline)
-  const bucketCount = 40;
-  const buckets: { buys: number; sells: number }[] = Array(bucketCount)
-    .fill(null)
-    .map(() => ({ buys: 0, sells: 0 }));
-
-  for (const tx of transactions) {
-    if (tx.timestamp >= startTime) {
-      const bucketIndex = Math.min(
-        bucketCount - 1,
-        Math.floor(((tx.timestamp - startTime) / timeRange) * bucketCount)
-      );
-      if (tx.type === 'buy') {
-        buckets[bucketIndex].buys += tx.amount;
-      } else {
-        buckets[bucketIndex].sells += tx.amount;
-      }
-    }
-  }
-
-  // Find max for scaling
-  const maxAmount = Math.max(
-    ...buckets.map((b) => Math.max(b.buys, b.sells)),
-    1
-  );
-
-  return (
-    <div className="flex items-end h-10 gap-[2px]">
-      {buckets.map((bucket, i) => {
-        const buyHeight = bucket.buys > 0 ? Math.max((bucket.buys / maxAmount) * 100, 15) : 0;
-        const sellHeight = bucket.sells > 0 ? Math.max((bucket.sells / maxAmount) * 100, 15) : 0;
-
-        return (
-          <div key={i} className="flex flex-col items-center w-[4px] h-full justify-end gap-[1px]">
-            {bucket.sells > 0 && (
-              <div
-                className="w-full bg-red-500 rounded-[1px]"
-                style={{ height: `${sellHeight}%` }}
-              />
-            )}
-            {bucket.buys > 0 && (
-              <div
-                className="w-full bg-emerald-500 rounded-[1px]"
-                style={{ height: `${buyHeight}%` }}
-              />
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function StatusBadge({ status, duration }: { status: string; duration: string }) {
-  const isBuying = status === 'Buying';
-  const isFlipping = status === 'Flipping';
-
-  return (
-    <div className="flex items-center gap-2">
-      {(isBuying || isFlipping) && (
-        <span
-          className={`w-2 h-2 rounded-[2px] ${isBuying ? 'bg-emerald-500' : 'bg-amber-500'}`}
-        />
-      )}
-      <span className={isBuying ? 'text-emerald-400' : isFlipping ? 'text-amber-400' : 'text-gray-400'}>
-        {status} since {duration}
-      </span>
-    </div>
-  );
 }
 
 export default function HoldersPage() {
@@ -254,22 +165,11 @@ export default function HoldersPage() {
             <table className="w-full">
               <thead>
                 <tr className="text-left text-sm text-gray-500 border-b border-gray-800/50">
-                  <th className="pb-3 font-medium w-[140px]">Holders</th>
-                  <th className="pb-3 font-medium w-[120px]">Owned</th>
-                  <th className="pb-3 font-medium w-[140px]">Current Pnl</th>
-                  <th className="pb-3 font-medium w-[160px]">Status</th>
-                  <th className="pb-3 font-medium">
-                    <div className="flex items-center justify-between">
-                      <span>Buy/Sell Timeline</span>
-                      <div className="flex items-center gap-12 text-xs text-gray-600 font-normal pr-4">
-                        <span>0</span>
-                        <span>1d</span>
-                        <span>2d</span>
-                        <span>3d</span>
-                        <span>now</span>
-                      </div>
-                    </div>
-                  </th>
+                  <th className="pb-3 font-medium">Rank</th>
+                  <th className="pb-3 font-medium">Holder</th>
+                  <th className="pb-3 font-medium">% of Supply</th>
+                  <th className="pb-3 font-medium">Value</th>
+                  <th className="pb-3 font-medium">PnL</th>
                 </tr>
               </thead>
               <tbody className="text-sm">
@@ -280,6 +180,9 @@ export default function HoldersPage() {
                       key={holder.address}
                       className="border-b border-gray-800/30 hover:bg-gray-900/20 transition-colors"
                     >
+                      <td className="py-2 font-mono text-gray-400">
+                        {index + 1}
+                      </td>
                       <td className="py-2">
                         <a
                           href={`https://solscan.io/account/${holder.address}`}
@@ -287,16 +190,14 @@ export default function HoldersPage() {
                           rel="noopener noreferrer"
                           className="font-mono text-gray-300 hover:text-white transition-colors"
                         >
-                          {index + 1}) {formatAddress(holder.address)}
+                          {formatAddress(holder.address)}
                         </a>
                       </td>
                       <td className="py-2">
-                        <span className="font-mono">
-                          <span className="text-white">{holder.percentage.toFixed(1)}%</span>
-                          <span className="text-gray-500 ml-1">
-                            ({formatValue(holder.valueUsd)})
-                          </span>
-                        </span>
+                        <span className="font-mono text-white">{holder.percentage.toFixed(2)}%</span>
+                      </td>
+                      <td className="py-2">
+                        <span className="font-mono text-gray-400">{formatValue(holder.valueUsd)}</span>
                       </td>
                       <td className="py-2">
                         <span
@@ -306,12 +207,6 @@ export default function HoldersPage() {
                         >
                           {pnlData.text}
                         </span>
-                      </td>
-                      <td className="py-2">
-                        <StatusBadge status={holder.status} duration={holder.statusDuration} />
-                      </td>
-                      <td className="py-2">
-                        <BuySellTimeline transactions={holder.transactions} />
                       </td>
                     </tr>
                   );
