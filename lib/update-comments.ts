@@ -2,6 +2,27 @@ import { supabase, isSupabaseConfigured } from './supabase';
 import { UpdateComment } from '@/types/update-comments';
 import { HolderTier } from '@/types/chat';
 
+// Get comment counts for multiple commits
+export async function getCommentCounts(
+  commitShas: string[]
+): Promise<Record<string, number>> {
+  if (!isSupabaseConfigured() || commitShas.length === 0) return {};
+
+  const { data, error } = await supabase
+    .from('update_comments')
+    .select('commit_sha')
+    .in('commit_sha', commitShas);
+
+  if (error || !data) return {};
+
+  // Count comments per commit
+  const counts: Record<string, number> = {};
+  for (const row of data) {
+    counts[row.commit_sha] = (counts[row.commit_sha] || 0) + 1;
+  }
+  return counts;
+}
+
 // Get comments for a specific update (commit)
 export async function getCommentsForUpdate(
   commitSha: string,

@@ -4,6 +4,7 @@ import { fetchAllRecentCommits, fetchHolderCount } from '@/lib/github';
 import { parseCommit, filterCommits, getLatestStats } from '@/lib/commits';
 import { formatCurrency, formatNumber } from '@/lib/utils';
 import { fetchTokenPrice, formatPrice, formatLargeNumber, JUPITER_SWAP_URL, DEXSCREENER_URL } from '@/lib/price';
+import { getCommentCounts } from '@/lib/update-comments';
 import { CommitList } from '@/components/commits/CommitList';
 import { CopyAddress } from '@/components/ui/CopyAddress';
 import { FAQ } from '@/components/home/FAQ';
@@ -19,6 +20,9 @@ export default async function HomePage() {
   const commits = rawCommits.map(parseCommit);
   const stats = getLatestStats(commits);
   const recentCommits = filterCommits(commits, { hideStats: true }).slice(0, 15);
+
+  // Fetch comment counts for displayed commits
+  const commentCounts = await getCommentCounts(recentCommits.map(c => c.sha));
 
   return (
     <div className="min-h-screen">
@@ -144,7 +148,7 @@ export default async function HomePage() {
             Recent Updates
           </h2>
 
-          <CommitList commits={recentCommits} />
+          <CommitList commits={recentCommits} commentCounts={commentCounts} />
 
           <div className="mt-8">
             <Link
