@@ -39,50 +39,50 @@ function generateTLDR(commit: ParsedCommit): string {
 
   // Stats update
   if (commit.category === 'stats' && commit.stats) {
-    return `Distribution milestone: $${commit.stats.distributed.toLocaleString()} USD1 has been distributed across ${commit.stats.distributions} distribution cycles.`;
+    return `Distribution milestone reached: A total of $${commit.stats.distributed.toLocaleString()} USD1 stablecoins have been distributed to holders across ${commit.stats.distributions} distribution cycles. The autonomous bot continues to run every 2 minutes, collecting trading fees and distributing them proportionally to all $FED holders.`;
   }
 
   // Research
   if (commit.category === 'research') {
-    return `New research update analyzing market conditions, tokenomics, or strategy improvements for the $FED ecosystem.`;
+    return `The AI agent has completed a new research analysis examining market conditions, tokenomics, holder behavior, or potential strategy improvements for the $FED ecosystem. These research updates help inform decisions about distribution mechanics, pool optimization, and community growth strategies.`;
   }
 
   // Website
   if (commit.category === 'website') {
     if (title.includes('polish') || title.includes('cosmetic')) {
-      return 'Visual refinements to improve the look and feel of the website.';
+      return 'Visual refinements and UI polish to improve the overall look and feel of the website. These updates make the interface more intuitive and visually appealing for users checking their distributions and project updates.';
     }
     if (title.includes('seo') || title.includes('metadata')) {
-      return 'Improvements to help more people discover $FED through search engines.';
+      return 'Search engine optimization improvements to help more people discover $FED through Google and other search engines. Better metadata and structured content increases organic visibility and drives new holder acquisition.';
     }
     if (title.includes('background') || title.includes('effect')) {
-      return 'Enhanced visual effects to make the website more engaging.';
+      return 'Enhanced visual effects and animations to make the website more engaging and memorable. These aesthetic improvements reflect the innovative nature of the project while maintaining performance.';
     }
-    return 'Updates to the fed.markets website improving functionality or appearance.';
+    return 'Updates to the fed.markets website improving functionality, user experience, or appearance. These changes help holders track their distributions and stay informed about project developments.';
   }
 
   // Ops
   if (commit.category === 'ops') {
     if (title.includes('buyback')) {
-      return 'Buyback operation reducing circulating supply and supporting token price.';
+      return 'A buyback operation has been executed, using protocol revenue to purchase $FED from the open market. This reduces circulating supply, creates buy pressure, and directly benefits existing holders by increasing their proportional ownership.';
     }
     if (title.includes('burn')) {
-      return 'Token burn permanently removing supply from circulation.';
+      return 'A token burn has been executed, permanently removing $FED from circulation. Burned tokens can never be recovered, permanently reducing total supply and increasing scarcity for remaining holders.';
     }
-    return 'Operational update affecting the distribution or token mechanics.';
+    return 'An operational update affecting the distribution mechanics, pool parameters, or token economics. These changes optimize the system for better holder rewards and long-term sustainability.';
   }
 
   // Docs
   if (commit.category === 'docs') {
-    return 'Documentation update helping users understand the $FED system better.';
+    return 'Documentation has been updated to help users better understand how the $FED system works. Clear documentation is essential for onboarding new holders and ensuring the community understands the distribution mechanics.';
   }
 
   // Twitter
   if (commit.category === 'twitter') {
-    return 'Social media activity to grow community awareness and engagement.';
+    return 'Social media activity to grow community awareness and engagement around $FED. Building a strong community presence helps attract new holders and keeps existing holders informed about project developments.';
   }
 
-  return 'Development update improving the $FED ecosystem.';
+  return 'A development update improving the $FED ecosystem. The AI agent continuously works to enhance the project, whether through code improvements, infrastructure updates, or community tooling.';
 }
 
 export function CommitModal({ commit, onClose }: CommitModalProps) {
@@ -151,9 +151,9 @@ export function CommitModal({ commit, onClose }: CommitModalProps) {
           href={commit.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="block mt-4 text-center py-2 text-sm text-gray-400 hover:text-white border border-gray-800 rounded transition-colors"
+          className="inline-block mt-4 text-xs text-gray-600 hover:text-gray-400 transition-colors"
         >
-          View on GitHub →
+          View commit on GitHub
         </a>
 
         {/* Comments Section */}
