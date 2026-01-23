@@ -39,10 +39,37 @@ export function extractStats(message: string): { distributed: number; distributi
   return undefined;
 }
 
+function removeDateFromTitle(title: string): string {
+  // Remove common date and time patterns from title
+  return title
+    // ISO datetime: 2024-01-15 23:05 or 2024-01-15T23:05:00
+    .replace(/\s*\d{4}-\d{2}-\d{2}[T\s]\d{1,2}:\d{2}(?::\d{2})?\s*/g, ' ')
+    // ISO dates: 2024-01-15
+    .replace(/\s*\d{4}-\d{2}-\d{2}\s*/g, ' ')
+    // US dates: 01/15/2024 or 1/15/24
+    .replace(/\s*\d{1,2}\/\d{1,2}\/\d{2,4}\s*/g, ' ')
+    // Parenthetical dates: (2024-01-15) or (Jan 15, 2024)
+    .replace(/\s*\([^)]*\d{4}[^)]*\)\s*/g, ' ')
+    // Month day, year: Jan 15, 2024 or January 15, 2024
+    .replace(/\s*(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{1,2},?\s+\d{4}\s*/gi, ' ')
+    // Day month year: 15 Jan 2024
+    .replace(/\s*\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)\s+\d{4}\s*/gi, ' ')
+    // Time with AM/PM: 10:30 AM, 10:30AM, 10:30 am
+    .replace(/\s*\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?\s*/g, ' ')
+    // Time with "at": at 10:30, at 10:30 AM
+    .replace(/\s+at\s+\d{1,2}:\d{2}\s*(?:AM|PM|am|pm)?\s*/gi, ' ')
+    // Parenthetical time: (10:30 AM) or (14:00)
+    .replace(/\s*\([^)]*\d{1,2}:\d{2}[^)]*\)\s*/g, ' ')
+    .trim()
+    // Clean up multiple spaces
+    .replace(/\s+/g, ' ');
+}
+
 export function parseCommit(commit: GitHubCommit): ParsedCommit {
   const message = commit.commit.message;
   const lines = message.split('\n');
-  const title = lines[0];
+  const rawTitle = lines[0];
+  const title = removeDateFromTitle(rawTitle);
   const body = lines.slice(1).join('\n').trim();
 
   return {

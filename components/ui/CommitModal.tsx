@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import type { ParsedCommit } from '@/types';
-import { formatDateTime } from '@/lib/utils';
+import { formatRelativeDate } from '@/lib/utils';
 
 interface CommitModalProps {
   commit: ParsedCommit | null;
@@ -109,7 +109,7 @@ export function CommitModal({ commit, onClose }: CommitModalProps) {
       >
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
-          <span className={`text-sm font-mono ${getCategoryColor(commit.category)}`}>
+          <span className={`inline-block text-sm font-mono px-2 py-0.5 rounded border ${getCategoryColor(commit.category)}`}>
             {commit.category}
           </span>
           <button
@@ -142,7 +142,7 @@ export function CommitModal({ commit, onClose }: CommitModalProps) {
         {/* Meta */}
         <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-800">
           <span>{commit.author}</span>
-          <span>{formatDateTime(commit.date)}</span>
+          <span>{formatRelativeDate(commit.date)}</span>
         </div>
 
         {/* View on GitHub */}
@@ -161,13 +161,13 @@ export function CommitModal({ commit, onClose }: CommitModalProps) {
 
 export function getCategoryColor(category: string): string {
   const colors: Record<string, string> = {
-    website: 'text-purple-400',
-    research: 'text-amber-400',
-    ops: 'text-red-400',
-    stats: 'text-blue-400',
-    docs: 'text-emerald-400',
-    twitter: 'text-sky-400',
-    other: 'text-gray-400',
+    website: 'text-purple-300 bg-purple-500/20 border-purple-500/30',
+    research: 'text-amber-300 bg-amber-500/20 border-amber-500/30',
+    ops: 'text-red-300 bg-red-500/20 border-red-500/30',
+    stats: 'text-blue-300 bg-blue-500/20 border-blue-500/30',
+    docs: 'text-emerald-300 bg-emerald-500/20 border-emerald-500/30',
+    twitter: 'text-sky-300 bg-sky-500/20 border-sky-500/30',
+    other: 'text-gray-300 bg-gray-500/20 border-gray-500/30',
   };
   return colors[category] || colors.other;
 }

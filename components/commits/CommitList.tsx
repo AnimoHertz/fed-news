@@ -23,7 +23,7 @@ export function CommitList({ commits }: CommitListProps) {
           >
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
-                <span className={`text-xs font-mono ${getCategoryColor(commit.category)}`}>
+                <span className={`inline-block text-xs font-mono px-2 py-0.5 rounded border ${getCategoryColor(commit.category)}`}>
                   {commit.category}
                 </span>
                 <p className="text-gray-200 mt-1 truncate">{commit.title}</p>

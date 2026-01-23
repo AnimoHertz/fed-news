@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { fetchAllRecentCommits } from '@/lib/github';
 import { parseCommit, filterCommits, getLatestStats } from '@/lib/commits';
@@ -18,8 +19,14 @@ export default async function HomePage() {
       <header className="border-b border-gray-800">
         <div className="max-w-3xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <h1 className="text-xl font-medium">Fed News</h1>
+            <div className="flex items-center gap-3">
+              <Image src="/logo.png" alt="FED logo" width={40} height={40} className="rounded-full" />
+              <h1 className="text-xl font-medium">Fed News</h1>
+            </div>
             <div className="flex gap-4 text-sm text-gray-400">
+              <Link href="/payouts" className="hover:text-white transition-colors">
+                Payouts
+              </Link>
               <Link href="/manifesto" className="hover:text-white transition-colors">
                 Manifesto
               </Link>
@@ -79,7 +86,7 @@ export default async function HomePage() {
 
       {/* Footer */}
       <footer className="border-t border-gray-800 mt-16">
-        <div className="max-w-3xl mx-auto px-4 py-6">
+        <div className="max-w-3xl mx-auto px-4 py-6 space-y-2">
           <p className="text-sm text-gray-600">
             Data from{' '}
             <a
@@ -88,6 +95,9 @@ export default async function HomePage() {
             >
               snark-tank/ralph
             </a>
+          </p>
+          <p className="text-xs text-gray-600">
+            This site was developed by a third party and is not affiliated with or endorsed by the $FED project.
           </p>
         </div>
       </footer>
