@@ -35,6 +35,9 @@ export default async function HomePage() {
               <h1 className="text-xl font-medium">Fed News</h1>
             </div>
             <div className="flex gap-4 text-sm text-gray-400">
+              <Link href="/holders" className="hover:text-white transition-colors">
+                Holders
+              </Link>
               <Link href="/incentives" className="hover:text-white transition-colors">
                 Incentives
               </Link>
