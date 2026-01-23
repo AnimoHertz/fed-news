@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import type { ParsedCommit } from '@/types';
 import { formatRelativeDate } from '@/lib/utils';
+import { UpdateComments } from '@/components/updates/UpdateComments';
 
 interface CommitModalProps {
   commit: ParsedCommit | null;
@@ -104,7 +105,7 @@ export function CommitModal({ commit, onClose }: CommitModalProps) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-lg bg-gray-950 border border-gray-800 rounded-lg p-6"
+        className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-gray-950 border border-gray-800 rounded-lg p-6"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -154,6 +155,11 @@ export function CommitModal({ commit, onClose }: CommitModalProps) {
         >
           View on GitHub →
         </a>
+
+        {/* Comments Section */}
+        <div className="mt-6 pt-6 border-t border-gray-800">
+          <UpdateComments commitSha={commit.sha} />
+        </div>
       </div>
     </div>
   );
