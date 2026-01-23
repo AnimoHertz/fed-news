@@ -1,6 +1,6 @@
-# Ralph News Backlog
+# Fed News Backlog
 
-Tasks for the Ralph loop to work through. Ordered by priority.
+Tasks for the Fed loop to work through. Ordered by priority.
 
 ## Legend
 - `[ ]` - Not started
@@ -80,9 +80,11 @@ _Tasks move here when done_
 - [x] Initial site setup with Next.js 16
 - [x] Create commit feed with category filtering
 - [x] Add documentation browser
-- [x] Implement government-style design theme
-- [x] Create about page with README content
+- [x] Implement minimal black & white design
+- [x] Create manifesto page
 - [x] Hide stats commits by default
+- [x] Add click-to-expand TLDR popups
+- [x] Color-coded category labels
 
 ---
 

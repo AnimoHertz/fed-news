@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to ralph-news, tracked by the Ralph loop.
+All notable changes to Fed News, tracked by the Fed loop.
 
 ## Format
 
@@ -22,12 +22,13 @@ All notable changes to ralph-news, tracked by the Ralph loop.
 ## [Iteration 0] - 2026-01-22
 
 ### Added
-- Initial ralph-news site created
-- Home page with hero section and live distribution stats
-- Commits page with category filtering (Website, Research, Ops, Twitter, Docs)
+- Initial Fed News site created
+- Home page with live distribution stats
+- Commits page with category filtering (Website, Research, Ops, Docs)
 - Documentation browser pulling from ralph repo's /docs folder
-- About page with full README content
-- Government-style dark theme (navy, gold accents, serif headings)
+- Manifesto page: "The First Self-Evolving Crypto Project"
+- Click-to-expand TLDR popups for each commit
+- Color-coded category labels
 
 ### Technical
 - Next.js 16.1.4 with App Router
@@ -35,12 +36,7 @@ All notable changes to ralph-news, tracked by the Ralph loop.
 - Tailwind CSS v4
 - ISR with 60-second revalidation for commits
 - GitHub API integration for commits and docs
-
-### Components Created
-- Header, Footer (layout)
-- HeroSection (home)
-- CommitCard, CommitFeed, CommitFilters (commits)
-- CategoryBadge, StatusBadge, Card (ui)
+- Minimal black & white design
 
 ### Next
 - Add search functionality to commits page

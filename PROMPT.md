@@ -37,7 +37,7 @@ Build and improve a minimal news site for the [snark-tank/ralph](https://github.
 - TypeScript strict mode must pass
 - No console errors in the browser
 - Responsive design (mobile + desktop)
-- Maintain the government aesthetic (navy, gold, serif headings)
+- Maintain the minimal black & white aesthetic
 - Keep code clean and well-organized
 
 ## When You're Done

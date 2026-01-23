@@ -15,12 +15,12 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000)
 
-## Ralph Loop
+## Fed Loop
 
 Continuous AI development using the Ralph technique.
 
 ```bash
-./scripts/ralph-loop.sh
+./scripts/fed-loop.sh
 ```
 
 Files:
