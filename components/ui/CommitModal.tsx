@@ -2,7 +2,6 @@
 
 import { useEffect } from 'react';
 import type { ParsedCommit } from '@/types';
-import { formatRelativeDate } from '@/lib/utils';
 import { UpdateComments } from '@/components/updates/UpdateComments';
 
 interface CommitModalProps {
@@ -151,12 +150,6 @@ export function CommitModal({ commit, onClose }: CommitModalProps) {
         <div className="mb-6">
           <h3 className="text-xs text-gray-500 uppercase tracking-wide mb-2">Why it matters</h3>
           <p className="text-gray-400">{categoryInfo.why}</p>
-        </div>
-
-        {/* Meta */}
-        <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-800">
-          <span>{commit.author}</span>
-          <span>{formatRelativeDate(commit.date)}</span>
         </div>
 
         {/* Comments Section */}
