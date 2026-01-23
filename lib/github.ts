@@ -152,9 +152,9 @@ const TIER_THRESHOLDS = {
 
 export async function fetchTierDistribution(): Promise<TierDistribution | null> {
   try {
-    const heliusKey = process.env.HELIUS_API;
+    const heliusKey = process.env.HELIUS_API_KEY || process.env.HELIUS_API;
     if (!heliusKey) {
-      console.error('HELIUS_API not set');
+      console.error('HELIUS_API_KEY not set');
       return null;
     }
 
@@ -234,9 +234,9 @@ export async function fetchTierDistribution(): Promise<TierDistribution | null> 
 
 export async function fetchHolderCount(): Promise<number | null> {
   try {
-    const heliusKey = process.env.HELIUS_API;
+    const heliusKey = process.env.HELIUS_API_KEY || process.env.HELIUS_API;
     if (!heliusKey) {
-      console.error('HELIUS_API not set');
+      console.error('HELIUS_API_KEY not set');
       return null;
     }
 
