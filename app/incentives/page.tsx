@@ -2,11 +2,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'How It Works | Fed News',
+  title: 'Incentives | Fed News',
   description: 'Learn how the $FED reward system distributes USD1 stablecoins to holders every 2 minutes.',
 };
 
-export default function HowItWorksPage() {
+export default function IncentivesPage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
@@ -32,7 +32,7 @@ export default function HowItWorksPage() {
       <main className="max-w-3xl mx-auto px-4 py-16">
         {/* Title */}
         <header className="mb-16">
-          <p className="text-sm text-gray-500 uppercase tracking-wide mb-4">How It Works</p>
+          <p className="text-sm text-gray-500 uppercase tracking-wide mb-4">Incentives</p>
           <h1 className="text-4xl font-medium leading-tight mb-4">
             The Money Printer
           </h1>
