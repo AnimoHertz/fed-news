@@ -188,12 +188,26 @@ export function getCategoryBorder(category: string): string {
 }
 
 export function getOneLiner(commit: ParsedCommit): string {
-  // Use first line of commit body if available
+  // Skip lines that are just metadata/attribution
+  const isMetadataLine = (line: string): boolean => {
+    const lower = line.toLowerCase();
+    return lower.includes('co-authored') ||
+           lower.includes('co authored') ||
+           lower.includes('ralph') ||
+           lower.startsWith('signed-off') ||
+           line.trim().length === 0;
+  };
+
+  // Use first meaningful line of commit body if available
   if (commit.body) {
-    const firstLine = commit.body.split('\n').find((line) => line.trim().length > 0);
-    if (firstLine) {
+    const lines = commit.body.split('\n');
+    const meaningfulLine = lines.find((line) => {
+      const trimmed = line.trim();
+      return trimmed.length > 0 && !isMetadataLine(trimmed);
+    });
+    if (meaningfulLine) {
       // Clean up and truncate if needed
-      const cleaned = firstLine.trim().replace(/^[-*•]\s*/, '');
+      const cleaned = meaningfulLine.trim().replace(/^[-*•]\s*/, '');
       if (cleaned.length > 80) {
         return cleaned.substring(0, 77) + '...';
       }
@@ -206,9 +220,27 @@ export function getOneLiner(commit: ParsedCommit): string {
     return `${commit.stats.distributions} cycles, $${commit.stats.distributed.toLocaleString()} USD1`;
   }
 
+  // For research, provide a descriptive summary based on title
+  if (commit.category === 'research') {
+    const title = commit.title.toLowerCase();
+    if (title.includes('holder') || title.includes('distribution')) {
+      return 'Analysis of holder metrics and distribution patterns';
+    }
+    if (title.includes('market') || title.includes('price')) {
+      return 'Market analysis and price dynamics research';
+    }
+    if (title.includes('pool') || title.includes('liquidity')) {
+      return 'Liquidity pool performance and optimization analysis';
+    }
+    if (title.includes('strategy') || title.includes('optimization')) {
+      return 'Strategy research for ecosystem optimization';
+    }
+    return 'AI-driven research analysis for the $FED ecosystem';
+  }
+
   // Extract specifics from title by removing the prefix
   const titleWithoutPrefix = commit.title
-    .replace(/^(website|economist|ops|docs|twitter):\s*/i, '')
+    .replace(/^(website|economist|ops|docs|twitter|research):\s*/i, '')
     .trim();
 
   if (titleWithoutPrefix && titleWithoutPrefix !== commit.title) {
