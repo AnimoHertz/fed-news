@@ -28,6 +28,9 @@ export default async function HomePage() {
               <h1 className="text-xl font-medium">Fed News</h1>
             </div>
             <div className="flex gap-4 text-sm text-gray-400">
+              <Link href="/how-it-works" className="hover:text-white transition-colors">
+                How It Works
+              </Link>
               <Link href="/payouts" className="hover:text-white transition-colors">
                 Payouts
               </Link>
@@ -103,19 +106,33 @@ export default async function HomePage() {
 
       {/* Footer */}
       <footer className="border-t border-gray-800 mt-16">
-        <div className="max-w-3xl mx-auto px-4 py-6 space-y-2">
-          <p className="text-sm text-gray-600">
-            Data from{' '}
+        <div className="max-w-3xl mx-auto px-4 py-6 space-y-3">
+          <div className="flex items-center gap-4">
+            <p className="text-sm text-gray-600">
+              Data from{' '}
+              <a
+                href="https://github.com/snark-tank/ralph"
+                className="text-gray-400 hover:text-white"
+              >
+                snark-tank/ralph
+              </a>
+            </p>
             <a
-              href="https://github.com/snark-tank/ralph"
-              className="text-gray-400 hover:text-white"
+              href="https://x.com/fed_USD1"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-500 hover:text-white transition-colors"
+              title="Follow @fed_USD1 on X"
             >
-              snark-tank/ralph
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
             </a>
-          </p>
+          </div>
           <CopyAddress address="132STreShuLRNgkyF1QECv37yP9Cdp8JBAgnKBgKafed" label="$FED Token" />
           <p className="text-xs text-gray-600">
             This site was developed by a third party and is not affiliated with or endorsed by the $FED project.
+            Information displayed may be inaccurate or out of date. Do your own research.
           </p>
         </div>
       </footer>
