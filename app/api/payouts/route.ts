@@ -52,7 +52,6 @@ export async function GET(request: NextRequest) {
       }
 
       const transactions = await response.json();
-      console.log(`Page ${pageCount + 1}: Found ${transactions.length} transactions`);
 
       if (transactions.length === 0) {
         break;
@@ -63,16 +62,17 @@ export async function GET(request: NextRequest) {
         // Check tokenTransfers for the specific amount sent TO this address
         if (tx.tokenTransfers && tx.tokenTransfers.length > 0) {
           for (const transfer of tx.tokenTransfers) {
-            // Only count if:
+            // Only count INCOMING transfers:
             // 1. It's the USD1 token
             // 2. The recipient (toUserAccount) is the queried address
-            // 3. Amount is greater than 0
-            if (
-              transfer.mint === USD1_MINT &&
-              transfer.toUserAccount === address &&
-              transfer.tokenAmount > 0
-            ) {
-              // This is the specific amount this address received in this transfer
+            // 3. The sender (fromUserAccount) is NOT the queried address (not outgoing)
+            // 4. Amount is greater than 0
+            const isUSD1 = transfer.mint === USD1_MINT;
+            const isRecipient = transfer.toUserAccount === address;
+            const isNotSender = transfer.fromUserAccount !== address;
+            const hasAmount = transfer.tokenAmount > 0;
+
+            if (isUSD1 && isRecipient && isNotSender && hasAmount) {
               const amount = transfer.tokenAmount;
               totalReceived += amount;
 
@@ -94,10 +94,6 @@ export async function GET(request: NextRequest) {
         break;
       }
     }
-
-    console.log(`Total pages fetched: ${pageCount}`);
-    console.log(`Total USD1 transfers to ${address}: ${usd1Transfers.length}`);
-    console.log(`Total USD1 received by ${address}: ${totalReceived}`);
 
     // Sort by timestamp descending (most recent first)
     usd1Transfers.sort((a, b) => b.timestamp - a.timestamp);

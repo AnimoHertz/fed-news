@@ -3,15 +3,17 @@ import Link from 'next/link';
 import { fetchAllRecentCommits, fetchHolderCount } from '@/lib/github';
 import { parseCommit, filterCommits, getLatestStats } from '@/lib/commits';
 import { formatCurrency, formatNumber } from '@/lib/utils';
+import { fetchTokenPrice, formatPrice, formatLargeNumber, JUPITER_SWAP_URL, DEXSCREENER_URL } from '@/lib/price';
 import { CommitList } from '@/components/commits/CommitList';
 import { CopyAddress } from '@/components/ui/CopyAddress';
 
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const [rawCommits, holderCount] = await Promise.all([
+  const [rawCommits, holderCount, price] = await Promise.all([
     fetchAllRecentCommits(100),
     fetchHolderCount(),
+    fetchTokenPrice(),
   ]);
   const commits = rawCommits.map(parseCommit);
   const stats = getLatestStats(commits);
@@ -37,6 +39,9 @@ export default async function HomePage() {
               <Link href="/roles" className="hover:text-white transition-colors">
                 Roles
               </Link>
+              <Link href="/social" className="hover:text-white transition-colors">
+                Social
+              </Link>
               <Link href="/manifesto" className="hover:text-white transition-colors">
                 Manifesto
               </Link>
@@ -58,6 +63,47 @@ export default async function HomePage() {
         <section className="mb-16">
           <p className="text-gray-400 mb-4">Autonomous USD1 distribution on Solana</p>
 
+          {/* Price Widget */}
+          {price && (
+            <div className="flex flex-wrap items-center gap-6 mb-8 p-4 rounded-lg border border-gray-800 bg-gray-900/30">
+              <div>
+                <span className="text-3xl font-mono text-white">{formatPrice(price.priceUsd)}</span>
+                <span className={`ml-3 text-sm font-mono ${price.priceChange24h >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {price.priceChange24h >= 0 ? '+' : ''}{price.priceChange24h.toFixed(2)}%
+                </span>
+              </div>
+              <div className="flex gap-6 text-sm">
+                <div>
+                  <span className="text-gray-500">MCap</span>
+                  <span className="text-white ml-2">{formatLargeNumber(price.marketCap)}</span>
+                </div>
+                <div>
+                  <span className="text-gray-500">24h Vol</span>
+                  <span className="text-white ml-2">{formatLargeNumber(price.volume24h)}</span>
+                </div>
+              </div>
+              <div className="flex gap-2 ml-auto">
+                <a
+                  href={DEXSCREENER_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 text-sm text-gray-400 border border-gray-700 rounded hover:text-white hover:border-gray-500 transition-colors"
+                >
+                  Chart
+                </a>
+                <a
+                  href={JUPITER_SWAP_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-1.5 text-sm font-medium text-black bg-white rounded hover:bg-gray-200 transition-colors"
+                >
+                  Buy $FED
+                </a>
+              </div>
+            </div>
+          )}
+
+          {/* Stats */}
           {(stats || holderCount) && (
             <div className="flex flex-wrap gap-8 font-mono text-2xl mb-8">
               {stats && (
