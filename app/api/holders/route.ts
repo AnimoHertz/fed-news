@@ -15,100 +15,6 @@ interface HolderData {
   balance: number;
   percentage: number;
   valueUsd: number;
-  pnl: number;
-  pnlMultiple: number;
-}
-
-interface Transaction {
-  type: 'buy' | 'sell';
-  amount: number;
-  solAmount: number;
-}
-
-async function fetchSolPrice(): Promise<number> {
-  try {
-    const response = await fetch(
-      'https://api.dexscreener.com/latest/dex/tokens/So11111111111111111111111111111111111111112'
-    );
-    if (!response.ok) return 200;
-    const data = await response.json();
-    return parseFloat(data.pairs?.[0]?.priceUsd) || 200;
-  } catch {
-    return 200;
-  }
-}
-
-async function fetchWalletTransactions(
-  walletAddress: string,
-  heliusApiKey: string,
-  solPrice: number
-): Promise<{ pnl: number; multiple: number; costBasis: number }> {
-  try {
-    const response = await fetch(
-      `https://api.helius.xyz/v0/addresses/${walletAddress}/transactions?api-key=${heliusApiKey}&limit=100`
-    );
-
-    if (!response.ok) {
-      return { pnl: 0, multiple: 1, costBasis: 0 };
-    }
-
-    const txData = await response.json();
-    const transactions: Transaction[] = [];
-
-    for (const tx of txData) {
-      if (tx.tokenTransfers) {
-        for (const transfer of tx.tokenTransfers) {
-          if (transfer.mint === FED_TOKEN_MINT) {
-            const isBuy = transfer.toUserAccount === walletAddress;
-            const amount = transfer.tokenAmount || 0;
-
-            // Find corresponding SOL transfer
-            let solAmount = 0;
-            if (tx.nativeTransfers && tx.nativeTransfers.length > 0) {
-              const solTransfer = tx.nativeTransfers.find(
-                (nt: { fromUserAccount: string; toUserAccount: string; amount: number }) =>
-                  (isBuy && nt.fromUserAccount === walletAddress) ||
-                  (!isBuy && nt.toUserAccount === walletAddress)
-              );
-              if (solTransfer) {
-                solAmount = solTransfer.amount / 1e9;
-              }
-            }
-
-            if (amount > 0 && solAmount > 0) {
-              transactions.push({
-                type: isBuy ? 'buy' : 'sell',
-                amount,
-                solAmount,
-              });
-            }
-          }
-        }
-      }
-    }
-
-    // Calculate cost basis from buys
-    let totalBought = 0;
-    let totalSolSpent = 0;
-
-    for (const tx of transactions) {
-      if (tx.type === 'buy') {
-        totalBought += tx.amount;
-        totalSolSpent += tx.solAmount;
-      }
-    }
-
-    if (totalBought === 0 || totalSolSpent === 0) {
-      return { pnl: 0, multiple: 1, costBasis: 0 };
-    }
-
-    const costBasis = totalSolSpent * solPrice;
-
-    return { pnl: 0, multiple: 1, costBasis };
-  } catch (error) {
-    console.error(`Failed to fetch transactions for ${walletAddress}:`, error);
-    return { pnl: 0, multiple: 1, costBasis: 0 };
-  }
 }
 
 export async function GET() {
@@ -119,11 +25,8 @@ export async function GET() {
   }
 
   try {
-    // Fetch current token price and SOL price in parallel
-    const [priceData, solPrice] = await Promise.all([
-      fetchTokenPrice(),
-      fetchSolPrice(),
-    ]);
+    // Fetch current token price
+    const priceData = await fetchTokenPrice();
     const currentPrice = priceData?.priceUsd || 0;
     const marketCap = priceData?.marketCap || 0;
 
@@ -189,27 +92,18 @@ export async function GET() {
     const top10Balance = sortedHolders.slice(0, 10).reduce((sum, h) => sum + h.balance, 0);
     const top10Percentage = (top10Balance / TOTAL_SUPPLY) * 100;
 
-    // Fetch transaction data and calculate PnL for each holder
-    const holderData: HolderData[] = await Promise.all(
-      sortedHolders.map(async (holder) => {
-        const percentage = (holder.balance / TOTAL_SUPPLY) * 100;
-        const valueUsd = holder.balance * currentPrice;
-        const { costBasis } = await fetchWalletTransactions(holder.owner, heliusApiKey, solPrice);
+    // Build holder data
+    const holderData: HolderData[] = sortedHolders.map((holder) => {
+      const percentage = (holder.balance / TOTAL_SUPPLY) * 100;
+      const valueUsd = holder.balance * currentPrice;
 
-        // Calculate PnL: current value - cost basis
-        const pnl = costBasis > 0 ? valueUsd - costBasis : 0;
-        const multiple = costBasis > 0 ? valueUsd / costBasis : 1;
-
-        return {
-          address: holder.owner,
-          balance: holder.balance,
-          percentage,
-          valueUsd,
-          pnl,
-          pnlMultiple: multiple,
-        };
-      })
-    );
+      return {
+        address: holder.owner,
+        balance: holder.balance,
+        percentage,
+        valueUsd,
+      };
+    });
 
     return NextResponse.json({
       holders: holderData,

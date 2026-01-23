@@ -8,8 +8,6 @@ interface HolderData {
   balance: number;
   percentage: number;
   valueUsd: number;
-  pnl: number;
-  pnlMultiple: number;
 }
 
 interface HoldersResponse {
@@ -33,24 +31,6 @@ function formatValue(value: number): string {
     return `$${(value / 1_000).toFixed(0)}K`;
   }
   return `$${value.toFixed(0)}`;
-}
-
-function formatPnL(pnl: number, multiple: number): { text: string; isPositive: boolean } {
-  const isPositive = pnl >= 0;
-  const sign = isPositive ? '' : '-';
-  const absValue = Math.abs(pnl);
-  let valueText: string;
-
-  if (absValue >= 1_000_000) {
-    valueText = `$${(absValue / 1_000_000).toFixed(0)}M`;
-  } else if (absValue >= 1_000) {
-    valueText = `$${(absValue / 1_000).toFixed(0)}K`;
-  } else {
-    valueText = `$${absValue.toFixed(0)}`;
-  }
-
-  const multipleText = `(${multiple.toFixed(1)}x)`;
-  return { text: `${sign}${valueText} ${multipleText}`, isPositive };
 }
 
 function formatPrice(price: number): string {
@@ -183,51 +163,38 @@ export default function HoldersPage() {
                   <th className="pb-3 font-medium">Tokens</th>
                   <th className="pb-3 font-medium">% of Supply</th>
                   <th className="pb-3 font-medium">Value</th>
-                  <th className="pb-3 font-medium">PnL</th>
                 </tr>
               </thead>
               <tbody className="text-sm">
-                {data.holders.map((holder, index) => {
-                  const pnlData = formatPnL(holder.pnl, holder.pnlMultiple);
-                  return (
-                    <tr
-                      key={holder.address}
-                      className="border-b border-gray-800/30 hover:bg-gray-900/20 transition-colors"
-                    >
-                      <td className="py-2 font-mono text-gray-400">
-                        {index + 1}
-                      </td>
-                      <td className="py-2">
-                        <a
-                          href={`https://solscan.io/account/${holder.address}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="font-mono text-gray-300 hover:text-white transition-colors"
-                        >
-                          {formatAddress(holder.address)}
-                        </a>
-                      </td>
-                      <td className="py-2">
-                        <span className="font-mono text-gray-400">{formatTokens(holder.balance)}</span>
-                      </td>
-                      <td className="py-2">
-                        <span className="font-mono text-white">{holder.percentage.toFixed(2)}%</span>
-                      </td>
-                      <td className="py-2">
-                        <span className="font-mono text-gray-400">{formatValue(holder.valueUsd)}</span>
-                      </td>
-                      <td className="py-2">
-                        <span
-                          className={`font-mono ${
-                            pnlData.isPositive ? 'text-emerald-400' : 'text-red-400'
-                          }`}
-                        >
-                          {pnlData.text}
-                        </span>
-                      </td>
-                    </tr>
-                  );
-                })}
+                {data.holders.map((holder, index) => (
+                  <tr
+                    key={holder.address}
+                    className="border-b border-gray-800/30 hover:bg-gray-900/20 transition-colors"
+                  >
+                    <td className="py-2 font-mono text-gray-400">
+                      {index + 1}
+                    </td>
+                    <td className="py-2">
+                      <a
+                        href={`https://solscan.io/account/${holder.address}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-mono text-gray-300 hover:text-white transition-colors"
+                      >
+                        {formatAddress(holder.address)}
+                      </a>
+                    </td>
+                    <td className="py-2">
+                      <span className="font-mono text-gray-400">{formatTokens(holder.balance)}</span>
+                    </td>
+                    <td className="py-2">
+                      <span className="font-mono text-white">{holder.percentage.toFixed(2)}%</span>
+                    </td>
+                    <td className="py-2">
+                      <span className="font-mono text-gray-400">{formatValue(holder.valueUsd)}</span>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
