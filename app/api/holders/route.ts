@@ -4,6 +4,12 @@ import { fetchTokenPrice } from '@/lib/price';
 const FED_TOKEN_MINT = '132STreShuLRNgkyF1QECv37yP9Cdp8JBAgnKBgKafed';
 const TOTAL_SUPPLY = 1_000_000_000; // 1 billion tokens
 
+// USD1 token mint address on Solana
+const USD1_MINT = 'USD1ttGY1N17NEEHLmELoaybftRBUSErhqYiQzvEmuB';
+
+// FED distribution wallet - only transfers from this address count as rewards
+const FED_DISTRIBUTION_WALLET = '4Br5iKfRkYMk8WMj6w8YASynuq7Eoas16rkyvWsAdL4P';
+
 interface TokenAccount {
   address: string;
   owner: string;
@@ -15,6 +21,55 @@ interface HolderData {
   balance: number;
   percentage: number;
   valueUsd: number;
+  usd1Earned: number;
+}
+
+async function fetchUsd1Earnings(
+  walletAddress: string,
+  heliusApiKey: string
+): Promise<number> {
+  try {
+    let totalReceived = 0;
+    let lastSignature: string | undefined;
+    const maxPages = 5; // Limit pages to keep it fast
+
+    for (let page = 0; page < maxPages; page++) {
+      const url = new URL(`https://api.helius.xyz/v0/addresses/${walletAddress}/transactions`);
+      url.searchParams.set('api-key', heliusApiKey);
+      if (lastSignature) {
+        url.searchParams.set('before', lastSignature);
+      }
+
+      const response = await fetch(url.toString());
+      if (!response.ok) break;
+
+      const transactions = await response.json();
+      if (transactions.length === 0) break;
+
+      for (const tx of transactions) {
+        if (tx.tokenTransfers) {
+          for (const transfer of tx.tokenTransfers) {
+            const isUSD1 = transfer.mint === USD1_MINT;
+            const isRecipient = transfer.toUserAccount === walletAddress;
+            const isFromDistributionWallet = transfer.fromUserAccount === FED_DISTRIBUTION_WALLET;
+            const hasAmount = transfer.tokenAmount > 0;
+
+            if (isUSD1 && isRecipient && isFromDistributionWallet && hasAmount) {
+              totalReceived += transfer.tokenAmount;
+            }
+          }
+        }
+      }
+
+      lastSignature = transactions[transactions.length - 1].signature;
+      if (transactions.length < 100) break;
+    }
+
+    return totalReceived;
+  } catch (error) {
+    console.error(`Failed to fetch USD1 earnings for ${walletAddress}:`, error);
+    return 0;
+  }
 }
 
 export async function GET() {
@@ -92,18 +147,22 @@ export async function GET() {
     const top10Balance = sortedHolders.slice(0, 10).reduce((sum, h) => sum + h.balance, 0);
     const top10Percentage = (top10Balance / TOTAL_SUPPLY) * 100;
 
-    // Build holder data
-    const holderData: HolderData[] = sortedHolders.map((holder) => {
-      const percentage = (holder.balance / TOTAL_SUPPLY) * 100;
-      const valueUsd = holder.balance * currentPrice;
+    // Build holder data with USD1 earnings
+    const holderData: HolderData[] = await Promise.all(
+      sortedHolders.map(async (holder) => {
+        const percentage = (holder.balance / TOTAL_SUPPLY) * 100;
+        const valueUsd = holder.balance * currentPrice;
+        const usd1Earned = await fetchUsd1Earnings(holder.owner, heliusApiKey);
 
-      return {
-        address: holder.owner,
-        balance: holder.balance,
-        percentage,
-        valueUsd,
-      };
-    });
+        return {
+          address: holder.owner,
+          balance: holder.balance,
+          percentage,
+          valueUsd,
+          usd1Earned,
+        };
+      })
+    );
 
     return NextResponse.json({
       holders: holderData,

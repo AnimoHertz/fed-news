@@ -8,6 +8,7 @@ interface HolderData {
   balance: number;
   percentage: number;
   valueUsd: number;
+  usd1Earned: number;
 }
 
 interface HoldersResponse {
@@ -163,6 +164,7 @@ export default function HoldersPage() {
                   <th className="pb-3 font-medium">Tokens</th>
                   <th className="pb-3 font-medium">% of Supply</th>
                   <th className="pb-3 font-medium">Value</th>
+                  <th className="pb-3 font-medium">USD1 Earned</th>
                 </tr>
               </thead>
               <tbody className="text-sm">
@@ -192,6 +194,11 @@ export default function HoldersPage() {
                     </td>
                     <td className="py-2">
                       <span className="font-mono text-gray-400">{formatValue(holder.valueUsd)}</span>
+                    </td>
+                    <td className="py-2">
+                      <span className="font-mono text-emerald-400">
+                        {holder.usd1Earned > 0 ? `$${holder.usd1Earned.toFixed(2)}` : '-'}
+                      </span>
                     </td>
                   </tr>
                 ))}
