@@ -8,6 +8,7 @@ import { CommitList } from '@/components/commits/CommitList';
 import { CopyAddress } from '@/components/ui/CopyAddress';
 import { FAQ } from '@/components/home/FAQ';
 import { Header } from '@/components/layout/Header';
+import { BackgroundAnimation } from '@/components/home/BackgroundAnimation';
 
 export const revalidate = 60;
 
@@ -25,7 +26,8 @@ export default async function HomePage() {
   const commentCounts = await getCommentCounts(recentCommits.map(c => c.sha));
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative">
+      <BackgroundAnimation />
       <Header />
 
       <main className="max-w-5xl mx-auto px-4 py-12">
