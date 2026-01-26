@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -18,8 +17,7 @@ export function Header() {
     <header>
       <div className="max-w-5xl mx-auto px-4 py-6">
         <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 sm:gap-4 hover:opacity-80 transition-opacity">
-            <Image src="/logoseal.png" alt="FED logo" width={100} height={100} className="w-12 h-12 sm:w-16 sm:h-16 md:w-[100px] md:h-[100px]" />
+          <Link href="/" className="hover:opacity-80 transition-opacity">
             <span className="text-xl sm:text-2xl md:text-3xl font-medium">Fed News</span>
           </Link>
 

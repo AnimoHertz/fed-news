@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import { fetchAllRecentCommits, fetchHolderCount } from '@/lib/github';
 import { parseCommit, filterCommits, getLatestStats } from '@/lib/commits';
@@ -59,15 +58,6 @@ export default async function HomePage() {
               Read the full manifesto
               <span>→</span>
             </Link>
-
-            {/* Logo - hidden on small screens */}
-            <Image
-              src="/logoseal.png"
-              alt="FED Logo"
-              width={200}
-              height={200}
-              className="hidden sm:block absolute bottom-4 right-4 opacity-20 sm:w-[120px] sm:h-[120px] md:w-[200px] md:h-[200px]"
-            />
           </div>
         </section>
 
