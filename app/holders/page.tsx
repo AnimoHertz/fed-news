@@ -243,35 +243,40 @@ export default function HoldersPage() {
 
       {/* Footer */}
       <footer className="border-t border-gray-800/50 mt-8">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-          <p className="text-xs sm:text-sm text-gray-600">
-            Data from{' '}
+        <div className="max-w-5xl mx-auto px-4 py-4 space-y-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+            <p className="text-xs sm:text-sm text-gray-600">
+              Data from{' '}
+              <a
+                href="https://helius.xyz"
+                className="text-gray-400 hover:text-white"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Helius
+              </a>
+              {' & '}
+              <a
+                href="https://dexscreener.com"
+                className="text-gray-400 hover:text-white"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                DexScreener
+              </a>
+            </p>
             <a
-              href="https://helius.xyz"
-              className="text-gray-400 hover:text-white"
+              href="https://github.com/snark-tank/ralph"
               target="_blank"
               rel="noopener noreferrer"
+              className="text-xs sm:text-sm text-gray-600 hover:text-white transition-colors"
             >
-              Helius
+              GitHub
             </a>
-            {' & '}
-            <a
-              href="https://dexscreener.com"
-              className="text-gray-400 hover:text-white"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              DexScreener
-            </a>
+          </div>
+          <p className="text-xs text-gray-600 pt-2 border-t border-gray-800 text-center">
+            This project is not affiliated with the Federal Reserve System or any government entity. For memetic and satirical purposes only.
           </p>
-          <a
-            href="https://github.com/snark-tank/ralph"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs sm:text-sm text-gray-600 hover:text-white transition-colors"
-          >
-            GitHub
-          </a>
         </div>
       </footer>
     </div>

@@ -280,3 +280,25 @@ body {
   background-size: 200% 100%;
   animation: gradient-shift 4s linear infinite;
 }
+
+/* Stats Display animations */
+@keyframes stats-line-pulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.stats-line-animate {
+  animation: stats-line-pulse 3s ease-in-out infinite;
+}
+
+.stats-display {
+  box-shadow:
+    0 0 0 1px rgba(16, 185, 129, 0.05),
+    0 4px 6px -1px rgba(0, 0, 0, 0.3),
+    0 20px 25px -5px rgba(0, 0, 0, 0.2),
+    0 0 60px -15px rgba(16, 185, 129, 0.15);
+}

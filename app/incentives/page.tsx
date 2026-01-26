@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
+import { FAQ } from '@/components/home/FAQ';
 
 export const metadata = {
   title: 'How it Works | Federal Cash',
@@ -305,6 +306,14 @@ export default function IncentivesPage() {
               <div className="text-gray-500 text-xs sm:text-sm">Always running</div>
             </div>
           </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="mb-12 sm:mb-16">
+          <h2 className="text-xl sm:text-2xl text-white font-medium mb-6 sm:mb-8">
+            Frequently Asked Questions
+          </h2>
+          <FAQ />
         </section>
 
         {/* CTA */}

@@ -10,6 +10,7 @@ import { MessageInput } from './MessageInput';
 import { TierBadge } from './TierBadge';
 import { NotificationPrompt } from './NotificationPrompt';
 import { useReplyNotifications } from '@/hooks/useReplyNotifications';
+import Link from 'next/link';
 
 export function ChatForum() {
   const { publicKey } = useWallet();
@@ -165,7 +166,13 @@ export function ChatForum() {
           {profile && profile.username && !editingUsername && (
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-xs sm:text-sm text-gray-400">
-                Posting as <span className="text-white">{profile.username}</span>
+                Posting as{' '}
+                <Link
+                  href="/profile"
+                  className="text-white hover:text-emerald-400 transition-colors underline underline-offset-2"
+                >
+                  {profile.username}
+                </Link>
               </span>
               <button
                 onClick={() => setEditingUsername(true)}

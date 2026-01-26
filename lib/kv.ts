@@ -3,6 +3,36 @@ import { ChatUser, ChatMessage, HolderTier } from '@/types/chat';
 
 const MAX_MESSAGES = 1000;
 
+// Get original case wallet address from database
+export async function getOriginalWalletAddress(walletAddress: string): Promise<string | null> {
+  if (!isSupabaseConfigured()) return null;
+
+  // Try chat_users first
+  const { data: userData } = await supabase
+    .from('chat_users')
+    .select('wallet_address_original')
+    .eq('wallet_address', walletAddress.toLowerCase())
+    .single();
+
+  if (userData?.wallet_address_original) {
+    return userData.wallet_address_original;
+  }
+
+  // Try chat_messages as fallback
+  const { data: messageData } = await supabase
+    .from('chat_messages')
+    .select('wallet_address_original')
+    .eq('wallet_address', walletAddress.toLowerCase())
+    .limit(1)
+    .single();
+
+  if (messageData?.wallet_address_original) {
+    return messageData.wallet_address_original;
+  }
+
+  return null;
+}
+
 // User operations
 export async function getUser(walletAddress: string): Promise<ChatUser | null> {
   if (!isSupabaseConfigured()) return null;
@@ -16,7 +46,7 @@ export async function getUser(walletAddress: string): Promise<ChatUser | null> {
   if (error || !data) return null;
 
   return {
-    walletAddress: data.wallet_address,
+    walletAddress: data.wallet_address_original || data.wallet_address,
     username: data.username,
     createdAt: new Date(data.created_at).getTime(),
   };
@@ -34,7 +64,7 @@ export async function getUserByUsername(username: string): Promise<ChatUser | nu
   if (error || !data) return null;
 
   return {
-    walletAddress: data.wallet_address,
+    walletAddress: data.wallet_address_original || data.wallet_address,
     username: data.username,
     createdAt: new Date(data.created_at).getTime(),
   };
@@ -63,11 +93,12 @@ export async function setUsername(
     return { success: false, error: 'Username already taken' };
   }
 
-  // Upsert user
+  // Upsert user - store original case wallet address
   const { error } = await supabase
     .from('chat_users')
     .upsert({
       wallet_address: walletAddress.toLowerCase(),
+      wallet_address_original: walletAddress,
       username,
       username_lower: username.toLowerCase(),
     }, {
@@ -125,7 +156,7 @@ export async function getMessages(limit: number = 100, currentWallet?: string | 
 
   return data.map((row) => ({
     id: row.id,
-    walletAddress: row.wallet_address,
+    walletAddress: row.wallet_address_original || row.wallet_address,
     username: row.username,
     content: row.content,
     balance: row.balance,
@@ -162,6 +193,7 @@ export async function addMessage(
     .from('chat_messages')
     .insert({
       wallet_address: walletAddress.toLowerCase(),
+      wallet_address_original: walletAddress,
       username,
       content: content.trim(),
       balance,
@@ -178,7 +210,7 @@ export async function addMessage(
 
   const message: ChatMessage = {
     id: data.id,
-    walletAddress: data.wallet_address,
+    walletAddress: data.wallet_address_original || data.wallet_address,
     username: data.username,
     content: data.content,
     balance: data.balance,
@@ -279,6 +311,22 @@ export async function toggleUpvote(
     upvoted: !existing,
     upvotes: count || 0,
   };
+}
+
+export async function getUserCommentCount(walletAddress: string): Promise<number> {
+  if (!isSupabaseConfigured()) return 0;
+
+  const { count, error } = await supabase
+    .from('chat_messages')
+    .select('*', { count: 'exact', head: true })
+    .eq('wallet_address', walletAddress.toLowerCase());
+
+  if (error) {
+    console.error('Failed to get comment count:', error);
+    return 0;
+  }
+
+  return count || 0;
 }
 
 async function cleanupOldMessages() {

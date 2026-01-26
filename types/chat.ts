@@ -33,4 +33,5 @@ export interface UserProfile {
   username: string | null;
   balance: number;
   tier: HolderTier;
+  commentCount?: number;
 }

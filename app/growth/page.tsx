@@ -180,7 +180,7 @@ export default async function GrowthPage() {
               <div className="mb-8">
                 <h3 className="text-sm text-gray-500 uppercase tracking-wide mb-4">
                   Total Holders Over Time
-              </h2>
+              </h3>
               <div className="p-4 rounded-lg border border-gray-800 bg-gray-900/30">
                 <HolderCountChart data={growthData} />
               </div>

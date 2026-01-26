@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { ChatMessage as ChatMessageType } from '@/types/chat';
 import { TierBadge } from './TierBadge';
 import { formatDistanceToNow } from 'date-fns';
@@ -126,7 +127,16 @@ export function ChatMessage({
   const handleUpvote = async () => {
     if (!currentWallet || upvoting) return;
 
+    // Optimistic update
+    const wasUpvoted = localUpvoted;
+    const previousUpvotes = localUpvotes;
+    const newUpvoted = !wasUpvoted;
+    const newUpvotes = wasUpvoted ? localUpvotes - 1 : localUpvotes + 1;
+
+    setLocalUpvoted(newUpvoted);
+    setLocalUpvotes(newUpvotes);
     setUpvoting(true);
+
     try {
       const response = await fetch('/api/chat/upvote', {
         method: 'POST',
@@ -139,14 +149,22 @@ export function ChatMessage({
 
       const data = await response.json();
       if (response.ok) {
+        // Sync with server response
         setLocalUpvotes(data.upvotes);
         setLocalUpvoted(data.upvoted);
         if (onUpvoteChange) {
           onUpvoteChange(message.id, data.upvotes, data.upvoted);
         }
+      } else {
+        // Revert on error
+        setLocalUpvoted(wasUpvoted);
+        setLocalUpvotes(previousUpvotes);
       }
     } catch (error) {
       console.error('Failed to upvote:', error);
+      // Revert on error
+      setLocalUpvoted(wasUpvoted);
+      setLocalUpvotes(previousUpvotes);
     } finally {
       setUpvoting(false);
     }
@@ -156,7 +174,12 @@ export function ChatMessage({
     <div className={`p-4 rounded-lg border border-gray-800 bg-gray-900/30 ${isReply ? 'ml-8 border-l-2 border-l-gray-700' : ''}`}>
       <div className="flex items-start justify-between gap-2 mb-2">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-medium text-white">{message.username}</span>
+          <Link
+            href={`/profile?wallet=${message.walletAddress}`}
+            className="font-medium text-white hover:text-emerald-400 transition-colors"
+          >
+            {message.username}
+          </Link>
           <TierBadge tier={message.tier} balance={message.balance} />
           {isOriginalAuthor && (
             <span className="px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide rounded bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">

@@ -425,6 +425,9 @@ function PayoutsContent() {
           <p className="text-xs text-gray-600">
             This site was developed by a third party and is not affiliated with or endorsed by the $FED project.
           </p>
+          <p className="text-xs text-gray-600 pt-2 border-t border-gray-800">
+            This project is not affiliated with the Federal Reserve System or any government entity. For memetic and satirical purposes only.
+          </p>
         </div>
       </footer>
     </div>
