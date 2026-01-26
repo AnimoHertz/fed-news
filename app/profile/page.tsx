@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Header } from '@/components/layout/Header';
@@ -10,7 +10,7 @@ import { TierBadge } from '@/components/chat/TierBadge';
 import { UserProfile } from '@/types/chat';
 import { getTierInfo } from '@/lib/token';
 
-export default function ProfilePage() {
+function ProfileContent() {
   const { publicKey } = useWallet();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -210,5 +210,23 @@ export default function ProfilePage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function ProfilePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen">
+        <Header />
+        <main className="max-w-2xl mx-auto px-4 py-8 sm:py-16">
+          <div className="p-8 rounded-lg border border-gray-800 bg-gray-900/30 text-center">
+            <p className="text-gray-400">Loading profile...</p>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    }>
+      <ProfileContent />
+    </Suspense>
   );
 }
