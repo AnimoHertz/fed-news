@@ -169,46 +169,54 @@ export default async function GrowthPage() {
               </section>
             )}
 
-            {/* Holder Count Over Time */}
+            {/* Charts Section */}
             <section className="mb-12">
-              <h2 className="text-sm text-gray-500 uppercase tracking-wide mb-4">
-                Total Holders Over Time
+              <div className="mb-8">
+                <h2 className="text-2xl sm:text-3xl font-medium text-white mb-2">Growth Charts</h2>
+                <p className="text-gray-400 text-sm">Visual breakdown of holder growth and distribution over time.</p>
+              </div>
+
+              {/* Holder Count Over Time */}
+              <div className="mb-8">
+                <h3 className="text-sm text-gray-500 uppercase tracking-wide mb-4">
+                  Total Holders Over Time
               </h2>
               <div className="p-4 rounded-lg border border-gray-800 bg-gray-900/30">
                 <HolderCountChart data={growthData} />
               </div>
-            </section>
-
-            {/* Tier Breakdown Over Time */}
-            <section className="mb-12">
-              <h2 className="text-sm text-gray-500 uppercase tracking-wide mb-4">
-                Tier Distribution Over Time
-              </h2>
-              <div className="p-4 rounded-lg border border-gray-800 bg-gray-900/30">
-                <TierBreakdownChart data={growthData} />
               </div>
-              <p className="text-xs text-gray-600 mt-2">
-                Stacked area chart showing holder counts by tier
-              </p>
-            </section>
 
-            {/* New Holders Per Day */}
-            <section className="mb-12">
-              <h2 className="text-sm text-gray-500 uppercase tracking-wide mb-4">
-                New Holders Per Day
-              </h2>
-              <div className="p-4 rounded-lg border border-gray-800 bg-gray-900/30">
-                <NewHoldersChart data={growthData} />
+              {/* Tier Breakdown Over Time */}
+              <div className="mb-8">
+                <h3 className="text-sm text-gray-500 uppercase tracking-wide mb-4">
+                  Tier Distribution Over Time
+                </h3>
+                <div className="p-4 rounded-lg border border-gray-800 bg-gray-900/30">
+                  <TierBreakdownChart data={growthData} />
+                </div>
+                <p className="text-xs text-gray-600 mt-2">
+                  Stacked area chart showing holder counts by tier
+                </p>
               </div>
-            </section>
 
-            {/* Weekly Summary */}
-            <section className="mb-12">
-              <h2 className="text-sm text-gray-500 uppercase tracking-wide mb-4">
-                Weekly New Holders
-              </h2>
-              <div className="p-4 rounded-lg border border-gray-800 bg-gray-900/30">
-                <WeeklyNewHoldersChart data={growthData} />
+              {/* New Holders Per Day */}
+              <div className="mb-8">
+                <h3 className="text-sm text-gray-500 uppercase tracking-wide mb-4">
+                  New Holders Per Day
+                </h3>
+                <div className="p-4 rounded-lg border border-gray-800 bg-gray-900/30">
+                  <NewHoldersChart data={growthData} />
+                </div>
+              </div>
+
+              {/* Weekly Summary */}
+              <div>
+                <h3 className="text-sm text-gray-500 uppercase tracking-wide mb-4">
+                  Weekly New Holders
+                </h3>
+                <div className="p-4 rounded-lg border border-gray-800 bg-gray-900/30">
+                  <WeeklyNewHoldersChart data={growthData} />
+                </div>
               </div>
             </section>
 
