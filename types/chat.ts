@@ -14,6 +14,24 @@ export interface ChatUser {
   createdAt: number;
 }
 
+export interface ProfileNftData {
+  id: string;
+  traits: {
+    headStyle: string;
+    eyeStyle: string;
+    mouthStyle: string;
+    bodyStyle: string;
+    feetStyle: string;
+    accessory: string;
+    bgStyle: string;
+    primaryColor: string;
+    secondaryColor: string | null;
+    accentColor: string;
+    tier: string;
+  };
+  rarityTier: string;
+}
+
 export interface ChatMessage {
   id: string;
   walletAddress: string;
@@ -26,6 +44,7 @@ export interface ChatMessage {
   replies?: ChatMessage[];
   upvotes: number;
   upvotedByUser?: boolean;
+  profileNft?: ProfileNftData | null;
 }
 
 export interface UserProfile {
