@@ -7,12 +7,13 @@ import {
   WeeklyNewHoldersChart,
 } from '@/components/growth/GrowthCharts';
 import { Header } from '@/components/layout/Header';
+import { SocialSection } from '@/components/growth/SocialSection';
 
 export const revalidate = 300;
 
 export const metadata = {
-  title: 'Community Growth | Fed News',
-  description: 'Track the growth of the $FED community over time.',
+  title: 'Members | Fed News',
+  description: 'Track the growth of the $FED community and connect on social media.',
 };
 
 export default async function GrowthPage() {
@@ -201,6 +202,9 @@ export default async function GrowthPage() {
                 </p>
               </div>
             </section>
+
+            {/* Social Section */}
+            <SocialSection />
           </>
         ) : (
           <section className="py-20">

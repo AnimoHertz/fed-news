@@ -9,7 +9,6 @@ const navLinks = [
   { href: '/incentives', label: 'Incentives' },
   { href: '/payouts', label: 'Payouts' },
   { href: '/growth', label: 'Members' },
-  { href: '/social', label: 'Social' },
   { href: '/manifesto', label: 'Manifesto' },
 ];
 
