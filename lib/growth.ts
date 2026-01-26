@@ -129,6 +129,13 @@ export interface TierPayouts {
   color: string;
 }
 
+export interface BurnData {
+  totalBurned: number;
+  burnedPercentage: number;
+  currentSupply: number;
+  originalSupply: number;
+}
+
 export interface GrowthData {
   snapshots: GrowthSnapshot[];
   dailyNewHolders: DailyNewHolders[];
@@ -138,6 +145,7 @@ export interface GrowthData {
   growthPercent: number;
   tierPayouts: TierPayouts[];
   totalDistributed: number;
+  burnData: BurnData | null;
 }
 
 // Tier multipliers from the roles page
@@ -202,8 +210,66 @@ function calculateTierPayouts(
   });
 }
 
+const FED_TOKEN_MINT = '132STreShuLRNgkyF1QECv37yP9Cdp8JBAgnKBgKafed';
+const ORIGINAL_SUPPLY = 1_000_000_000; // 1 billion tokens
+
+async function fetchBurnData(): Promise<BurnData | null> {
+  const heliusApiKey = process.env.HELIUS_API_KEY || process.env.HELIUS_API;
+
+  if (!heliusApiKey) {
+    return null;
+  }
+
+  try {
+    // Fetch token supply from Solana via Helius RPC
+    const response = await fetch(
+      `https://mainnet.helius-rpc.com/?api-key=${heliusApiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'getTokenSupply',
+          params: [FED_TOKEN_MINT],
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      console.error('Failed to fetch token supply');
+      return null;
+    }
+
+    const data = await response.json();
+    const supplyInfo = data?.result?.value;
+
+    if (!supplyInfo) {
+      return null;
+    }
+
+    // Amount is in raw units (with decimals), uiAmount is human-readable
+    const currentSupply = supplyInfo.uiAmount || parseFloat(supplyInfo.amount) / Math.pow(10, supplyInfo.decimals);
+    const totalBurned = ORIGINAL_SUPPLY - currentSupply;
+    const burnedPercentage = (totalBurned / ORIGINAL_SUPPLY) * 100;
+
+    return {
+      totalBurned: Math.max(0, totalBurned),
+      burnedPercentage: Math.max(0, burnedPercentage),
+      currentSupply,
+      originalSupply: ORIGINAL_SUPPLY,
+    };
+  } catch (error) {
+    console.error('Error fetching burn data:', error);
+    return null;
+  }
+}
+
 export async function fetchGrowthData(): Promise<GrowthData | null> {
-  const distribution = await fetchTierDistribution();
+  const [distribution, burnData] = await Promise.all([
+    fetchTierDistribution(),
+    fetchBurnData(),
+  ]);
 
   if (!distribution) {
     return null;
@@ -234,5 +300,6 @@ export async function fetchGrowthData(): Promise<GrowthData | null> {
     growthPercent,
     tierPayouts,
     totalDistributed,
+    burnData,
   };
 }

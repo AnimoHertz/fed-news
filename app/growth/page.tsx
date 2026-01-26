@@ -118,6 +118,57 @@ export default async function GrowthPage() {
               </div>
             </section>
 
+            {/* Amount Burned */}
+            {growthData.burnData && (
+              <section className="mb-12">
+                <h2 className="text-sm text-gray-500 uppercase tracking-wide mb-4">
+                  Amount Burned
+                </h2>
+                <p className="text-gray-400 text-sm mb-6">
+                  Tokens permanently removed from circulation, increasing scarcity for remaining holders.
+                </p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                  <div className="p-4 rounded-lg border border-orange-500/30 bg-orange-500/10">
+                    <p className="text-xs sm:text-sm text-gray-500 mb-1">Total Burned</p>
+                    <p className="text-xl sm:text-2xl font-mono text-orange-400">
+                      {formatNumber(Math.round(growthData.burnData.totalBurned))}
+                    </p>
+                  </div>
+                  <div className="p-4 rounded-lg border border-red-500/30 bg-red-500/10">
+                    <p className="text-xs sm:text-sm text-gray-500 mb-1">% of Supply</p>
+                    <p className="text-xl sm:text-2xl font-mono text-red-400">
+                      {growthData.burnData.burnedPercentage.toFixed(2)}%
+                    </p>
+                  </div>
+                  <div className="p-4 rounded-lg border border-gray-700 bg-gray-800/30">
+                    <p className="text-xs sm:text-sm text-gray-500 mb-1">Current Supply</p>
+                    <p className="text-xl sm:text-2xl font-mono text-white">
+                      {formatNumber(Math.round(growthData.burnData.currentSupply))}
+                    </p>
+                  </div>
+                  <div className="p-4 rounded-lg border border-gray-700 bg-gray-800/30">
+                    <p className="text-xs sm:text-sm text-gray-500 mb-1">Original Supply</p>
+                    <p className="text-xl sm:text-2xl font-mono text-gray-400">
+                      {formatNumber(growthData.burnData.originalSupply)}
+                    </p>
+                  </div>
+                </div>
+                {/* Burn progress bar */}
+                <div className="mt-4 p-4 rounded-lg border border-gray-800 bg-gray-900/30">
+                  <div className="flex items-center justify-between text-sm mb-2">
+                    <span className="text-gray-500">Burn Progress</span>
+                    <span className="text-orange-400 font-mono">{growthData.burnData.burnedPercentage.toFixed(2)}% burned</span>
+                  </div>
+                  <div className="h-3 bg-gray-800 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-orange-500 to-red-500 transition-all"
+                      style={{ width: `${Math.min(growthData.burnData.burnedPercentage, 100)}%` }}
+                    />
+                  </div>
+                </div>
+              </section>
+            )}
+
             {/* Holder Count Over Time */}
             <section className="mb-12">
               <h2 className="text-sm text-gray-500 uppercase tracking-wide mb-4">
