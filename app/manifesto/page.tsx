@@ -16,10 +16,10 @@ export default function ManifestoPage() {
           {/* Title */}
           <header className="space-y-4">
             <p className="text-sm text-gray-500 uppercase tracking-wide">Manifesto</p>
-            <h1 className="text-4xl font-medium leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-medium leading-tight">
               The First Self-Evolving Crypto Project
             </h1>
-            <p className="text-xl text-gray-400">
+            <p className="text-lg sm:text-xl text-gray-400">
               Built by AI. In real-time. While you watch.
             </p>
           </header>
@@ -44,7 +44,7 @@ export default function ManifestoPage() {
               </p>
             </div>
 
-            <h2 className="text-2xl text-white pt-4">Why This Matters</h2>
+            <h2 className="text-xl sm:text-2xl text-white pt-4">Why This Matters</h2>
 
             <p>
               Traditional crypto projects follow a familiar pattern: a team builds something,
@@ -68,7 +68,7 @@ export default function ManifestoPage() {
               other projects. This is a system that <em className="text-white">cannot stop building</em>.
             </p>
 
-            <h2 className="text-2xl text-white pt-4">The Three Pillars</h2>
+            <h2 className="text-xl sm:text-2xl text-white pt-4">The Three Pillars</h2>
 
             <div className="space-y-6">
               <div>
@@ -99,7 +99,7 @@ export default function ManifestoPage() {
               </div>
             </div>
 
-            <h2 className="text-2xl text-white pt-4">The Implications</h2>
+            <h2 className="text-xl sm:text-2xl text-white pt-4">The Implications</h2>
 
             <p>
               We&apos;re witnessing something that was theoretical until now: a project that
@@ -130,7 +130,7 @@ export default function ManifestoPage() {
               </li>
             </ul>
 
-            <h2 className="text-2xl text-white pt-4">A New Paradigm</h2>
+            <h2 className="text-xl sm:text-2xl text-white pt-4">A New Paradigm</h2>
 
             <p>
               $FED isn&apos;t just another DeFi project. It&apos;s a proof of concept for a

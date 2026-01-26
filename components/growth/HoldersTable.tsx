@@ -109,7 +109,7 @@ export function HoldersTable() {
   return (
     <div>
       {/* Stats summary */}
-      <div className="flex flex-wrap items-center gap-4 mb-4 text-sm">
+      <div className="flex flex-wrap items-center gap-4 mb-4 text-xs sm:text-sm">
         <div className="flex items-center gap-1">
           <span className="text-gray-500">Top 10 Own:</span>
           <span className="text-white font-mono">{data.top10Percentage.toFixed(1)}%</span>
@@ -120,8 +120,38 @@ export function HoldersTable() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
+      {/* Mobile Card View */}
+      <div className="sm:hidden space-y-2">
+        {data.holders.map((holder, index) => (
+          <a
+            key={holder.address}
+            href={`https://solscan.io/account/${holder.address}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block p-3 rounded-lg border border-gray-800/30 hover:border-gray-700 transition-colors"
+          >
+            <div className="flex items-center justify-between mb-1.5">
+              <div className="flex items-center gap-2">
+                <span className="text-gray-500 font-mono text-xs">#{index + 1}</span>
+                <span className="font-mono text-gray-300 text-sm">{formatAddress(holder.address)}</span>
+              </div>
+              <span className="font-mono text-white text-sm">{holder.percentage.toFixed(2)}%</span>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+              <div className="flex gap-3">
+                <span className="text-gray-500">{formatTokens(holder.balance)}</span>
+                <span className="text-gray-400">{formatValue(holder.valueUsd)}</span>
+              </div>
+              <span className="font-mono text-emerald-400">
+                {holder.usd1Earned > 0 ? `+$${holder.usd1Earned.toFixed(2)}` : '-'}
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      {/* Desktop Table */}
+      <div className="hidden sm:block overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="text-left text-sm text-gray-500 border-b border-gray-800/50">

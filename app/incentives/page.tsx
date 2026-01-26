@@ -13,22 +13,22 @@ export default function IncentivesPage() {
 
       <main className="max-w-5xl mx-auto px-4 py-16">
         {/* Title */}
-        <header className="mb-16">
+        <header className="mb-12 sm:mb-16">
           <p className="text-sm text-gray-500 uppercase tracking-wide mb-4">How it Works</p>
-          <h1 className="text-4xl font-medium leading-tight mb-4">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-medium leading-tight mb-4">
             The Money Printer
           </h1>
-          <p className="text-xl text-gray-400">
+          <p className="text-lg sm:text-xl text-gray-400">
             Every 2 minutes, $FED holders receive USD1 stablecoins. Automatically. Forever.
           </p>
         </header>
 
         {/* Visual Flow Diagram */}
-        <section className="mb-20">
+        <section className="mb-16 sm:mb-20">
           <div className="relative">
             {/* Step 1 */}
-            <div className="flex gap-6 mb-8">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-green-500/20 border border-green-500/30 flex items-center justify-center text-green-400 font-mono text-lg">
+            <div className="flex gap-4 sm:gap-6 mb-8">
+              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-green-500/20 border border-green-500/30 flex items-center justify-center text-green-400 font-mono text-base sm:text-lg">
                 1
               </div>
               <div className="flex-1 pt-2">
@@ -61,8 +61,8 @@ export default function IncentivesPage() {
             </div>
 
             {/* Step 2 */}
-            <div className="flex gap-6 mb-8">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-mono text-lg">
+            <div className="flex gap-4 sm:gap-6 mb-8">
+              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-mono text-base sm:text-lg">
                 2
               </div>
               <div className="flex-1 pt-2">
@@ -88,8 +88,8 @@ export default function IncentivesPage() {
             </div>
 
             {/* Step 3 */}
-            <div className="flex gap-6 mb-8">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-mono text-lg">
+            <div className="flex gap-4 sm:gap-6 mb-8">
+              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-mono text-base sm:text-lg">
                 3
               </div>
               <div className="flex-1 pt-2">
@@ -115,8 +115,8 @@ export default function IncentivesPage() {
             </div>
 
             {/* Step 4 */}
-            <div className="flex gap-6">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 font-mono text-lg">
+            <div className="flex gap-4 sm:gap-6">
+              <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 font-mono text-base sm:text-lg">
                 4
               </div>
               <div className="flex-1 pt-2">
@@ -147,8 +147,8 @@ export default function IncentivesPage() {
         </section>
 
         {/* Key Points */}
-        <section className="mb-16">
-          <h2 className="text-2xl text-white font-medium mb-8">Why This Works</h2>
+        <section className="mb-12 sm:mb-16">
+          <h2 className="text-xl sm:text-2xl text-white font-medium mb-6 sm:mb-8">Why This Works</h2>
 
           <div className="grid gap-6">
             <div className="bg-gray-900/30 animated-border animated-border-emerald animated-border-subtle rounded-lg p-6">
@@ -206,8 +206,8 @@ export default function IncentivesPage() {
         </section>
 
         {/* The Flywheel */}
-        <section className="mb-16">
-          <h2 className="text-2xl text-white font-medium mb-6">The Flywheel Effect</h2>
+        <section className="mb-12 sm:mb-16">
+          <h2 className="text-xl sm:text-2xl text-white font-medium mb-6">The Flywheel Effect</h2>
           <p className="text-gray-400 mb-8">
             The system creates a positive feedback loop that benefits all participants:
           </p>
@@ -250,8 +250,8 @@ export default function IncentivesPage() {
         </section>
 
         {/* The Pool */}
-        <section className="mb-16">
-          <h2 className="text-2xl text-white font-medium mb-6">The Liquidity Pool</h2>
+        <section className="mb-12 sm:mb-16">
+          <h2 className="text-xl sm:text-2xl text-white font-medium mb-6">The Liquidity Pool</h2>
           <p className="text-gray-400 mb-6">
             $FED trades on a Meteora Dynamic AMM (DAMM) v2 pool paired with USD1, the World Liberty Financial stablecoin.
             This pool type automatically adjusts to market conditions and generates fees from every trade.
@@ -284,25 +284,25 @@ export default function IncentivesPage() {
         </section>
 
         {/* Quick Stats */}
-        <section className="mb-16">
-          <h2 className="text-2xl text-white font-medium mb-6">By The Numbers</h2>
+        <section className="mb-12 sm:mb-16">
+          <h2 className="text-xl sm:text-2xl text-white font-medium mb-6">By The Numbers</h2>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-900/30 animated-border animated-border-emerald animated-border-subtle rounded-lg p-6 text-center">
-              <div className="text-3xl font-mono text-white mb-2">2 min</div>
-              <div className="text-gray-500 text-sm">Distribution frequency</div>
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            <div className="bg-gray-900/30 animated-border animated-border-emerald animated-border-subtle rounded-lg p-4 sm:p-6 text-center">
+              <div className="text-2xl sm:text-3xl font-mono text-white mb-1 sm:mb-2">2 min</div>
+              <div className="text-gray-500 text-xs sm:text-sm">Distribution frequency</div>
             </div>
-            <div className="bg-gray-900/30 animated-border animated-border-cyan animated-border-subtle rounded-lg p-6 text-center">
-              <div className="text-3xl font-mono text-white mb-2">720</div>
-              <div className="text-gray-500 text-sm">Distributions per day</div>
+            <div className="bg-gray-900/30 animated-border animated-border-cyan animated-border-subtle rounded-lg p-4 sm:p-6 text-center">
+              <div className="text-2xl sm:text-3xl font-mono text-white mb-1 sm:mb-2">720</div>
+              <div className="text-gray-500 text-xs sm:text-sm">Distributions per day</div>
             </div>
-            <div className="bg-gray-900/30 animated-border animated-border-gold animated-border-subtle rounded-lg p-6 text-center">
-              <div className="text-3xl font-mono text-white mb-2">USD1</div>
-              <div className="text-gray-500 text-sm">Reward token</div>
+            <div className="bg-gray-900/30 animated-border animated-border-gold animated-border-subtle rounded-lg p-4 sm:p-6 text-center">
+              <div className="text-2xl sm:text-3xl font-mono text-white mb-1 sm:mb-2">USD1</div>
+              <div className="text-gray-500 text-xs sm:text-sm">Reward token</div>
             </div>
-            <div className="bg-gray-900/30 animated-border animated-border-subtle rounded-lg p-6 text-center">
-              <div className="text-3xl font-mono text-white mb-2">24/7</div>
-              <div className="text-gray-500 text-sm">Always running</div>
+            <div className="bg-gray-900/30 animated-border animated-border-subtle rounded-lg p-4 sm:p-6 text-center">
+              <div className="text-2xl sm:text-3xl font-mono text-white mb-1 sm:mb-2">24/7</div>
+              <div className="text-gray-500 text-xs sm:text-sm">Always running</div>
             </div>
           </div>
         </section>

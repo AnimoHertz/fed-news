@@ -99,9 +99,9 @@ export default function HoldersPage() {
       {data && (
         <div className="border-b border-gray-800/50">
           <div className="max-w-5xl mx-auto px-4 py-2">
-            <div className="flex items-center gap-6 text-sm">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 sm:gap-6 text-xs sm:text-sm">
               <div className="flex items-center gap-1">
-                <span className="text-gray-500">Market Cap:</span>
+                <span className="text-gray-500">MCap:</span>
                 <span className="text-emerald-400 font-mono">
                   {formatMarketCap(data.marketCap)}
                 </span>
@@ -111,10 +111,10 @@ export default function HoldersPage() {
                 <span className="text-white font-mono">{formatPrice(data.price)}</span>
               </div>
               <div className="flex items-center gap-1">
-                <span className="text-gray-500">Top 10 Holders Owned:</span>
+                <span className="text-gray-500">Top 10:</span>
                 <span className="text-white font-mono">{data.top10Percentage.toFixed(1)}%</span>
               </div>
-              <div className="flex items-center gap-1">
+              <div className="hidden sm:flex items-center gap-1">
                 <span className="text-gray-500">CA:</span>
                 <span className="text-gray-400 font-mono text-xs">132S...afed</span>
               </div>
@@ -155,63 +155,96 @@ export default function HoldersPage() {
         )}
 
         {data && (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="text-left text-sm text-gray-500 border-b border-gray-800/50">
-                  <th className="pb-3 font-medium">Rank</th>
-                  <th className="pb-3 font-medium">Holder</th>
-                  <th className="pb-3 font-medium">Tokens</th>
-                  <th className="pb-3 font-medium">% of Supply</th>
-                  <th className="pb-3 font-medium">Value</th>
-                  <th className="pb-3 font-medium">USD1 Earned</th>
-                </tr>
-              </thead>
-              <tbody className="text-sm">
-                {data.holders.map((holder, index) => (
-                  <tr
-                    key={holder.address}
-                    className="border-b border-gray-800/30 hover:bg-gray-900/20 transition-colors"
-                  >
-                    <td className="py-2 font-mono text-gray-400">
-                      {index + 1}
-                    </td>
-                    <td className="py-2">
-                      <a
-                        href={`https://solscan.io/account/${holder.address}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-mono text-gray-300 hover:text-white transition-colors"
-                      >
-                        {formatAddress(holder.address)}
-                      </a>
-                    </td>
-                    <td className="py-2">
-                      <span className="font-mono text-gray-400">{formatTokens(holder.balance)}</span>
-                    </td>
-                    <td className="py-2">
-                      <span className="font-mono text-white">{holder.percentage.toFixed(2)}%</span>
-                    </td>
-                    <td className="py-2">
-                      <span className="font-mono text-gray-400">{formatValue(holder.valueUsd)}</span>
-                    </td>
-                    <td className="py-2">
-                      <span className="font-mono text-emerald-400">
-                        {holder.usd1Earned > 0 ? `$${holder.usd1Earned.toFixed(2)}` : '-'}
-                      </span>
-                    </td>
+          <>
+            {/* Mobile Card View */}
+            <div className="sm:hidden space-y-3">
+              {data.holders.map((holder, index) => (
+                <a
+                  key={holder.address}
+                  href={`https://solscan.io/account/${holder.address}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block p-3 rounded-lg border border-gray-800/50 hover:border-gray-700 bg-gray-900/30 transition-colors"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-500 font-mono text-sm">#{index + 1}</span>
+                      <span className="font-mono text-gray-300 text-sm">{formatAddress(holder.address)}</span>
+                    </div>
+                    <span className="font-mono text-white text-sm">{holder.percentage.toFixed(2)}%</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs">
+                    <div className="flex gap-3">
+                      <span className="text-gray-500">{formatTokens(holder.balance)}</span>
+                      <span className="text-gray-400">{formatValue(holder.valueUsd)}</span>
+                    </div>
+                    <span className="font-mono text-emerald-400">
+                      {holder.usd1Earned > 0 ? `+$${holder.usd1Earned.toFixed(2)}` : '-'}
+                    </span>
+                  </div>
+                </a>
+              ))}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="text-left text-sm text-gray-500 border-b border-gray-800/50">
+                    <th className="pb-3 font-medium">Rank</th>
+                    <th className="pb-3 font-medium">Holder</th>
+                    <th className="pb-3 font-medium">Tokens</th>
+                    <th className="pb-3 font-medium">% of Supply</th>
+                    <th className="pb-3 font-medium">Value</th>
+                    <th className="pb-3 font-medium">USD1 Earned</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="text-sm">
+                  {data.holders.map((holder, index) => (
+                    <tr
+                      key={holder.address}
+                      className="border-b border-gray-800/30 hover:bg-gray-900/20 transition-colors"
+                    >
+                      <td className="py-2 font-mono text-gray-400">
+                        {index + 1}
+                      </td>
+                      <td className="py-2">
+                        <a
+                          href={`https://solscan.io/account/${holder.address}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-mono text-gray-300 hover:text-white transition-colors"
+                        >
+                          {formatAddress(holder.address)}
+                        </a>
+                      </td>
+                      <td className="py-2">
+                        <span className="font-mono text-gray-400">{formatTokens(holder.balance)}</span>
+                      </td>
+                      <td className="py-2">
+                        <span className="font-mono text-white">{holder.percentage.toFixed(2)}%</span>
+                      </td>
+                      <td className="py-2">
+                        <span className="font-mono text-gray-400">{formatValue(holder.valueUsd)}</span>
+                      </td>
+                      <td className="py-2">
+                        <span className="font-mono text-emerald-400">
+                          {holder.usd1Earned > 0 ? `$${holder.usd1Earned.toFixed(2)}` : '-'}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </main>
 
       {/* Footer */}
       <footer className="border-t border-gray-800/50 mt-8">
-        <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-          <p className="text-sm text-gray-600">
+        <div className="max-w-5xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+          <p className="text-xs sm:text-sm text-gray-600">
             Data from{' '}
             <a
               href="https://helius.xyz"
@@ -235,7 +268,7 @@ export default function HoldersPage() {
             href="https://github.com/snark-tank/ralph"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-gray-600 hover:text-white transition-colors"
+            className="text-xs sm:text-sm text-gray-600 hover:text-white transition-colors"
           >
             GitHub
           </a>

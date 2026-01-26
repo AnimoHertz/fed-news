@@ -168,24 +168,27 @@ export default async function GrowthPage() {
               </h2>
               <div className="space-y-2">
                 {[
-                  { key: 'chairman', name: 'Fed Chairman', color: 'bg-yellow-500', count: growthData.currentDistribution.chairman },
-                  { key: 'governor', name: 'Fed Governor', color: 'bg-purple-500', count: growthData.currentDistribution.governor },
-                  { key: 'director', name: 'Regional Director', color: 'bg-blue-500', count: growthData.currentDistribution.director },
-                  { key: 'member', name: 'Board Member', color: 'bg-emerald-500', count: growthData.currentDistribution.member },
-                  { key: 'citizen', name: 'Fed Citizen', color: 'bg-gray-500', count: growthData.currentDistribution.citizen },
+                  { key: 'chairman', name: 'Fed Chairman', shortName: 'Chairman', color: 'bg-yellow-500', count: growthData.currentDistribution.chairman },
+                  { key: 'governor', name: 'Fed Governor', shortName: 'Governor', color: 'bg-purple-500', count: growthData.currentDistribution.governor },
+                  { key: 'director', name: 'Regional Director', shortName: 'Director', color: 'bg-blue-500', count: growthData.currentDistribution.director },
+                  { key: 'member', name: 'Board Member', shortName: 'Member', color: 'bg-emerald-500', count: growthData.currentDistribution.member },
+                  { key: 'citizen', name: 'Fed Citizen', shortName: 'Citizen', color: 'bg-gray-500', count: growthData.currentDistribution.citizen },
                 ].map((tier) => {
                   const percent = (tier.count / growthData.currentDistribution.total) * 100;
                   return (
-                    <div key={tier.key} className="flex items-center gap-3">
-                      <div className="w-24 text-sm text-gray-400">{tier.name}</div>
-                      <div className="flex-1 h-6 bg-gray-800 rounded-full overflow-hidden">
+                    <div key={tier.key} className="flex items-center gap-2 sm:gap-3">
+                      <div className="w-16 sm:w-24 text-xs sm:text-sm text-gray-400 truncate">
+                        <span className="sm:hidden">{tier.shortName}</span>
+                        <span className="hidden sm:inline">{tier.name}</span>
+                      </div>
+                      <div className="flex-1 h-5 sm:h-6 bg-gray-800 rounded-full overflow-hidden">
                         <div
                           className={`h-full ${tier.color} transition-all`}
                           style={{ width: `${Math.max(percent, 1)}%` }}
                         />
                       </div>
-                      <div className="w-20 text-right text-sm font-mono text-gray-300">
-                        {formatNumber(tier.count)} <span className="text-gray-600">({percent.toFixed(1)}%)</span>
+                      <div className="w-16 sm:w-20 text-right text-xs sm:text-sm font-mono text-gray-300">
+                        {formatNumber(tier.count)} <span className="text-gray-600 hidden sm:inline">({percent.toFixed(1)}%)</span>
                       </div>
                     </div>
                   );

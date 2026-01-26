@@ -15,12 +15,12 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="border-b border-gray-800">
+    <header>
       <div className="max-w-5xl mx-auto px-4 py-6">
         <div className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <Image src="/logoseal.png" alt="FED logo" width={80} height={80} />
-            <span className="text-xl font-medium">Fed News</span>
+          <Link href="/" className="flex items-center gap-2 sm:gap-4 hover:opacity-80 transition-opacity">
+            <Image src="/logoseal.png" alt="FED logo" width={100} height={100} className="w-12 h-12 sm:w-16 sm:h-16 md:w-[100px] md:h-[100px]" />
+            <span className="text-xl sm:text-2xl md:text-3xl font-medium">Fed News</span>
           </Link>
 
           {/* Desktop navigation */}
@@ -87,6 +87,7 @@ export function Header() {
           </nav>
         )}
       </div>
+      <div className="animated-gradient-line" />
     </header>
   );
 }

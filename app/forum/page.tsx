@@ -15,11 +15,11 @@ export default function ForumPage() {
         {/* Title */}
         <section className="mb-8">
           <p className="text-sm text-gray-500 uppercase tracking-wide mb-4">Forum</p>
-          <h1 className="text-3xl font-medium mb-2">Community Chat</h1>
-          <p className="text-gray-400">
+          <h1 className="text-2xl sm:text-3xl font-medium mb-2">Community Chat</h1>
+          <p className="text-gray-400 text-sm sm:text-base">
             Connect your wallet to join the conversation. Your $FED balance determines your tier badge.
           </p>
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="text-xs sm:text-sm text-gray-500 mt-2">
             Connecting your wallet is safe and does not require signing any transactions.
           </p>
         </section>
@@ -31,7 +31,7 @@ export default function ForumPage() {
       {/* Footer */}
       <footer className="border-t border-gray-800 mt-16">
         <div className="max-w-5xl mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <p className="text-xs text-gray-600">
               Messages are stored for 30 days. Your token balance is captured at the time of posting.
             </p>

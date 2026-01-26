@@ -60,13 +60,13 @@ export default async function HomePage() {
               <span>→</span>
             </Link>
 
-            {/* Logo */}
+            {/* Logo - hidden on small screens */}
             <Image
               src="/logoseal.png"
               alt="FED Logo"
               width={200}
               height={200}
-              className="absolute bottom-4 right-4 opacity-20"
+              className="hidden sm:block absolute bottom-4 right-4 opacity-20 sm:w-[120px] sm:h-[120px] md:w-[200px] md:h-[200px]"
             />
           </div>
         </section>
@@ -78,14 +78,14 @@ export default async function HomePage() {
           {/* Price Widget */}
           {price && (
             <div className="mb-8 animated-border animated-border-emerald animated-border-subtle">
-              <div className="flex flex-wrap items-center gap-6 p-4 rounded-t-lg bg-gray-900/30">
-                <div>
-                  <span className="text-3xl font-mono text-white">{formatPrice(price.priceUsd)}</span>
+              <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3 sm:gap-6 p-4 rounded-t-lg bg-gray-900/30">
+                <div className="flex items-center justify-between sm:justify-start">
+                  <span className="text-2xl sm:text-3xl font-mono text-white">{formatPrice(price.priceUsd)}</span>
                   <span className={`ml-3 text-sm font-mono ${price.priceChange24h >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
                     {price.priceChange24h >= 0 ? '+' : ''}{price.priceChange24h.toFixed(2)}%
                   </span>
                 </div>
-                <div className="flex gap-6 text-sm">
+                <div className="flex gap-4 sm:gap-6 text-sm">
                   <div>
                     <span className="text-gray-500">MCap</span>
                     <span className="text-white ml-2">{formatLargeNumber(price.marketCap)}</span>
@@ -95,12 +95,12 @@ export default async function HomePage() {
                     <span className="text-white ml-2">{formatLargeNumber(price.volume24h)}</span>
                   </div>
                 </div>
-                <div className="flex gap-2 ml-auto">
+                <div className="flex gap-2 sm:ml-auto">
                   <a
                     href={DEXSCREENER_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-1.5 text-sm text-gray-400 border border-gray-700 rounded hover:text-white hover:border-gray-500 transition-colors"
+                    className="flex-1 sm:flex-none text-center px-3 py-1.5 text-sm text-gray-400 border border-gray-700 rounded hover:text-white hover:border-gray-500 transition-colors"
                   >
                     Full Chart
                   </a>
@@ -108,7 +108,7 @@ export default async function HomePage() {
                     href={JUPITER_SWAP_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-1.5 text-sm font-medium text-black bg-white rounded hover:bg-gray-200 transition-colors"
+                    className="flex-1 sm:flex-none text-center px-4 py-1.5 text-sm font-medium text-black bg-white rounded hover:bg-gray-200 transition-colors"
                   >
                     Buy $FED
                   </a>
@@ -117,7 +117,7 @@ export default async function HomePage() {
               <div className="rounded-b-lg border-t border-gray-800 overflow-hidden">
                 <iframe
                   src="https://dexscreener.com/solana/132STreShuLRNgkyF1QECv37yP9Cdp8JBAgnKBgKafed?embed=1&theme=dark&info=0&trades=0&chartLeftToolbar=0&chartDefaultOnMobile=1"
-                  className="w-full h-[400px]"
+                  className="w-full h-[300px] sm:h-[400px]"
                   title="$FED Price Chart"
                 />
               </div>
@@ -126,23 +126,23 @@ export default async function HomePage() {
 
           {/* Stats */}
           {(stats || holderCount) && (
-            <div className="flex flex-wrap gap-8 font-mono text-2xl mb-8">
+            <div className="flex flex-wrap gap-4 sm:gap-8 font-mono text-xl sm:text-2xl mb-8">
               {stats && (
                 <>
                   <div>
                     <span className="text-white">{formatCurrency(stats.distributed)}</span>
-                    <span className="text-gray-500 text-sm ml-2">distributed</span>
+                    <span className="text-gray-500 text-xs sm:text-sm ml-2">distributed</span>
                   </div>
                   <div>
                     <span className="text-white">{formatNumber(stats.distributions)}</span>
-                    <span className="text-gray-500 text-sm ml-2">distributions</span>
+                    <span className="text-gray-500 text-xs sm:text-sm ml-2">distributions</span>
                   </div>
                 </>
               )}
               {holderCount && (
                 <div>
                   <span className="text-white">{formatNumber(holderCount)}</span>
-                  <span className="text-gray-500 text-sm ml-2">holders</span>
+                  <span className="text-gray-500 text-xs sm:text-sm ml-2">holders</span>
                 </div>
               )}
             </div>

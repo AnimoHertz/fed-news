@@ -133,12 +133,12 @@ export function ChatForum() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
           <WalletButton />
           {profile && profile.username && !editingUsername && (
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-400">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs sm:text-sm text-gray-400">
                 Posting as <span className="text-white">{profile.username}</span>
               </span>
               <button
@@ -156,7 +156,7 @@ export function ChatForum() {
         <button
           onClick={handleRefresh}
           disabled={refreshing}
-          className="px-3 py-1.5 text-sm text-gray-400 border border-gray-700 rounded hover:text-white hover:border-gray-600 transition-colors disabled:opacity-50"
+          className="self-end sm:self-auto px-3 py-1.5 text-sm text-gray-400 border border-gray-700 rounded hover:text-white hover:border-gray-600 transition-colors disabled:opacity-50"
         >
           {refreshing ? 'Refreshing...' : 'Refresh'}
         </button>
@@ -164,11 +164,11 @@ export function ChatForum() {
 
       {/* Balance display when connected */}
       {walletAddress && profile && (
-        <div className="p-4 rounded-lg animated-border animated-border-emerald animated-border-subtle bg-gray-900/30">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-400">Your $FED Balance</span>
-            <div className="flex items-center gap-3">
-              <span className="text-xl font-mono text-white">
+        <div className="p-3 sm:p-4 rounded-lg animated-border animated-border-emerald animated-border-subtle bg-gray-900/30">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <span className="text-xs sm:text-sm text-gray-400">Your $FED Balance</span>
+            <div className="flex items-center gap-2 sm:gap-3">
+              <span className="text-lg sm:text-xl font-mono text-white">
                 {profile.balance.toLocaleString()} FED
               </span>
               <TierBadge tier={profile.tier} balance={profile.balance} showBalance={false} />
