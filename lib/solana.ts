@@ -8,7 +8,7 @@
 import { Connection, PublicKey, ParsedTransactionWithMeta } from '@solana/web3.js';
 
 // Treasury wallet for $FED payments
-export const TREASURY_WALLET = new PublicKey('4Br5iKfRkYMk8WMj6w8YASynuq7Eoas16rkyvWsAdL4P');
+export const TREASURY_WALLET = new PublicKey('7VxHbzoPZWj4GYs18NFjyctJYajBwXY639mkuPw1EAA6');
 
 // $FED token mint
 export const FED_TOKEN_MINT = new PublicKey('132STreShuLRNgkyF1QECv37yP9Cdp8JBAgnKBgKafed');
