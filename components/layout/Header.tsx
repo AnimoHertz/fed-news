@@ -15,14 +15,6 @@ export function Header() {
 
   return (
     <header>
-      {/* Disclaimer Banner */}
-      <div className="bg-gray-900 border-b border-gray-800">
-        <div className="max-w-5xl mx-auto px-4 py-2">
-          <p className="text-[10px] sm:text-xs text-gray-500 text-center">
-            This project is not affiliated with the Federal Reserve System or any government entity. For memetic and satirical purposes only.
-          </p>
-        </div>
-      </div>
       <div className="max-w-5xl mx-auto px-4 py-6">
         <div className="flex items-center justify-between">
           <Link href="/" className="hover:opacity-80 transition-opacity">
