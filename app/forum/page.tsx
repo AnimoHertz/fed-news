@@ -2,7 +2,7 @@ import { ChatForum } from '@/components/chat/ChatForum';
 import { Header } from '@/components/layout/Header';
 
 export const metadata = {
-  title: 'Forum | Fed News',
+  title: 'Forum | Federal Cash',
   description: 'Community forum for $FED token holders.',
 };
 

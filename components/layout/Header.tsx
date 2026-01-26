@@ -18,7 +18,7 @@ export function Header() {
       <div className="max-w-5xl mx-auto px-4 py-6">
         <div className="flex items-center justify-between">
           <Link href="/" className="hover:opacity-80 transition-opacity">
-            <span className="text-xl sm:text-2xl md:text-3xl font-medium">Fed News</span>
+            <span className="text-xl sm:text-2xl md:text-3xl font-medium">Federal Cash</span>
           </Link>
 
           {/* Desktop navigation */}

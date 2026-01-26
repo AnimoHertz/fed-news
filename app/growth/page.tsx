@@ -13,7 +13,7 @@ import { HoldersTable } from '@/components/growth/HoldersTable';
 export const revalidate = 300;
 
 export const metadata = {
-  title: 'Members | Fed News',
+  title: 'Members | Federal Cash',
   description: 'Track the growth of the $FED community and connect on social media.',
 };
 

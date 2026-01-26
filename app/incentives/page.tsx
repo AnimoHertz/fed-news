@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 
 export const metadata = {
-  title: 'How it Works | Fed News',
+  title: 'How it Works | Federal Cash',
   description: 'Learn how the $FED reward system distributes USD1 stablecoins to holders every 2 minutes.',
 };
 

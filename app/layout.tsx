@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Fed News',
+  title: 'Federal Cash',
   description: 'Development updates for the $FED project on Solana.',
 };
 

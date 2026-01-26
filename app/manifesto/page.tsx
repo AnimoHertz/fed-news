@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 
 export const metadata = {
-  title: 'Manifesto | Fed News',
+  title: 'Manifesto | Federal Cash',
   description: 'Why $FED represents a new paradigm in crypto: AI-driven, self-evolving, built in real-time.',
 };
 
