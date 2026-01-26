@@ -25,19 +25,24 @@ export function CopyAddress({ address, label = 'Token Address' }: CopyAddressPro
   return (
     <button
       onClick={handleCopy}
-      className="inline-flex items-center gap-2 text-xs font-mono text-gray-500 hover:text-white transition-colors group"
+      className="inline-flex items-center gap-2 text-xs font-mono text-gray-500 hover:text-white transition-all hover:scale-105 active:scale-95 group"
       title="Click to copy"
     >
       <span className="text-gray-600">{label}:</span>
-      <span className="text-gray-400 group-hover:text-white">{shortAddress}</span>
-      {copied ? (
-        <svg className="w-3.5 h-3.5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-        </svg>
-      ) : (
-        <svg className="w-3.5 h-3.5 opacity-50 group-hover:opacity-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-        </svg>
+      <span className="text-gray-400 group-hover:text-white transition-colors">{shortAddress}</span>
+      <span className="relative">
+        {copied ? (
+          <svg className="w-3.5 h-3.5 text-green-400 animate-bounce-small" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        ) : (
+          <svg className="w-3.5 h-3.5 opacity-50 group-hover:opacity-100 transition-all group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+        )}
+      </span>
+      {copied && (
+        <span className="text-green-400 text-[10px] animate-fade-in-up">Copied!</span>
       )}
     </button>
   );

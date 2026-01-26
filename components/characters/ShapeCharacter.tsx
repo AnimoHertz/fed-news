@@ -10,6 +10,8 @@ export type FeetStyle = "orbs" | "bars" | "triangles" | "floating" | "none";
 export type Accessory = "none" | "halo" | "orbits" | "sparks" | "aura" | "frame" | "glitch";
 export type BgStyle = "solid" | "gradient" | "radial" | "grid" | "dots" | "circuit" | "stars";
 
+export type RarityTier = "Common" | "Uncommon" | "Rare" | "Epic" | "Legendary";
+
 export interface CharacterProps {
   headStyle?: HeadStyle;
   eyeStyle?: EyeStyle;
@@ -23,6 +25,8 @@ export interface CharacterProps {
   accentColor?: string;
   size?: number;
   className?: string;
+  rarityTier?: RarityTier;
+  showRarityBadge?: boolean;
 }
 
 export function ShapeCharacter({
@@ -38,6 +42,8 @@ export function ShapeCharacter({
   accentColor = "#ffffff",
   size = 200,
   className = "",
+  rarityTier,
+  showRarityBadge = true,
 }: CharacterProps) {
   const centerX = 75;
   const centerY = 100;
@@ -451,6 +457,89 @@ export function ShapeCharacter({
     }
   };
 
+  // Rarity badge in bottom right corner
+  const renderRarityBadge = () => {
+    if (!rarityTier || !showRarityBadge) return null;
+
+    const badgeX = 130;
+    const badgeY = 182;
+    const badgeSize = 18;
+
+    const RARITY_CONFIG: Record<RarityTier, { color: string; bgColor: string; symbol: React.ReactNode }> = {
+      Common: {
+        color: "#9ca3af",
+        bgColor: "#374151",
+        symbol: (
+          <circle cx={badgeX} cy={badgeY} r={5} fill="#9ca3af" />
+        ),
+      },
+      Uncommon: {
+        color: "#34d399",
+        bgColor: "#065f46",
+        symbol: (
+          <polygon
+            points={`${badgeX},${badgeY - 6} ${badgeX + 5},${badgeY + 4} ${badgeX - 5},${badgeY + 4}`}
+            fill="#34d399"
+          />
+        ),
+      },
+      Rare: {
+        color: "#60a5fa",
+        bgColor: "#1e3a8a",
+        symbol: (
+          <g fill="#60a5fa">
+            <polygon points={`${badgeX},${badgeY - 7} ${badgeX + 2},${badgeY - 2} ${badgeX + 7},${badgeY - 2} ${badgeX + 3},${badgeY + 2} ${badgeX + 5},${badgeY + 7} ${badgeX},${badgeY + 4} ${badgeX - 5},${badgeY + 7} ${badgeX - 3},${badgeY + 2} ${badgeX - 7},${badgeY - 2} ${badgeX - 2},${badgeY - 2}`} />
+          </g>
+        ),
+      },
+      Epic: {
+        color: "#c084fc",
+        bgColor: "#581c87",
+        symbol: (
+          <g>
+            <polygon
+              points={`${badgeX},${badgeY - 7} ${badgeX + 6},${badgeY} ${badgeX},${badgeY + 7} ${badgeX - 6},${badgeY}`}
+              fill="#c084fc"
+            />
+            <circle cx={badgeX} cy={badgeY} r={2.5} fill="#581c87" />
+          </g>
+        ),
+      },
+      Legendary: {
+        color: "#fbbf24",
+        bgColor: "#78350f",
+        symbol: (
+          <g fill="#fbbf24">
+            {/* Crown shape */}
+            <path d={`M${badgeX - 7},${badgeY + 5} L${badgeX - 7},${badgeY - 2} L${badgeX - 4},${badgeY + 1} L${badgeX},${badgeY - 6} L${badgeX + 4},${badgeY + 1} L${badgeX + 7},${badgeY - 2} L${badgeX + 7},${badgeY + 5} Z`} />
+            <circle cx={badgeX - 7} cy={badgeY - 3} r={1.5} />
+            <circle cx={badgeX} cy={badgeY - 7} r={1.5} />
+            <circle cx={badgeX + 7} cy={badgeY - 3} r={1.5} />
+          </g>
+        ),
+      },
+    };
+
+    const config = RARITY_CONFIG[rarityTier];
+
+    return (
+      <g>
+        {/* Badge background */}
+        <circle
+          cx={badgeX}
+          cy={badgeY}
+          r={badgeSize / 2}
+          fill={config.bgColor}
+          stroke={config.color}
+          strokeWidth="1.5"
+          opacity="0.95"
+        />
+        {/* Rarity symbol */}
+        {config.symbol}
+      </g>
+    );
+  };
+
   return (
     <svg
       width={size}
@@ -481,6 +570,9 @@ export function ShapeCharacter({
 
       {/* Effects on top */}
       {accessory !== "none" && accessory !== "aura" && renderEffect()}
+
+      {/* Rarity badge - always on top */}
+      {renderRarityBadge()}
     </svg>
   );
 }

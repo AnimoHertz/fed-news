@@ -126,18 +126,18 @@ export function ForumCard({ messageCount = 0, activeUsers = 0 }: ForumCardProps)
               </div>
             </div>
 
-            {/* Stats (desktop) */}
+            {/* Stats */}
             {(messageCount > 0 || activeUsers > 0) && (
-              <div className="hidden lg:flex flex-col items-end gap-3">
+              <div className="flex flex-row sm:flex-col items-center sm:items-end gap-4 sm:gap-3 mt-4 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-gray-800/50">
                 {messageCount > 0 && (
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-violet-400 font-mono">{messageCount.toLocaleString()}</div>
+                  <div className="text-center sm:text-right">
+                    <div className="text-xl sm:text-2xl font-bold text-violet-400 font-mono">{messageCount.toLocaleString()}</div>
                     <div className="text-xs text-gray-500 uppercase tracking-wider">Messages</div>
                   </div>
                 )}
                 {activeUsers > 0 && (
-                  <div className="text-right">
-                    <div className="text-xl font-bold text-emerald-400 font-mono">{activeUsers}</div>
+                  <div className="text-center sm:text-right">
+                    <div className="text-lg sm:text-xl font-bold text-emerald-400 font-mono">{activeUsers}</div>
                     <div className="text-xs text-gray-500 uppercase tracking-wider">Active</div>
                   </div>
                 )}

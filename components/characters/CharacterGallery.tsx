@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ShapeCharacter, CHARACTER_PRESETS, CharacterProps, HeadStyle, EyeStyle, MouthStyle, BodyStyle, FeetStyle, Accessory, BgStyle } from "./ShapeCharacter";
+import { ShapeCharacter, CHARACTER_PRESETS, CharacterProps, HeadStyle, EyeStyle, MouthStyle, BodyStyle, FeetStyle, Accessory, BgStyle, RarityTier } from "./ShapeCharacter";
 
 // Weighted trait pools
 const HEAD_WEIGHTS: { style: HeadStyle; weight: number }[] = [
@@ -225,4 +225,4 @@ export const TOTAL_COMBINATIONS =
   COLOR_PALETTES.length;
 
 export { ShapeCharacter, CHARACTER_PRESETS };
-export type { CharacterProps, HeadStyle, EyeStyle, MouthStyle, BodyStyle, FeetStyle, Accessory, BgStyle };
+export type { CharacterProps, HeadStyle, EyeStyle, MouthStyle, BodyStyle, FeetStyle, Accessory, BgStyle, RarityTier };

@@ -64,10 +64,10 @@ export function SocialSection() {
             href={`https://x.com/${account.handle}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="block p-6 rounded-lg border border-sky-500/30 bg-sky-500/10 hover:bg-sky-500/20 transition-colors"
+            className="group block p-6 rounded-lg border border-sky-500/30 bg-sky-500/10 hover:bg-sky-500/20 transition-all hover:scale-[1.02] hover:shadow-lg hover:shadow-sky-500/10"
           >
             <div className="flex items-start gap-4">
-              <div className="w-12 h-12 rounded-full bg-sky-500/20 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-sky-500/20 flex items-center justify-center transition-transform group-hover:scale-110">
                 <svg className="w-6 h-6 text-sky-400" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                 </svg>
@@ -84,7 +84,7 @@ export function SocialSection() {
                 <p className="text-sky-400 text-sm">@{account.handle}</p>
                 <p className="text-gray-400 text-sm mt-2">{account.description}</p>
               </div>
-              <span className="text-gray-500">→</span>
+              <span className="text-gray-500 transition-transform group-hover:translate-x-1">→</span>
             </div>
           </a>
         ))}
@@ -151,14 +151,14 @@ export function SocialSection() {
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-4 p-4 rounded-lg border border-gray-800 bg-gray-900/30 hover:bg-gray-900/70 hover:border-gray-700 transition-all"
+              className="group flex items-center gap-4 p-4 rounded-lg border border-gray-800 bg-gray-900/30 hover:bg-gray-900/70 hover:border-gray-700 transition-all hover:scale-[1.02]"
             >
-              <div className="text-gray-400">{link.icon}</div>
+              <div className="text-gray-400 transition-all group-hover:text-white group-hover:scale-110">{link.icon}</div>
               <div className="flex-1">
                 <h4 className="font-medium text-white">{link.name}</h4>
                 <p className="text-sm text-gray-500">{link.description}</p>
               </div>
-              <span className="text-gray-500">→</span>
+              <span className="text-gray-500 transition-transform group-hover:translate-x-1">→</span>
             </a>
           ))}
         </div>
@@ -170,13 +170,14 @@ export function SocialSection() {
           Hashtags
         </h3>
         <div className="flex flex-wrap gap-2">
-          {['$FED', '#FED', '#FEDUSD1', '#SolanaAI'].map((tag) => (
+          {['$FED', '#FED', '#FEDUSD1', '#SolanaAI'].map((tag, index) => (
             <a
               key={tag}
               href={`https://x.com/search?q=${encodeURIComponent(tag)}&src=typed_query&f=live`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1 text-sm font-mono text-gray-400 bg-gray-800/50 rounded hover:bg-gray-800 hover:text-white transition-colors"
+              className="px-3 py-1.5 text-sm font-mono text-gray-400 bg-gray-800/50 rounded hover:bg-emerald-500/20 hover:text-emerald-400 hover:border-emerald-500/30 border border-transparent transition-all hover:scale-105 active:scale-95 opacity-0 animate-fade-in-up"
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
               {tag}
             </a>

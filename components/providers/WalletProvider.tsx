@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 import { ConnectionProvider, WalletProvider as SolanaWalletProvider } from '@solana/wallet-adapter-react';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adapter-wallets';
-import { clusterApiUrl } from '@solana/web3.js';
 
 // Import wallet adapter styles
 import '@solana/wallet-adapter-react-ui/styles.css';
@@ -13,8 +12,17 @@ interface WalletProviderProps {
   children: React.ReactNode;
 }
 
+function getRpcEndpoint(): string {
+  const apiKey = process.env.NEXT_PUBLIC_HELIUS_API_KEY;
+  if (apiKey) {
+    return `https://mainnet.helius-rpc.com/?api-key=${apiKey}`;
+  }
+  // Fallback to public RPC (rate limited)
+  return 'https://api.mainnet-beta.solana.com';
+}
+
 export function WalletProvider({ children }: WalletProviderProps) {
-  const endpoint = useMemo(() => clusterApiUrl('mainnet-beta'), []);
+  const endpoint = useMemo(() => getRpcEndpoint(), []);
 
   const wallets = useMemo(
     () => [

@@ -106,10 +106,10 @@ export function ResearchBanner({ latestResearch, totalCount }: ResearchBannerPro
               </div>
             </div>
 
-            {/* Stats badge (desktop) */}
-            <div className="hidden lg:flex flex-col items-end gap-2">
-              <div className="text-right">
-                <div className="text-3xl font-bold text-amber-400 font-mono">{totalCount}</div>
+            {/* Stats badge */}
+            <div className="flex flex-row sm:flex-col items-center sm:items-end gap-4 sm:gap-2 mt-4 sm:mt-0 pt-4 sm:pt-0 border-t sm:border-t-0 border-gray-800/50">
+              <div className="text-center sm:text-right">
+                <div className="text-2xl sm:text-3xl font-bold text-amber-400 font-mono">{totalCount}</div>
                 <div className="text-xs text-gray-500 uppercase tracking-wider">Reports</div>
               </div>
             </div>

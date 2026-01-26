@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { ShapeCharacter, CharacterProps } from "@/components/characters/ShapeCharacter";
 import { generateRandomCharacter, calculateRarityScore, getRarityTier, TOTAL_COMBINATIONS, TRAIT_RARITY } from "@/components/characters/CharacterGallery";
 import { Header } from "@/components/layout/Header";
 import { BackgroundAnimation } from "@/components/home/BackgroundAnimation";
+import { MintButton } from "@/components/characters/MintButton";
+import { MintedAgent } from "@/app/api/agents/gallery/route";
 
 const TIER_COLORS: Record<string, { border: string; glow: string; text: string; bg: string }> = {
   chairman: { border: "border-yellow-500/50", glow: "shadow-yellow-500/20", text: "text-yellow-400", bg: "bg-yellow-500/10" },
@@ -153,17 +155,171 @@ function TraitSection({
   );
 }
 
+// Minted Agents Gallery Component
+function MintedAgentsGallery() {
+  const [agents, setAgents] = useState<MintedAgent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    async function fetchGallery() {
+      try {
+        const response = await fetch('/api/agents/gallery?limit=12&sort=newest');
+        if (response.ok) {
+          const data = await response.json();
+          setAgents(data.agents || []);
+          setTotal(data.total || 0);
+        }
+      } catch (error) {
+        console.error('Failed to fetch gallery:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchGallery();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="text-center py-8">
+        <div className="inline-flex items-center gap-2 text-gray-400">
+          <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+          </svg>
+          Loading minted agents...
+        </div>
+      </div>
+    );
+  }
+
+  if (agents.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-500">No agents minted yet. Be the first!</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-white">Minted Agents</h3>
+        <span className="text-sm text-gray-400">{total} total</span>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+        {agents.map((agent) => {
+          const tierStyle = TIER_COLORS[agent.traits.tier] || TIER_COLORS.citizen;
+          return (
+            <div
+              key={agent.id}
+              className={`relative rounded-xl bg-gray-900/80 border ${tierStyle.border} overflow-hidden group hover:scale-105 transition-transform`}
+            >
+              <ShapeCharacter
+                headStyle={agent.traits.headStyle as CharacterProps["headStyle"]}
+                eyeStyle={agent.traits.eyeStyle as CharacterProps["eyeStyle"]}
+                mouthStyle={agent.traits.mouthStyle as CharacterProps["mouthStyle"]}
+                bodyStyle={agent.traits.bodyStyle as CharacterProps["bodyStyle"]}
+                feetStyle={agent.traits.feetStyle as CharacterProps["feetStyle"]}
+                accessory={agent.traits.accessory as CharacterProps["accessory"]}
+                bgStyle={agent.traits.bgStyle as CharacterProps["bgStyle"]}
+                primaryColor={agent.traits.primaryColor}
+                secondaryColor={agent.traits.secondaryColor || undefined}
+                accentColor={agent.traits.accentColor}
+                size={120}
+                className="rounded-xl"
+                rarityTier={getRarityTier(agent.rarityScore).label as "Common" | "Uncommon" | "Rare" | "Epic" | "Legendary"}
+              />
+              <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
+                <div className="flex items-center justify-between">
+                  <span className={`text-xs font-medium ${tierStyle.text} capitalize`}>
+                    {agent.traits.tier}
+                  </span>
+                  <span className={`text-xs ${getRarityTier(agent.rarityScore).color}`}>
+                    {agent.rarityScore}
+                  </span>
+                </div>
+              </div>
+              <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <a
+                  href={`https://solscan.io/token/${agent.nftMintAddress}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-1 bg-gray-900/80 rounded text-gray-400 hover:text-white"
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function AgentsPage() {
   const [character, setCharacter] = useState<(CharacterProps & { tier: string }) | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationCount, setGenerationCount] = useState(0);
   const [rarityScore, setRarityScore] = useState<number | null>(null);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [mintedHash, setMintedHash] = useState<string | null>(null);
   const svgRef = useRef<HTMLDivElement>(null);
+
+  // Function to export SVG as PNG data URL for minting
+  const getImageDataUrl = useCallback(async (): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      if (!svgRef.current) {
+        reject(new Error('SVG ref not available'));
+        return;
+      }
+
+      const svg = svgRef.current.querySelector("svg");
+      if (!svg) {
+        reject(new Error('SVG element not found'));
+        return;
+      }
+
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        reject(new Error('Canvas context not available'));
+        return;
+      }
+
+      const scale = 3;
+      canvas.width = 150 * scale;
+      canvas.height = 200 * scale;
+
+      const svgData = new XMLSerializer().serializeToString(svg);
+      const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+      const url = URL.createObjectURL(svgBlob);
+
+      const img = new Image();
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        URL.revokeObjectURL(url);
+        resolve(canvas.toDataURL("image/png"));
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error('Failed to load SVG as image'));
+      };
+      img.src = url;
+    });
+  }, []);
+
+  const handleMintSuccess = useCallback((result: { traitHash: string; nftMint: string }) => {
+    setMintedHash(result.traitHash);
+  }, []);
 
   const generateCharacterHandler = () => {
     setIsGenerating(true);
     setShowCelebration(false);
+    setMintedHash(null); // Reset minted status for new character
     setTimeout(() => {
       const newCharacter = generateRandomCharacter();
       const score = calculateRarityScore(newCharacter);
@@ -276,19 +432,48 @@ export default function AgentsPage() {
                 {character && !isGenerating && (
                   <div className="text-center">
                     <div className="relative inline-block" ref={svgRef}>
-                      <ShapeCharacter {...character} size={200} className="rounded-xl" />
+                      <ShapeCharacter {...character} size={200} className="rounded-xl" rarityTier={rarityTierInfo?.label as "Common" | "Uncommon" | "Rare" | "Epic" | "Legendary"} />
                       <div className="absolute -top-2 -right-2 px-2 py-1 bg-gray-800 border border-gray-700 rounded-full">
                         <span className="text-xs text-gray-400 font-mono">#{String(generationCount).padStart(4, "0")}</span>
                       </div>
+                      {mintedHash && (
+                        <div className="absolute -top-2 -left-2 px-2 py-1 bg-emerald-500/20 border border-emerald-500/50 rounded-full">
+                          <span className="text-xs text-emerald-400">NFT</span>
+                        </div>
+                      )}
                     </div>
 
                     <div className="mt-5 space-y-3">
+                      {/* Tier Badge */}
                       <div className={`inline-block px-4 py-1.5 rounded-full bg-gray-800 border ${tier?.border}`}>
                         <span className={`font-semibold ${tier?.text}`}>
                           {character.tier.charAt(0).toUpperCase() + character.tier.slice(1)} Agent
                         </span>
                       </div>
 
+                      {/* Rarity Score */}
+                      {rarityScore !== null && rarityTierInfo && (
+                        <div className="flex items-center justify-center gap-3">
+                          <div className="flex items-center gap-2">
+                            <span className="text-gray-500 text-sm">Rarity:</span>
+                            <span className={`font-bold text-lg ${rarityTierInfo.color}`}>
+                              {rarityScore}
+                            </span>
+                            <span className="text-gray-600 text-sm">/1000</span>
+                          </div>
+                          <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                            rarityTierInfo.label === 'Legendary' ? 'bg-yellow-500/20 text-yellow-400' :
+                            rarityTierInfo.label === 'Epic' ? 'bg-purple-500/20 text-purple-400' :
+                            rarityTierInfo.label === 'Rare' ? 'bg-blue-500/20 text-blue-400' :
+                            rarityTierInfo.label === 'Uncommon' ? 'bg-emerald-500/20 text-emerald-400' :
+                            'bg-gray-800 text-gray-400'
+                          }`}>
+                            {rarityTierInfo.label}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Trait Tags */}
                       <div className="flex flex-wrap justify-center gap-2">
                         <span className="px-2 py-1 text-xs bg-gray-800 rounded-full text-gray-400 border border-gray-700">
                           {character.headStyle}
@@ -358,6 +543,7 @@ export default function AgentsPage() {
                     <button
                       onClick={downloadCharacter}
                       className="px-4 py-3 rounded-xl font-semibold bg-red-500 hover:bg-red-400 text-white transition-all"
+                      title="Download PNG"
                     >
                       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -366,6 +552,19 @@ export default function AgentsPage() {
                   )}
                 </div>
               </div>
+
+              {/* Mint as NFT Section */}
+              {character && !isGenerating && rarityScore !== null && rarityTierInfo && !mintedHash && (
+                <div className="p-4 border-t border-gray-800">
+                  <MintButton
+                    character={character}
+                    rarityScore={rarityScore}
+                    rarityTier={rarityTierInfo.label}
+                    getImageDataUrl={getImageDataUrl}
+                    onMintSuccess={handleMintSuccess}
+                  />
+                </div>
+              )}
 
               {/* Lore Section */}
               <div className="p-4 border-t border-gray-800">
@@ -407,7 +606,7 @@ export default function AgentsPage() {
               </div>
             </div>
 
-            <TraitSection title="Clearance Levels" defaultOpen={true}>
+            <TraitSection title="Clearance Levels">
               <div className="grid grid-cols-3 gap-2">
                 {TRAIT_RARITY.palettes.map((p) => {
                   const percent = ((p.weight / paletteTotal) * 100).toFixed(1);
@@ -555,6 +754,51 @@ export default function AgentsPage() {
             </TraitSection>
           </section>
         </div>
+
+        {/* Minted Agents Gallery */}
+        <section className="mb-12 rounded-2xl bg-gray-900/60 border border-gray-800 p-6">
+          <MintedAgentsGallery />
+        </section>
+
+        {/* Pricing Info */}
+        <section className="mb-12 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-blue-500/10 border border-emerald-500/20 p-6">
+          <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <svg className="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Minting Prices
+          </h3>
+          <div className="grid sm:grid-cols-5 gap-3">
+            <div className="p-3 rounded-lg bg-gray-800/50 border border-gray-700">
+              <div className="text-gray-400 text-xs mb-1">Common</div>
+              <div className="text-white font-bold">25K $FED</div>
+              <div className="text-gray-600 text-xs">1x base</div>
+            </div>
+            <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
+              <div className="text-emerald-400 text-xs mb-1">Uncommon</div>
+              <div className="text-white font-bold">37.5K $FED</div>
+              <div className="text-gray-600 text-xs">1.5x base</div>
+            </div>
+            <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/30">
+              <div className="text-blue-400 text-xs mb-1">Rare</div>
+              <div className="text-white font-bold">50K $FED</div>
+              <div className="text-gray-600 text-xs">2x base</div>
+            </div>
+            <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/30">
+              <div className="text-purple-400 text-xs mb-1">Epic</div>
+              <div className="text-white font-bold">75K $FED</div>
+              <div className="text-gray-600 text-xs">3x base</div>
+            </div>
+            <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
+              <div className="text-yellow-400 text-xs mb-1">Legendary</div>
+              <div className="text-white font-bold">125K $FED</div>
+              <div className="text-gray-600 text-xs">5x base</div>
+            </div>
+          </div>
+          <p className="mt-4 text-xs text-gray-500">
+            All minting fees go to the treasury for LP addition. Each unique trait combination can only be minted once.
+          </p>
+        </section>
 
         <section className="text-center text-sm text-gray-500">
           <p>Fed Agents · $FED on Solana</p>
