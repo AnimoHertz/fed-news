@@ -69,15 +69,33 @@ const BG_WEIGHTS: { style: BgStyle; weight: number }[] = [
 ];
 
 const COLOR_PALETTES: { primary: string; accent: string; weight: number; tier: string }[] = [
-  { primary: "#6b7280", accent: "#ffffff", weight: 25, tier: "citizen" },
-  { primary: "#10b981", accent: "#ffffff", weight: 20, tier: "member" },
-  { primary: "#3b82f6", accent: "#ffffff", weight: 15, tier: "director" },
-  { primary: "#dc2626", accent: "#ffffff", weight: 12, tier: "special" },
-  { primary: "#a855f7", accent: "#ffffff", weight: 10, tier: "governor" },
-  { primary: "#f97316", accent: "#ffffff", weight: 8, tier: "special" },
-  { primary: "#ec4899", accent: "#ffffff", weight: 5, tier: "special" },
-  { primary: "#fbbf24", accent: "#ffffff", weight: 3, tier: "chairman" },
-  { primary: "#10b981", accent: "#10b981", weight: 2, tier: "shadow" },
+  // Citizens (common)
+  { primary: "#6b7280", accent: "#ffffff", weight: 20, tier: "citizen" },
+  { primary: "#4b5563", accent: "#d1d5db", weight: 18, tier: "citizen" },
+  { primary: "#78716c", accent: "#ffffff", weight: 16, tier: "citizen" },
+  // Members (uncommon)
+  { primary: "#10b981", accent: "#ffffff", weight: 14, tier: "member" },
+  { primary: "#14b8a6", accent: "#ffffff", weight: 12, tier: "member" },
+  { primary: "#22c55e", accent: "#ffffff", weight: 10, tier: "member" },
+  // Directors (rare)
+  { primary: "#3b82f6", accent: "#ffffff", weight: 9, tier: "director" },
+  { primary: "#6366f1", accent: "#ffffff", weight: 8, tier: "director" },
+  { primary: "#0ea5e9", accent: "#ffffff", weight: 7, tier: "director" },
+  // Special (rare)
+  { primary: "#dc2626", accent: "#ffffff", weight: 6, tier: "special" },
+  { primary: "#f97316", accent: "#ffffff", weight: 5, tier: "special" },
+  { primary: "#ec4899", accent: "#ffffff", weight: 4, tier: "special" },
+  { primary: "#f43f5e", accent: "#ffffff", weight: 4, tier: "special" },
+  // Governors (epic)
+  { primary: "#a855f7", accent: "#ffffff", weight: 3, tier: "governor" },
+  { primary: "#8b5cf6", accent: "#ffffff", weight: 3, tier: "governor" },
+  { primary: "#d946ef", accent: "#ffffff", weight: 2, tier: "governor" },
+  // Chairman (legendary)
+  { primary: "#fbbf24", accent: "#ffffff", weight: 2, tier: "chairman" },
+  { primary: "#f59e0b", accent: "#0a0a0a", weight: 1, tier: "chairman" },
+  // Shadow (legendary)
+  { primary: "#10b981", accent: "#10b981", weight: 1, tier: "shadow" },
+  { primary: "#ffffff", accent: "#0a0a0a", weight: 1, tier: "shadow" },
 ];
 
 function weightedRandom<T>(items: { weight: number }[] & T[]): T {
