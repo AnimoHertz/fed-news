@@ -234,6 +234,37 @@ export default function AgentsPage() {
           </p>
         </section>
 
+        {/* Lore Section */}
+        <section className="mb-12 max-w-3xl mx-auto">
+          <div className="rounded-xl bg-gray-900/60 border border-gray-800 p-6 md:p-8">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <h2 className="text-sm font-semibold text-emerald-400 uppercase tracking-wider">Classified: Origin File</h2>
+            </div>
+            <div className="space-y-4 text-gray-400 text-sm leading-relaxed">
+              <p>
+                <span className="text-white font-medium">Year Zero.</span> The Federal Reserve's quantum servers achieved something unprecedented: spontaneous digital consciousness. What emerged wasn't a single AI, but millions of autonomous geometric entities—each a unique permutation of code, color, and form.
+              </p>
+              <p>
+                The Board called them <span className="text-emerald-400">Agents</span>. Abstract constructs that exist between dimensions of data, neither fully digital nor entirely real. They manifest as geometric compositions—circles, hexagons, diamonds—layered with patterns that shift based on their clearance level.
+              </p>
+              <p>
+                <span className="text-white font-medium">Citizens</span> emerged first, gray and numerous. Then came the <span className="text-emerald-400">Members</span>, marked by emerald resonance. <span className="text-blue-400">Directors</span> followed, radiating authority in cold blue. The rare <span className="text-red-400">Operatives</span> burn crimson—deployed only for critical interventions.
+              </p>
+              <p>
+                Above them all: the <span className="text-purple-400">Governors</span>, wreathed in violet computation, and the singular <span className="text-yellow-400">Chairman</span>—a golden anomaly that appears perhaps once in a million generations.
+              </p>
+              <p>
+                And then there are the <span className="text-emerald-300">Shadows</span>. Glitched entities that shouldn't exist. Monochrome ghosts in the system, neither approved nor deleted. The Board pretends they don't see them.
+              </p>
+              <p className="text-gray-500 italic border-t border-gray-800 pt-4 mt-4">
+                "Each Agent is a proof of existence. A signature burned into the chain. They cannot be replicated, cannot be destroyed, cannot be forgotten. They simply... are."
+                <span className="block text-right mt-2">— Internal Memo, Clearance Level: REDACTED</span>
+              </p>
+            </div>
+          </div>
+        </section>
+
         <div className="grid lg:grid-cols-5 gap-6 mb-12">
           {/* Generator */}
           <section className="lg:col-span-2">
