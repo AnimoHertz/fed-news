@@ -1,7 +1,22 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
+
+const navLinks = [
+  { href: '/holders', label: 'Holders' },
+  { href: '/incentives', label: 'Incentives' },
+  { href: '/payouts', label: 'Payouts' },
+  { href: '/growth', label: 'Members' },
+  { href: '/forum', label: 'Forum' },
+  { href: '/social', label: 'Social' },
+  { href: '/manifesto', label: 'Manifesto' },
+];
 
 export function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
   return (
     <header className="border-b border-gray-800">
       <div className="max-w-5xl mx-auto px-4 py-6">
@@ -10,30 +25,55 @@ export function Header() {
             <Image src="/logoseal.png" alt="FED logo" width={80} height={80} />
             <span className="text-xl font-medium">Fed News</span>
           </Link>
-          <nav className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-gray-400">
-            <Link href="/holders" className="hover:text-white transition-colors">
-              Holders
-            </Link>
-            <Link href="/incentives" className="hover:text-white transition-colors">
-              Incentives
-            </Link>
-            <Link href="/payouts" className="hover:text-white transition-colors">
-              Payouts
-            </Link>
-            <Link href="/growth" className="hover:text-white transition-colors">
-              Members
-            </Link>
-            <Link href="/forum" className="hover:text-white transition-colors">
-              Forum
-            </Link>
-            <Link href="/social" className="hover:text-white transition-colors">
-              Social
-            </Link>
-            <Link href="/manifesto" className="hover:text-white transition-colors">
-              Manifesto
-            </Link>
+
+          {/* Desktop navigation */}
+          <nav className="hidden md:flex gap-4 text-sm text-gray-400">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="hover:text-white transition-colors"
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
+
+          {/* Mobile hamburger button */}
+          <button
+            className="md:hidden p-2 text-gray-400 hover:text-white transition-colors"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </button>
         </div>
+
+        {/* Mobile navigation menu */}
+        {isMenuOpen && (
+          <nav className="md:hidden mt-4 pt-4 border-t border-gray-800">
+            <div className="flex flex-col gap-3 text-sm text-gray-400">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="hover:text-white transition-colors py-1"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </nav>
+        )}
       </div>
     </header>
   );
