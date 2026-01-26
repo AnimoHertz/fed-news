@@ -314,10 +314,32 @@ async function createPaymentTransaction(
   amount: number
 ): Promise<Transaction> {
   // Dynamic import to avoid SSR issues
-  const { getAssociatedTokenAddress, createTransferInstruction } = await import('@solana/spl-token');
+  const {
+    getAssociatedTokenAddress,
+    createTransferInstruction,
+    createAssociatedTokenAccountInstruction,
+    getAccount,
+  } = await import('@solana/spl-token');
 
   const payerTokenAccount = await getAssociatedTokenAddress(FED_TOKEN_MINT, payer);
   const treasuryTokenAccount = await getAssociatedTokenAddress(FED_TOKEN_MINT, TREASURY_WALLET);
+
+  const transaction = new Transaction();
+
+  // Check if treasury ATA exists, if not create it
+  try {
+    await getAccount(connection, treasuryTokenAccount);
+  } catch {
+    // Treasury ATA doesn't exist, add instruction to create it
+    transaction.add(
+      createAssociatedTokenAccountInstruction(
+        payer, // payer
+        treasuryTokenAccount, // ata
+        TREASURY_WALLET, // owner
+        FED_TOKEN_MINT // mint
+      )
+    );
+  }
 
   // Convert amount to raw units
   const rawAmount = BigInt(Math.round(amount * Math.pow(10, FED_DECIMALS)));
@@ -329,7 +351,7 @@ async function createPaymentTransaction(
     rawAmount
   );
 
-  const transaction = new Transaction().add(transferInstruction);
+  transaction.add(transferInstruction);
 
   // Get recent blockhash
   const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
