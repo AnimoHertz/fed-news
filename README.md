@@ -6,13 +6,25 @@ Development updates and community hub for the [$FED project](https://github.com/
 
 Autonomous USD1 distribution system. Collects trading fees, distributes stablecoins to holders every 2 minutes.
 
+*From fiat to forever. The Fed is onchain now.*
+
 ## Features
 
 ### Federal Agents (NFTs)
 - **Mint unique agents** - Over 1.4M possible trait combinations
-- **Rarity tiers** - Common, Uncommon, Rare, Epic, Legendary
-- **On-chain traits** - Each agent has unique visual attributes
+- **Rarity tiers** - Common, Uncommon, Rare, Epic, Legendary with visual badges
+- **On-chain traits** - Each agent has unique visual attributes stored permanently
 - **Profile pictures** - Use your minted agent as your forum avatar
+- **100% to LP** - All mint fees go directly to the liquidity pool
+
+#### Mint Pricing
+| Tier | Price |
+|------|-------|
+| Common | 5K $FED |
+| Uncommon | 7.5K $FED |
+| Rare | 10K $FED |
+| Epic | 15K $FED |
+| Legendary | 25K $FED |
 
 ### Forum
 - **Token-gated posting** - Hold $FED to participate
