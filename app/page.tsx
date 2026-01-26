@@ -37,40 +37,49 @@ export default async function HomePage() {
 
           {/* Price Widget */}
           {price && (
-            <div className="flex flex-wrap items-center gap-6 mb-8 p-4 rounded-lg border border-gray-800 bg-gray-900/30">
-              <div>
-                <span className="text-3xl font-mono text-white">{formatPrice(price.priceUsd)}</span>
-                <span className={`ml-3 text-sm font-mono ${price.priceChange24h >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                  {price.priceChange24h >= 0 ? '+' : ''}{price.priceChange24h.toFixed(2)}%
-                </span>
-              </div>
-              <div className="flex gap-6 text-sm">
+            <div className="mb-8">
+              <div className="flex flex-wrap items-center gap-6 p-4 rounded-t-lg border border-gray-800 bg-gray-900/30">
                 <div>
-                  <span className="text-gray-500">MCap</span>
-                  <span className="text-white ml-2">{formatLargeNumber(price.marketCap)}</span>
+                  <span className="text-3xl font-mono text-white">{formatPrice(price.priceUsd)}</span>
+                  <span className={`ml-3 text-sm font-mono ${price.priceChange24h >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                    {price.priceChange24h >= 0 ? '+' : ''}{price.priceChange24h.toFixed(2)}%
+                  </span>
                 </div>
-                <div>
-                  <span className="text-gray-500">24h Vol</span>
-                  <span className="text-white ml-2">{formatLargeNumber(price.volume24h)}</span>
+                <div className="flex gap-6 text-sm">
+                  <div>
+                    <span className="text-gray-500">MCap</span>
+                    <span className="text-white ml-2">{formatLargeNumber(price.marketCap)}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">24h Vol</span>
+                    <span className="text-white ml-2">{formatLargeNumber(price.volume24h)}</span>
+                  </div>
+                </div>
+                <div className="flex gap-2 ml-auto">
+                  <a
+                    href={DEXSCREENER_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-1.5 text-sm text-gray-400 border border-gray-700 rounded hover:text-white hover:border-gray-500 transition-colors"
+                  >
+                    Full Chart
+                  </a>
+                  <a
+                    href={JUPITER_SWAP_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-1.5 text-sm font-medium text-black bg-white rounded hover:bg-gray-200 transition-colors"
+                  >
+                    Buy $FED
+                  </a>
                 </div>
               </div>
-              <div className="flex gap-2 ml-auto">
-                <a
-                  href={DEXSCREENER_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-3 py-1.5 text-sm text-gray-400 border border-gray-700 rounded hover:text-white hover:border-gray-500 transition-colors"
-                >
-                  Chart
-                </a>
-                <a
-                  href={JUPITER_SWAP_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-4 py-1.5 text-sm font-medium text-black bg-white rounded hover:bg-gray-200 transition-colors"
-                >
-                  Buy $FED
-                </a>
+              <div className="rounded-b-lg border border-t-0 border-gray-800 overflow-hidden">
+                <iframe
+                  src="https://dexscreener.com/solana/132STreShuLRNgkyF1QECv37yP9Cdp8JBAgnKBgKafed?embed=1&theme=dark&info=0&trades=0&chartLeftToolbar=0&chartDefaultOnMobile=1"
+                  className="w-full h-[400px]"
+                  title="$FED Price Chart"
+                />
               </div>
             </div>
           )}
