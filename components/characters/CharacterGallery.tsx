@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ShapeCharacter, CHARACTER_PRESETS, CharacterProps, HeadStyle, EyeStyle, MouthStyle, BodyStyle, FeetStyle, Accessory } from "./ShapeCharacter";
+import { ShapeCharacter, CHARACTER_PRESETS, CharacterProps, HeadStyle, EyeStyle, MouthStyle, BodyStyle, FeetStyle, Accessory, BgStyle } from "./ShapeCharacter";
 
 // Weighted trait pools
 const HEAD_WEIGHTS: { style: HeadStyle; weight: number }[] = [
@@ -58,6 +58,16 @@ const ACCESSORY_WEIGHTS: { accessory: Accessory; weight: number }[] = [
   { accessory: "antenna", weight: 4 },
 ];
 
+const BG_WEIGHTS: { style: BgStyle; weight: number }[] = [
+  { style: "solid", weight: 30 },
+  { style: "gradient", weight: 20 },
+  { style: "radial", weight: 18 },
+  { style: "grid", weight: 12 },
+  { style: "dots", weight: 10 },
+  { style: "stars", weight: 6 },
+  { style: "circuit", weight: 4 },
+];
+
 const COLOR_PALETTES: { primary: string; accent: string; weight: number; tier: string }[] = [
   { primary: "#6b7280", accent: "#ffffff", weight: 25, tier: "citizen" },
   { primary: "#10b981", accent: "#ffffff", weight: 20, tier: "member" },
@@ -88,6 +98,7 @@ export function calculateRarityScore(char: CharacterProps & { tier: string }): n
   const bodyTotal = BODY_WEIGHTS.reduce((s, b) => s + b.weight, 0);
   const feetTotal = FEET_WEIGHTS.reduce((s, f) => s + f.weight, 0);
   const accTotal = ACCESSORY_WEIGHTS.reduce((s, a) => s + a.weight, 0);
+  const bgTotal = BG_WEIGHTS.reduce((s, b) => s + b.weight, 0);
   const paletteTotal = COLOR_PALETTES.reduce((s, p) => s + p.weight, 0);
 
   const headWeight = HEAD_WEIGHTS.find(h => h.style === char.headStyle)?.weight || 25;
@@ -96,6 +107,7 @@ export function calculateRarityScore(char: CharacterProps & { tier: string }): n
   const bodyWeight = BODY_WEIGHTS.find(b => b.style === char.bodyStyle)?.weight || 28;
   const feetWeight = FEET_WEIGHTS.find(f => f.style === char.feetStyle)?.weight || 30;
   const accWeight = ACCESSORY_WEIGHTS.find(a => a.accessory === char.accessory)?.weight || 35;
+  const bgWeight = BG_WEIGHTS.find(b => b.style === char.bgStyle)?.weight || 30;
   const paletteWeight = COLOR_PALETTES.find(p => p.primary === char.primaryColor)?.weight || 25;
 
   // Convert weights to rarity (inverse - lower weight = higher rarity)
@@ -105,10 +117,11 @@ export function calculateRarityScore(char: CharacterProps & { tier: string }): n
   const bodyRarity = 1 - (bodyWeight / bodyTotal);
   const feetRarity = 1 - (feetWeight / feetTotal);
   const accRarity = 1 - (accWeight / accTotal);
+  const bgRarity = 1 - (bgWeight / bgTotal);
   const paletteRarity = 1 - (paletteWeight / paletteTotal);
 
   // Average rarity, weighted slightly towards color (tier)
-  const avgRarity = (headRarity + eyeRarity + mouthRarity + bodyRarity + feetRarity + accRarity + paletteRarity * 2) / 8;
+  const avgRarity = (headRarity + eyeRarity + mouthRarity + bodyRarity + feetRarity + accRarity + bgRarity + paletteRarity * 2) / 9;
 
   return Math.round(avgRarity * 1000);
 }
@@ -130,6 +143,7 @@ export function generateRandomCharacter(): CharacterProps & { tier: string } {
   const body = weightedRandom(BODY_WEIGHTS);
   const feet = weightedRandom(FEET_WEIGHTS);
   const accessory = weightedRandom(ACCESSORY_WEIGHTS);
+  const bg = weightedRandom(BG_WEIGHTS);
   const palette = weightedRandom(COLOR_PALETTES);
 
   return {
@@ -139,6 +153,7 @@ export function generateRandomCharacter(): CharacterProps & { tier: string } {
     bodyStyle: body.style,
     feetStyle: feet.style,
     accessory: accessory.accessory,
+    bgStyle: bg.style,
     primaryColor: palette.primary,
     accentColor: palette.accent,
     tier: palette.tier,
@@ -153,6 +168,7 @@ export const TRAIT_RARITY = {
   bodies: BODY_WEIGHTS,
   feet: FEET_WEIGHTS,
   accessories: ACCESSORY_WEIGHTS,
+  backgrounds: BG_WEIGHTS,
   palettes: COLOR_PALETTES,
 };
 
@@ -164,7 +180,8 @@ export const TOTAL_COMBINATIONS =
   BODY_WEIGHTS.length *
   FEET_WEIGHTS.length *
   ACCESSORY_WEIGHTS.length *
+  BG_WEIGHTS.length *
   COLOR_PALETTES.length;
 
 export { ShapeCharacter, CHARACTER_PRESETS };
-export type { CharacterProps, HeadStyle, EyeStyle, MouthStyle, BodyStyle, FeetStyle, Accessory };
+export type { CharacterProps, HeadStyle, EyeStyle, MouthStyle, BodyStyle, FeetStyle, Accessory, BgStyle };

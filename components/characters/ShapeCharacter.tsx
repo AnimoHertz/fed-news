@@ -8,6 +8,7 @@ export type MouthStyle = "smile" | "neutral" | "open" | "smirk" | "frown" | "tee
 export type BodyStyle = "round" | "square" | "wide" | "tall" | "split";
 export type FeetStyle = "pill" | "split" | "square" | "round" | "none";
 export type Accessory = "none" | "badge" | "antenna" | "mark" | "glow" | "hat" | "glasses";
+export type BgStyle = "solid" | "gradient" | "radial" | "grid" | "dots" | "circuit" | "stars";
 
 export interface CharacterProps {
   headStyle?: HeadStyle;
@@ -16,6 +17,7 @@ export interface CharacterProps {
   bodyStyle?: BodyStyle;
   feetStyle?: FeetStyle;
   accessory?: Accessory;
+  bgStyle?: BgStyle;
   primaryColor?: string;
   accentColor?: string;
   size?: number;
@@ -29,11 +31,111 @@ export function ShapeCharacter({
   bodyStyle = "round",
   feetStyle = "pill",
   accessory = "none",
+  bgStyle = "solid",
   primaryColor = "#dc2626",
   accentColor = "#ffffff",
   size = 200,
   className = "",
 }: CharacterProps) {
+
+  // Background rendering
+  const renderBackground = () => {
+    const bgBase = "#0a0a0a";
+    const bgAccent = primaryColor;
+
+    switch (bgStyle) {
+      case "gradient":
+        return (
+          <>
+            <defs>
+              <linearGradient id={`bg-grad-${primaryColor.replace('#', '')}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor={bgBase} />
+                <stop offset="100%" stopColor={bgAccent} stopOpacity="0.3" />
+              </linearGradient>
+            </defs>
+            <rect x="0" y="0" width="150" height="200" fill={`url(#bg-grad-${primaryColor.replace('#', '')})`} />
+          </>
+        );
+      case "radial":
+        return (
+          <>
+            <defs>
+              <radialGradient id={`bg-radial-${primaryColor.replace('#', '')}`} cx="50%" cy="50%" r="70%">
+                <stop offset="0%" stopColor={bgAccent} stopOpacity="0.25" />
+                <stop offset="100%" stopColor={bgBase} />
+              </radialGradient>
+            </defs>
+            <rect x="0" y="0" width="150" height="200" fill={`url(#bg-radial-${primaryColor.replace('#', '')})`} />
+          </>
+        );
+      case "grid":
+        return (
+          <>
+            <defs>
+              <pattern id="grid-pattern" width="15" height="15" patternUnits="userSpaceOnUse">
+                <path d="M 15 0 L 0 0 0 15" fill="none" stroke={bgAccent} strokeWidth="0.5" strokeOpacity="0.2" />
+              </pattern>
+            </defs>
+            <rect x="0" y="0" width="150" height="200" fill={bgBase} />
+            <rect x="0" y="0" width="150" height="200" fill="url(#grid-pattern)" />
+          </>
+        );
+      case "dots":
+        return (
+          <>
+            <defs>
+              <pattern id="dots-pattern" width="12" height="12" patternUnits="userSpaceOnUse">
+                <circle cx="6" cy="6" r="1.5" fill={bgAccent} fillOpacity="0.2" />
+              </pattern>
+            </defs>
+            <rect x="0" y="0" width="150" height="200" fill={bgBase} />
+            <rect x="0" y="0" width="150" height="200" fill="url(#dots-pattern)" />
+          </>
+        );
+      case "circuit":
+        return (
+          <>
+            <rect x="0" y="0" width="150" height="200" fill={bgBase} />
+            <g stroke={bgAccent} strokeOpacity="0.15" strokeWidth="1" fill="none">
+              <path d="M0,40 H40 V80 H80" />
+              <path d="M150,60 H110 V100 H70" />
+              <path d="M30,200 V160 H70 V120" />
+              <path d="M120,200 V170 H90 V140" />
+              <circle cx="40" cy="40" r="3" fill={bgAccent} fillOpacity="0.2" />
+              <circle cx="80" cy="80" r="3" fill={bgAccent} fillOpacity="0.2" />
+              <circle cx="110" cy="60" r="3" fill={bgAccent} fillOpacity="0.2" />
+              <circle cx="70" cy="100" r="3" fill={bgAccent} fillOpacity="0.2" />
+              <circle cx="70" cy="120" r="3" fill={bgAccent} fillOpacity="0.2" />
+              <circle cx="90" cy="140" r="3" fill={bgAccent} fillOpacity="0.2" />
+            </g>
+          </>
+        );
+      case "stars":
+        return (
+          <>
+            <rect x="0" y="0" width="150" height="200" fill={bgBase} />
+            <g fill={bgAccent} fillOpacity="0.4">
+              <circle cx="20" cy="25" r="1" />
+              <circle cx="45" cy="15" r="1.5" />
+              <circle cx="80" cy="30" r="1" />
+              <circle cx="120" cy="20" r="1.2" />
+              <circle cx="135" cy="45" r="1" />
+              <circle cx="15" cy="70" r="1.3" />
+              <circle cx="130" cy="85" r="1" />
+              <circle cx="25" cy="120" r="1" />
+              <circle cx="140" cy="130" r="1.5" />
+              <circle cx="10" cy="160" r="1" />
+              <circle cx="50" cy="175" r="1.2" />
+              <circle cx="100" cy="165" r="1" />
+              <circle cx="125" cy="185" r="1.3" />
+            </g>
+          </>
+        );
+      case "solid":
+      default:
+        return <rect x="0" y="0" width="150" height="200" fill={bgBase} />;
+    }
+  };
 
   // Main face/head - single unified head with facial features
   const renderHead = () => {
@@ -408,8 +510,8 @@ export function ShapeCharacter({
       viewBox="0 0 150 200"
       className={className}
     >
-      {/* Pure black background */}
-      <rect x="0" y="0" width="150" height="200" fill="#0a0a0a" />
+      {/* Background */}
+      {renderBackground()}
 
       {/* Glow renders first */}
       {accessory === "glow" && renderAccessory()}

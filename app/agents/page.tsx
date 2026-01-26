@@ -19,12 +19,12 @@ const TIER_COLORS: Record<string, { border: string; glow: string; text: string; 
 
 // Preview characters with faces
 const PREVIEW_CHARACTERS: (CharacterProps & { tier: string })[] = [
-  { headStyle: "round", eyeStyle: "round", mouthStyle: "smile", bodyStyle: "round", feetStyle: "pill", accessory: "badge", primaryColor: "#dc2626", tier: "special" },
-  { headStyle: "horns", eyeStyle: "angry", mouthStyle: "teeth", bodyStyle: "wide", feetStyle: "split", accessory: "glow", primaryColor: "#a855f7", tier: "governor" },
-  { headStyle: "square", eyeStyle: "wide", mouthStyle: "neutral", bodyStyle: "square", feetStyle: "square", accessory: "glasses", primaryColor: "#3b82f6", tier: "director" },
-  { headStyle: "pointed", eyeStyle: "slit", mouthStyle: "frown", bodyStyle: "split", feetStyle: "none", accessory: "glow", primaryColor: "#10b981", accentColor: "#10b981", tier: "shadow" },
-  { headStyle: "split", eyeStyle: "half", mouthStyle: "smirk", bodyStyle: "tall", feetStyle: "pill", primaryColor: "#fbbf24", tier: "chairman" },
-  { headStyle: "flat", eyeStyle: "wink", mouthStyle: "open", bodyStyle: "wide", feetStyle: "pill", accessory: "hat", primaryColor: "#f97316", tier: "special" },
+  { headStyle: "round", eyeStyle: "round", mouthStyle: "smile", bodyStyle: "round", feetStyle: "pill", accessory: "badge", bgStyle: "gradient", primaryColor: "#dc2626", tier: "special" },
+  { headStyle: "horns", eyeStyle: "angry", mouthStyle: "teeth", bodyStyle: "wide", feetStyle: "split", accessory: "glow", bgStyle: "circuit", primaryColor: "#a855f7", tier: "governor" },
+  { headStyle: "square", eyeStyle: "wide", mouthStyle: "neutral", bodyStyle: "square", feetStyle: "square", accessory: "glasses", bgStyle: "grid", primaryColor: "#3b82f6", tier: "director" },
+  { headStyle: "pointed", eyeStyle: "slit", mouthStyle: "frown", bodyStyle: "split", feetStyle: "none", accessory: "glow", bgStyle: "stars", primaryColor: "#10b981", accentColor: "#10b981", tier: "shadow" },
+  { headStyle: "split", eyeStyle: "half", mouthStyle: "smirk", bodyStyle: "tall", feetStyle: "pill", bgStyle: "radial", primaryColor: "#fbbf24", tier: "chairman" },
+  { headStyle: "flat", eyeStyle: "wink", mouthStyle: "open", bodyStyle: "wide", feetStyle: "pill", accessory: "hat", bgStyle: "dots", primaryColor: "#f97316", tier: "special" },
 ];
 
 function getRarityLabel(weight: number, total: number): { label: string; color: string } {
@@ -218,6 +218,7 @@ export default function AgentsPage() {
   const bodyTotal = TRAIT_RARITY.bodies.reduce((s, b) => s + b.weight, 0);
   const feetTotal = TRAIT_RARITY.feet.reduce((s, f) => s + f.weight, 0);
   const accTotal = TRAIT_RARITY.accessories.reduce((s, a) => s + a.weight, 0);
+  const bgTotal = TRAIT_RARITY.backgrounds.reduce((s, b) => s + b.weight, 0);
   const paletteTotal = TRAIT_RARITY.palettes.reduce((s, p) => s + p.weight, 0);
 
   return (
@@ -327,6 +328,11 @@ export default function AgentsPage() {
                         {character.accessory !== "none" && (
                           <span className="px-2 py-1 text-xs bg-gray-800 rounded-full text-gray-400 border border-gray-700">
                             {character.accessory}
+                          </span>
+                        )}
+                        {character.bgStyle && character.bgStyle !== "solid" && (
+                          <span className="px-2 py-1 text-xs bg-gray-800 rounded-full text-gray-400 border border-gray-700">
+                            {character.bgStyle} bg
                           </span>
                         )}
                       </div>
@@ -468,6 +474,24 @@ export default function AgentsPage() {
                 {TRAIT_RARITY.bodies.map((b) => {
                   const percent = ((b.weight / bodyTotal) * 100).toFixed(1);
                   const rarity = getRarityLabel(b.weight, bodyTotal);
+                  return (
+                    <div key={b.style} className="flex items-center justify-between text-sm">
+                      <span className="text-gray-400 capitalize">{b.style}</span>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xs ${rarity.color}`}>{rarity.label}</span>
+                        <span className="text-gray-600 w-10 text-right">{percent}%</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </TraitSection>
+
+            <TraitSection title="Backgrounds">
+              <div className="space-y-1">
+                {TRAIT_RARITY.backgrounds.map((b) => {
+                  const percent = ((b.weight / bgTotal) * 100).toFixed(1);
+                  const rarity = getRarityLabel(b.weight, bgTotal);
                   return (
                     <div key={b.style} className="flex items-center justify-between text-sm">
                       <span className="text-gray-400 capitalize">{b.style}</span>

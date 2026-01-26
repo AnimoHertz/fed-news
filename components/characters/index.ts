@@ -8,6 +8,7 @@ export {
   type BodyStyle,
   type FeetStyle,
   type Accessory,
+  type BgStyle,
 } from "./ShapeCharacter";
 
 export {
