@@ -33,8 +33,9 @@ async function fetchUsd1Earnings(
     let lastSignature: string | undefined;
     const maxPages = 5; // Limit pages to keep it fast
 
+    // Query the distribution wallet's transactions to find transfers TO this wallet
     for (let page = 0; page < maxPages; page++) {
-      const url = new URL(`https://api.helius.xyz/v0/addresses/${walletAddress}/transactions`);
+      const url = new URL(`https://api.helius.xyz/v0/addresses/${FED_DISTRIBUTION_WALLET}/transactions`);
       url.searchParams.set('api-key', heliusApiKey);
       if (lastSignature) {
         url.searchParams.set('before', lastSignature);
@@ -50,11 +51,10 @@ async function fetchUsd1Earnings(
         if (tx.tokenTransfers) {
           for (const transfer of tx.tokenTransfers) {
             const isUSD1 = transfer.mint === USD1_MINT;
-            const isFromDistribution = transfer.fromUserAccount === FED_DISTRIBUTION_WALLET;
             const isRecipient = transfer.toUserAccount === walletAddress;
             const hasAmount = transfer.tokenAmount > 0;
 
-            if (isUSD1 && isFromDistribution && isRecipient && hasAmount) {
+            if (isUSD1 && isRecipient && hasAmount) {
               totalReceived += transfer.tokenAmount;
             }
           }

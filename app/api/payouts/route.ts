@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { fetchTokenBalance, getTierFromBalance, getTierInfo } from '@/lib/token';
 
 // USD1 token mint address on Solana
@@ -25,111 +25,187 @@ interface Transfer {
 }
 
 export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams;
-  const address = searchParams.get('address');
-
-  if (!address) {
-    return NextResponse.json({ error: 'Address is required' }, { status: 400 });
-  }
-
-  // Validate Solana address format
-  if (!/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)) {
-    return NextResponse.json({ error: 'Invalid Solana address format' }, { status: 400 });
-  }
-
-  const heliusApiKey = process.env.HELIUS_API_KEY || process.env.HELIUS_API;
-  if (!heliusApiKey) {
-    return NextResponse.json({ error: 'API key not configured' }, { status: 500 });
-  }
-
   try {
-    // Fetch FED token balance to determine tier
-    const fedBalance = await fetchTokenBalance(address);
-    const tier = getTierFromBalance(fedBalance);
-    const tierInfo = getTierInfo(tier);
-    const tierMultiplier = TIER_MULTIPLIERS[tier] || 1.0;
-    const usd1Transfers: Transfer[] = [];
-    let totalReceived = 0;
-    let lastSignature: string | undefined;
-    let pageCount = 0;
-    const maxPages = 20;
+    const searchParams = request.nextUrl.searchParams;
+    const address = searchParams.get('address');
 
-
-    // Use Helius to get detailed transaction data with individual transfer amounts
-    while (pageCount < maxPages) {
-      const url: URL = new URL(`https://api.helius.xyz/v0/addresses/${address}/transactions`);
-      url.searchParams.set('api-key', heliusApiKey);
-      if (lastSignature) {
-        url.searchParams.set('before', lastSignature);
-      }
-
-      const response = await fetch(url.toString());
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Helius API error:', response.status, errorText);
-        throw new Error(`Helius API error: ${response.status}`);
-      }
-
-      const transactions = await response.json();
-
-      if (transactions.length === 0) {
-        break;
-      }
-
-      // Process each transaction
-      for (const tx of transactions) {
-        // Check tokenTransfers for the specific amount sent TO this address
-        if (tx.tokenTransfers && tx.tokenTransfers.length > 0) {
-          for (const transfer of tx.tokenTransfers) {
-            // Filter: USD1 token, from distribution wallet, to this address, non-zero
-            const isUSD1 = transfer.mint === USD1_MINT;
-            const isFromDistribution = transfer.fromUserAccount === FED_DISTRIBUTION_WALLET;
-            const isRecipient = transfer.toUserAccount === address;
-            const hasAmount = transfer.tokenAmount > 0;
-
-            if (isUSD1 && isFromDistribution && isRecipient && hasAmount) {
-              const amount = transfer.tokenAmount;
-              totalReceived += amount;
-
-              usd1Transfers.push({
-                signature: tx.signature,
-                timestamp: tx.timestamp * 1000,
-                amount,
-                from: transfer.fromUserAccount || 'Unknown',
-              });
-            }
-          }
-        }
-      }
-
-      lastSignature = transactions[transactions.length - 1].signature;
-      pageCount++;
-
-      if (transactions.length < 100) {
-        break;
-      }
+    if (!address) {
+      return new Response(JSON.stringify({ error: 'Address is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
-    // Sort by timestamp descending (most recent first)
-    usd1Transfers.sort((a, b) => b.timestamp - a.timestamp);
+    // Validate Solana address format
+    if (!/^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(address)) {
+      return new Response(JSON.stringify({ error: 'Invalid Solana address format' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
 
-    return NextResponse.json({
-      totalReceived,
-      transferCount: usd1Transfers.length,
-      transfers: usd1Transfers.slice(0, 50),
-      // Tier info
-      fedBalance,
-      tier: tier,
-      tierName: tierInfo.name,
-      tierColor: tierInfo.color,
-      tierMultiplier,
+    const heliusApiKey = process.env.HELIUS_API_KEY || process.env.HELIUS_API;
+    if (!heliusApiKey) {
+      console.error('HELIUS_API_KEY not found in environment');
+      return new Response(JSON.stringify({ error: 'API key not configured' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+  // Create a streaming response
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream({
+    async start(controller) {
+      const sendEvent = (data: object) => {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
+      };
+
+      try {
+        // Fetch FED token balance to determine tier
+        sendEvent({ type: 'status', message: 'Fetching token balance...' });
+        const fedBalance = await fetchTokenBalance(address);
+        const tier = getTierFromBalance(fedBalance);
+        const tierInfo = getTierInfo(tier);
+        const tierMultiplier = TIER_MULTIPLIERS[tier] || 1.0;
+
+        const usd1Transfers: Transfer[] = [];
+        let totalReceived = 0;
+        let lastSignature: string | undefined;
+        let pageCount = 0;
+        const maxPages = 100;
+        let totalTransactionsScanned = 0;
+
+        sendEvent({ type: 'status', message: 'Scanning distribution history...' });
+
+        // Query the DISTRIBUTION WALLET's transactions to find transfers TO the user
+        while (pageCount < maxPages) {
+          const url: URL = new URL(`https://api.helius.xyz/v0/addresses/${FED_DISTRIBUTION_WALLET}/transactions`);
+          url.searchParams.set('api-key', heliusApiKey);
+          if (lastSignature) {
+            url.searchParams.set('before', lastSignature);
+          }
+
+          let response;
+          let retries = 0;
+          const maxRetries = 3;
+
+          while (retries < maxRetries) {
+            try {
+              response = await fetch(url.toString());
+              if (response.ok) break;
+
+              if (response.status === 429) {
+                // Rate limited - wait and retry
+                retries++;
+                sendEvent({ type: 'status', message: `Rate limited, waiting... (attempt ${retries}/${maxRetries})` });
+                await new Promise(resolve => setTimeout(resolve, 2000 * retries));
+                continue;
+              }
+
+              throw new Error(`Helius API error: ${response.status}`);
+            } catch (fetchError) {
+              retries++;
+              if (retries >= maxRetries) throw fetchError;
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+          }
+
+          if (!response || !response.ok) {
+            throw new Error('Failed to fetch after retries');
+          }
+
+          const transactions = await response.json();
+
+          if (transactions.length === 0) {
+            break;
+          }
+
+          totalTransactionsScanned += transactions.length;
+
+          // Process each transaction from the distribution wallet
+          for (const tx of transactions) {
+            if (tx.tokenTransfers && tx.tokenTransfers.length > 0) {
+              for (const transfer of tx.tokenTransfers) {
+                const isUSD1 = transfer.mint === USD1_MINT;
+                const isRecipient = transfer.toUserAccount === address;
+                const hasAmount = transfer.tokenAmount > 0;
+
+                if (isUSD1 && isRecipient && hasAmount) {
+                  const amount = transfer.tokenAmount;
+                  totalReceived += amount;
+
+                  usd1Transfers.push({
+                    signature: tx.signature,
+                    timestamp: tx.timestamp * 1000,
+                    amount,
+                    from: FED_DISTRIBUTION_WALLET,
+                  });
+                }
+              }
+            }
+          }
+
+          // Send progress update
+          sendEvent({
+            type: 'progress',
+            page: pageCount + 1,
+            maxPages,
+            transactionsScanned: totalTransactionsScanned,
+            transfersFound: usd1Transfers.length,
+            totalSoFar: totalReceived,
+          });
+
+          lastSignature = transactions[transactions.length - 1].signature;
+          pageCount++;
+
+          // Send keepalive and small delay to avoid rate limiting
+          await new Promise(resolve => setTimeout(resolve, 150));
+
+          if (transactions.length < 100) {
+            break;
+          }
+        }
+
+        // Sort by timestamp descending (most recent first)
+        usd1Transfers.sort((a, b) => b.timestamp - a.timestamp);
+
+        // Send final result
+        sendEvent({
+          type: 'complete',
+          totalReceived,
+          transferCount: usd1Transfers.length,
+          transfers: usd1Transfers.slice(0, 50),
+          fedBalance,
+          tier: tier,
+          tierName: tierInfo.name,
+          tierColor: tierInfo.color,
+          tierMultiplier,
+          pagesScanned: pageCount,
+          totalTransactionsScanned,
+        });
+
+        controller.close();
+      } catch (error) {
+        console.error('Payout lookup error:', error);
+        sendEvent({ type: 'error', message: 'Failed to fetch payout data. Please try again.' });
+        controller.close();
+      }
+    },
+  });
+
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
     });
   } catch (error) {
-    console.error('Payout lookup error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch payout data. Please try again.' },
-      { status: 500 }
-    );
+    console.error('Payouts API error:', error);
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
 }

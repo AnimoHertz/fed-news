@@ -256,3 +256,27 @@ body {
     #10b981 100%
   );
 }
+
+/* Animated gradient line */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+.animated-gradient-line {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    #10b981 0%,
+    #3b82f6 25%,
+    #8b5cf6 50%,
+    #ec4899 75%,
+    #10b981 100%
+  );
+  background-size: 200% 100%;
+  animation: gradient-shift 4s linear infinite;
+}
