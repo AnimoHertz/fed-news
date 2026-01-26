@@ -14,11 +14,11 @@ interface WalletProviderProps {
 
 function getRpcEndpoint(): string {
   const apiKey = process.env.NEXT_PUBLIC_HELIUS_API_KEY;
-  if (apiKey) {
-    return `https://mainnet.helius-rpc.com/?api-key=${apiKey}`;
-  }
-  // Fallback to public RPC (rate limited)
-  return 'https://api.mainnet-beta.solana.com';
+  const endpoint = apiKey
+    ? `https://mainnet.helius-rpc.com/?api-key=${apiKey}`
+    : 'https://api.mainnet-beta.solana.com';
+  console.log('[RPC] Using endpoint:', apiKey ? 'Helius' : 'Public fallback');
+  return endpoint;
 }
 
 export function WalletProvider({ children }: WalletProviderProps) {

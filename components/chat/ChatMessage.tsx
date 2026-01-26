@@ -187,7 +187,7 @@ export function ChatMessage({
           className="shrink-0"
         >
           {message.profileNft ? (
-            <div className="w-10 h-12 rounded-md overflow-hidden border border-gray-700 hover:border-gray-600 transition-colors">
+            <div className="w-9 rounded-md overflow-hidden border border-gray-700 hover:border-gray-600 transition-colors" style={{ aspectRatio: '3/4' }}>
               <ShapeCharacter
                 headStyle={message.profileNft.traits.headStyle as CharacterProps['headStyle']}
                 eyeStyle={message.profileNft.traits.eyeStyle as CharacterProps['eyeStyle']}
@@ -200,6 +200,8 @@ export function ChatMessage({
                 secondaryColor={message.profileNft.traits.secondaryColor || undefined}
                 accentColor={message.profileNft.traits.accentColor}
                 size={48}
+                showRarityBadge={false}
+                className="w-full h-full"
               />
             </div>
           ) : (

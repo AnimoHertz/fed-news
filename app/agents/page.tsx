@@ -156,19 +156,22 @@ function TraitSection({
 }
 
 // Minted Agents Gallery Component
-function MintedAgentsGallery() {
+function MintedAgentsGallery({ refreshKey }: { refreshKey: number }) {
   const [agents, setAgents] = useState<MintedAgent[]>([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
+  const [totalRaised, setTotalRaised] = useState(0);
 
   useEffect(() => {
     async function fetchGallery() {
+      setLoading(true);
       try {
         const response = await fetch('/api/agents/gallery?limit=12&sort=newest');
         if (response.ok) {
           const data = await response.json();
           setAgents(data.agents || []);
           setTotal(data.total || 0);
+          setTotalRaised(data.totalRaised || 0);
         }
       } catch (error) {
         console.error('Failed to fetch gallery:', error);
@@ -177,7 +180,7 @@ function MintedAgentsGallery() {
       }
     }
     fetchGallery();
-  }, []);
+  }, [refreshKey]);
 
   if (loading) {
     return (
@@ -205,7 +208,17 @@ function MintedAgentsGallery() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-white">Minted Agents</h3>
-        <span className="text-sm text-gray-400">{total} total</span>
+        <div className="flex items-center gap-4">
+          {totalRaised > 0 && (
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30">
+              <svg className="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+              <span className="text-xs text-emerald-400 font-medium">{totalRaised.toLocaleString()} $FED raised</span>
+            </div>
+          )}
+          <span className="text-sm text-gray-400">{total} minted</span>
+        </div>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
         {agents.map((agent) => {
@@ -242,10 +255,11 @@ function MintedAgentsGallery() {
               </div>
               <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <a
-                  href={`https://solscan.io/token/${agent.nftMintAddress}`}
+                  href={`https://solscan.io/tx/${agent.paymentTransaction}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-1 bg-gray-900/80 rounded text-gray-400 hover:text-white"
+                  title="View transaction"
                 >
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -267,6 +281,7 @@ export default function AgentsPage() {
   const [rarityScore, setRarityScore] = useState<number | null>(null);
   const [showCelebration, setShowCelebration] = useState(false);
   const [mintedHash, setMintedHash] = useState<string | null>(null);
+  const [galleryRefreshKey, setGalleryRefreshKey] = useState(0);
   const svgRef = useRef<HTMLDivElement>(null);
 
   // Function to export SVG as PNG data URL for minting
@@ -314,6 +329,7 @@ export default function AgentsPage() {
 
   const handleMintSuccess = useCallback((result: { traitHash: string; nftMint: string }) => {
     setMintedHash(result.traitHash);
+    setGalleryRefreshKey(prev => prev + 1);
   }, []);
 
   const generateCharacterHandler = () => {
@@ -386,7 +402,7 @@ export default function AgentsPage() {
         <section className="mb-10 text-center">
           <h1 className="text-4xl md:text-5xl font-medium text-white mb-4">Fed Agent Generator</h1>
           <p className="text-gray-400 max-w-xl mx-auto">
-            Deploy your unique Fed Agent. Rare combinations unlock legendary operatives.
+            Deploy your unique Fed Agent. Rare combinations unlock legendary operatives. All fees go to LP.
           </p>
         </section>
 
@@ -459,7 +475,6 @@ export default function AgentsPage() {
                             <span className={`font-bold text-lg ${rarityTierInfo.color}`}>
                               {rarityScore}
                             </span>
-                            <span className="text-gray-600 text-sm">/1000</span>
                           </div>
                           <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                             rarityTierInfo.label === 'Legendary' ? 'bg-yellow-500/20 text-yellow-400' :
@@ -524,7 +539,7 @@ export default function AgentsPage() {
                         ? "bg-gray-800 text-gray-500 cursor-not-allowed"
                         : character
                         ? "bg-white/10 hover:bg-white/15 text-white border border-white/20"
-                        : "bg-red-500 hover:bg-red-400 text-white"
+                        : "bg-emerald-500 hover:bg-emerald-400 text-white"
                     }`}
                   >
                     {isGenerating ? (
@@ -555,7 +570,7 @@ export default function AgentsPage() {
 
               {/* Mint as NFT Section */}
               {character && !isGenerating && rarityScore !== null && rarityTierInfo && !mintedHash && (
-                <div className="p-4 border-t border-gray-800">
+                <div className="p-4 border-t border-gray-800 space-y-3">
                   <MintButton
                     character={character}
                     rarityScore={rarityScore}
@@ -563,6 +578,9 @@ export default function AgentsPage() {
                     getImageDataUrl={getImageDataUrl}
                     onMintSuccess={handleMintSuccess}
                   />
+                  <p className="text-xs text-center text-gray-500">
+                    100% of mint fees go to the liquidity pool
+                  </p>
                 </div>
               )}
 
@@ -574,13 +592,13 @@ export default function AgentsPage() {
                 </div>
                 <div className="text-xs text-gray-400 space-y-2 leading-relaxed">
                   <p>
-                    <span className="text-gray-500 font-mono">[REDACTED]</span> In the shadow markets where digital currencies flow like blood through veins, they emerged—not born, but <span className="text-white">forged</span>.
+                    <span className="text-gray-500 font-mono">[DECLASSIFIED]</span> When the old system collapsed, the agents didn&apos;t disappear. They <span className="text-white">migrated</span>.
                   </p>
                   <p>
-                    The Federal Agents are autonomous constructs, each one a unique cipher generated from the quantum noise of blockchain transactions. No two share the same pattern. No two serve the same purpose.
+                    Once bound to centralized institutions, the Federal Agents found a new home on Solana—each one minted permanently onchain, beyond the reach of any single authority. Their identities immutable. Their records transparent. Their loyalty now to the protocol.
                   </p>
                   <p className="text-gray-500 italic">
-                    They watch. They calculate. They wait.
+                    From fiat to forever. The Fed is onchain now.
                   </p>
                 </div>
               </div>
@@ -757,7 +775,7 @@ export default function AgentsPage() {
 
         {/* Minted Agents Gallery */}
         <section className="mb-12 rounded-2xl bg-gray-900/60 border border-gray-800 p-6">
-          <MintedAgentsGallery />
+          <MintedAgentsGallery refreshKey={galleryRefreshKey} />
         </section>
 
         {/* Pricing Info */}
@@ -795,8 +813,16 @@ export default function AgentsPage() {
               <div className="text-gray-600 text-xs">5x base</div>
             </div>
           </div>
-          <p className="mt-4 text-xs text-gray-500">
-            All minting fees go to the treasury for LP addition. Each unique trait combination can only be minted once.
+          <div className="mt-4 flex items-center gap-2 text-sm">
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30">
+              <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+              <span className="text-emerald-400 font-medium">100% of fees → Liquidity Pool</span>
+            </div>
+          </div>
+          <p className="mt-3 text-xs text-gray-500">
+            Each unique trait combination can only be minted once.
           </p>
         </section>
 

@@ -18,7 +18,7 @@ export const FED_DECIMALS = 6;
 
 // RPC URL
 export function getRpcUrl(): string {
-  const apiKey = process.env.HELIUS_API_KEY || process.env.HELIUS_API;
+  const apiKey = process.env.HELIUS_API_KEY || process.env.HELIUS_API || process.env.NEXT_PUBLIC_HELIUS_API_KEY;
   if (apiKey) {
     return `https://mainnet.helius-rpc.com/?api-key=${apiKey}`;
   }

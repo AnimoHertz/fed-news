@@ -22,6 +22,7 @@ export interface MintedAgent {
   imageUri: string;
   ownerWallet: string;
   minterWallet: string;
+  paymentTransaction: string;
   paymentAmount: number;
   rarityScore: number;
   rarityTier: string;
@@ -95,6 +96,16 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Get total $FED raised
+    const { data: sumData } = await supabase
+      .from('minted_agents')
+      .select('payment_amount')
+      .then(({ data }) => ({
+        data: data?.reduce((sum, row) => sum + (row.payment_amount || 0), 0) || 0
+      }));
+
+    const totalRaised = (sumData || 0) / 1_000_000; // Convert from raw
+
     // Transform data to API format
     const agents: MintedAgent[] = (data || []).map((row) => ({
       id: row.id,
@@ -117,6 +128,7 @@ export async function GET(request: NextRequest) {
       imageUri: row.image_uri,
       ownerWallet: row.owner_wallet,
       minterWallet: row.minter_wallet,
+      paymentTransaction: row.payment_transaction,
       paymentAmount: row.payment_amount / 1_000_000, // Convert from raw
       rarityScore: row.rarity_score,
       rarityTier: row.rarity_tier,
@@ -126,6 +138,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       agents,
       total: count || 0,
+      totalRaised,
       limit,
       offset,
     });
