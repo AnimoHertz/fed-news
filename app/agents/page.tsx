@@ -17,14 +17,14 @@ const TIER_COLORS: Record<string, { border: string; glow: string; text: string; 
   shadow: { border: "border-emerald-500/50", glow: "shadow-emerald-500/30", text: "text-emerald-400", bg: "bg-emerald-500/10" },
 };
 
-// Preview characters in the new style
+// Preview characters with faces
 const PREVIEW_CHARACTERS: (CharacterProps & { tier: string })[] = [
-  { headStyle: "round", eyeStyle: "quarter", bodyStyle: "round", feetStyle: "pill", accessory: "badge", primaryColor: "#dc2626", tier: "special" },
-  { headStyle: "horns", eyeStyle: "angry", bodyStyle: "wide", feetStyle: "split", accessory: "glow", primaryColor: "#a855f7", tier: "governor" },
-  { headStyle: "square", eyeStyle: "wide", bodyStyle: "square", feetStyle: "square", primaryColor: "#3b82f6", tier: "director" },
-  { headStyle: "pointed", eyeStyle: "slit", bodyStyle: "split", feetStyle: "none", accessory: "glow", primaryColor: "#10b981", accentColor: "#10b981", tier: "shadow" },
-  { headStyle: "split", eyeStyle: "half", bodyStyle: "tall", feetStyle: "pill", primaryColor: "#fbbf24", tier: "chairman" },
-  { headStyle: "flat", eyeStyle: "wink", bodyStyle: "wide", feetStyle: "pill", accessory: "badge", primaryColor: "#f97316", tier: "special" },
+  { headStyle: "round", eyeStyle: "round", mouthStyle: "smile", bodyStyle: "round", feetStyle: "pill", accessory: "badge", primaryColor: "#dc2626", tier: "special" },
+  { headStyle: "horns", eyeStyle: "angry", mouthStyle: "teeth", bodyStyle: "wide", feetStyle: "split", accessory: "glow", primaryColor: "#a855f7", tier: "governor" },
+  { headStyle: "square", eyeStyle: "wide", mouthStyle: "neutral", bodyStyle: "square", feetStyle: "square", accessory: "glasses", primaryColor: "#3b82f6", tier: "director" },
+  { headStyle: "pointed", eyeStyle: "slit", mouthStyle: "frown", bodyStyle: "split", feetStyle: "none", accessory: "glow", primaryColor: "#10b981", accentColor: "#10b981", tier: "shadow" },
+  { headStyle: "split", eyeStyle: "half", mouthStyle: "smirk", bodyStyle: "tall", feetStyle: "pill", primaryColor: "#fbbf24", tier: "chairman" },
+  { headStyle: "flat", eyeStyle: "wink", mouthStyle: "open", bodyStyle: "wide", feetStyle: "pill", accessory: "hat", primaryColor: "#f97316", tier: "special" },
 ];
 
 function getRarityLabel(weight: number, total: number): { label: string; color: string } {
@@ -153,7 +153,7 @@ function TraitSection({
   );
 }
 
-export default function CharactersPage() {
+export default function AgentsPage() {
   const [character, setCharacter] = useState<(CharacterProps & { tier: string }) | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationCount, setGenerationCount] = useState(0);
@@ -214,6 +214,7 @@ export default function CharactersPage() {
 
   const headTotal = TRAIT_RARITY.heads.reduce((s, h) => s + h.weight, 0);
   const eyeTotal = TRAIT_RARITY.eyes.reduce((s, e) => s + e.weight, 0);
+  const mouthTotal = TRAIT_RARITY.mouths.reduce((s, m) => s + m.weight, 0);
   const bodyTotal = TRAIT_RARITY.bodies.reduce((s, b) => s + b.weight, 0);
   const feetTotal = TRAIT_RARITY.feet.reduce((s, f) => s + f.weight, 0);
   const accTotal = TRAIT_RARITY.accessories.reduce((s, a) => s + a.weight, 0);
@@ -257,13 +258,13 @@ export default function CharactersPage() {
                   <div className="text-center">
                     <div className="w-44 h-56 mx-auto mb-4 rounded-xl bg-gray-800/50 border border-gray-700 flex items-center justify-center relative overflow-hidden">
                       <div className="animate-pulse flex flex-col items-center gap-4">
-                        <div className="flex gap-3">
-                          <div className="w-10 h-10 rounded-full bg-gray-700" />
-                          <div className="w-10 h-10 rounded-full bg-gray-700" />
-                        </div>
+                        <div className="w-16 h-16 rounded-full bg-gray-700" />
                         <div className="w-8 h-3 rounded bg-gray-700" />
-                        <div className="w-28 h-16 rounded-xl bg-gray-700" />
-                        <div className="w-20 h-8 rounded-full bg-gray-700" />
+                        <div className="w-20 h-14 rounded-xl bg-gray-700" />
+                        <div className="flex gap-3">
+                          <div className="w-8 h-6 rounded-full bg-gray-700" />
+                          <div className="w-8 h-6 rounded-full bg-gray-700" />
+                        </div>
                       </div>
                       <div className="absolute inset-0 bg-gradient-to-b from-red-500/10 via-transparent to-transparent animate-pulse" />
                     </div>
@@ -311,6 +312,9 @@ export default function CharactersPage() {
                         </span>
                         <span className="px-2 py-1 text-xs bg-gray-800 rounded-full text-gray-400 border border-gray-700">
                           {character.eyeStyle}
+                        </span>
+                        <span className="px-2 py-1 text-xs bg-gray-800 rounded-full text-gray-400 border border-gray-700">
+                          {character.mouthStyle}
                         </span>
                         <span className="px-2 py-1 text-xs bg-gray-800 rounded-full text-gray-400 border border-gray-700">
                           {character.bodyStyle}
@@ -394,7 +398,7 @@ export default function CharactersPage() {
                   <p className="text-2xl font-bold text-white font-mono">{TOTAL_COMBINATIONS.toLocaleString()}</p>
                   <p className="text-sm text-gray-400">Unique Agents</p>
                 </div>
-                <div className="flex gap-2 text-xs">
+                <div className="flex gap-2 text-xs flex-wrap justify-end">
                   <span className="px-2 py-1 rounded bg-gray-800 text-gray-400">0-399 Common</span>
                   <span className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-400">400+ Uncommon</span>
                   <span className="px-2 py-1 rounded bg-blue-500/20 text-blue-400">550+ Rare</span>
@@ -431,6 +435,24 @@ export default function CharactersPage() {
                   return (
                     <div key={e.style} className="flex items-center justify-between text-sm">
                       <span className="text-gray-400 capitalize">{e.style}</span>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xs ${rarity.color}`}>{rarity.label}</span>
+                        <span className="text-gray-600 w-10 text-right">{percent}%</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </TraitSection>
+
+            <TraitSection title="Mouth Expressions">
+              <div className="space-y-1">
+                {TRAIT_RARITY.mouths.map((m) => {
+                  const percent = ((m.weight / mouthTotal) * 100).toFixed(1);
+                  const rarity = getRarityLabel(m.weight, mouthTotal);
+                  return (
+                    <div key={m.style} className="flex items-center justify-between text-sm">
+                      <span className="text-gray-400 capitalize">{m.style}</span>
                       <div className="flex items-center gap-2">
                         <span className={`text-xs ${rarity.color}`}>{rarity.label}</span>
                         <span className="text-gray-600 w-10 text-right">{percent}%</span>

@@ -4,6 +4,7 @@ export {
   type CharacterProps,
   type HeadStyle,
   type EyeStyle,
+  type MouthStyle,
   type BodyStyle,
   type FeetStyle,
   type Accessory,
