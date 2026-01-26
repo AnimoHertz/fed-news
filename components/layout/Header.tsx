@@ -5,10 +5,9 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 const navLinks = [
-  { href: '/holders', label: 'Holders' },
-  { href: '/incentives', label: 'Incentives' },
+  { href: '/incentives', label: 'How it Works' },
   { href: '/payouts', label: 'Payouts' },
-  { href: '/growth', label: 'Members' },
+  { href: '/growth', label: 'Stats' },
   { href: '/manifesto', label: 'Manifesto' },
 ];
 

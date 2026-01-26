@@ -8,6 +8,7 @@ import {
 } from '@/components/growth/GrowthCharts';
 import { Header } from '@/components/layout/Header';
 import { SocialSection } from '@/components/growth/SocialSection';
+import { HoldersTable } from '@/components/growth/HoldersTable';
 
 export const revalidate = 300;
 
@@ -189,6 +190,16 @@ export default async function GrowthPage() {
                     </div>
                   );
                 })}
+              </div>
+            </section>
+
+            {/* Top Holders */}
+            <section className="mb-12">
+              <h2 className="text-sm text-gray-500 uppercase tracking-wide mb-6">
+                Top Holders
+              </h2>
+              <div className="p-4 rounded-lg border border-gray-800 bg-gray-900/30">
+                <HoldersTable />
               </div>
             </section>
 

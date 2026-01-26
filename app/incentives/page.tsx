@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Header } from '@/components/layout/Header';
 
 export const metadata = {
-  title: 'Incentives | Fed News',
+  title: 'How it Works | Fed News',
   description: 'Learn how the $FED reward system distributes USD1 stablecoins to holders every 2 minutes.',
 };
 
@@ -14,7 +14,7 @@ export default function IncentivesPage() {
       <main className="max-w-5xl mx-auto px-4 py-16">
         {/* Title */}
         <header className="mb-16">
-          <p className="text-sm text-gray-500 uppercase tracking-wide mb-4">Incentives</p>
+          <p className="text-sm text-gray-500 uppercase tracking-wide mb-4">How it Works</p>
           <h1 className="text-4xl font-medium leading-tight mb-4">
             The Money Printer
           </h1>

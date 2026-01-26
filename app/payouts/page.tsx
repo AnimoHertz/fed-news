@@ -24,9 +24,9 @@ interface PayoutData {
 }
 
 const bonusMultipliers = [
-  { name: 'Diamond Hands', description: 'Hold continuously without selling', max: '1.25x' },
-  { name: 'Engagement', description: 'Participate and earn XP', max: '1.2x' },
-  { name: 'Time Lock', description: 'Voluntarily lock your tokens', max: '2.0x' },
+  { name: 'Diamond Hands', description: 'Hold continuously without selling', max: '1.25x', color: 'text-cyan-400', bgColor: 'bg-cyan-500/10', borderColor: 'border-cyan-500/30' },
+  { name: 'Engagement', description: 'Participate and earn XP', max: '1.2x', color: 'text-pink-400', bgColor: 'bg-pink-500/10', borderColor: 'border-pink-500/30' },
+  { name: 'Time Lock', description: 'Voluntarily lock your tokens', max: '2.0x', color: 'text-orange-400', bgColor: 'bg-orange-500/10', borderColor: 'border-orange-500/30' },
 ];
 
 function formatBalance(balance: number): string {
@@ -181,14 +181,14 @@ export default function PayoutsPage() {
                 {bonusMultipliers.map((bonus) => (
                   <div
                     key={bonus.name}
-                    className="p-3 rounded-lg border border-gray-800 bg-gray-900/30 flex items-center justify-between"
+                    className={`p-3 rounded-lg border ${bonus.borderColor} ${bonus.bgColor} flex items-center justify-between`}
                   >
                     <div>
-                      <span className="text-gray-300 text-sm">{bonus.name}</span>
+                      <span className={`text-sm font-medium ${bonus.color}`}>{bonus.name}</span>
                       <span className="text-gray-600 text-sm ml-2">·</span>
                       <span className="text-gray-500 text-sm ml-2">{bonus.description}</span>
                     </div>
-                    <span className="text-gray-400 font-mono text-sm">up to {bonus.max}</span>
+                    <span className={`font-mono text-sm ${bonus.color}`}>up to {bonus.max}</span>
                   </div>
                 ))}
               </div>

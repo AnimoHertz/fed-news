@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { fetchAllRecentCommits, fetchHolderCount } from '@/lib/github';
 import { parseCommit, filterCommits, getLatestStats } from '@/lib/commits';
@@ -31,6 +32,47 @@ export default async function HomePage() {
       <Header />
 
       <main className="max-w-5xl mx-auto px-4 py-12">
+        {/* Manifesto Excerpt */}
+        <section className="mb-16">
+          <div className="relative rounded-xl bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 border border-gray-700/50 p-8 md:p-10 overflow-hidden">
+            {/* Subtle gradient accent */}
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500/50 via-blue-500/50 to-purple-500/50" />
+
+            <h1 className="text-3xl md:text-4xl font-medium text-white mb-3">
+              The First Self-Evolving Crypto Mechanism
+            </h1>
+
+            <p className="text-lg text-gray-400 mb-8">
+              Novel Crypto Mechanism Built by AI. In real-time. While you watch.
+            </p>
+
+            <p className="text-lg text-gray-300 leading-relaxed mb-8">
+              For the first time, a crypto project isn&apos;t just using AI as a tool. It&apos;s being{' '}
+              <span className="text-white font-medium">built by AI</span>, continuously, autonomously, in the open.
+              Every commit you see on this site was written by an AI working through problems,
+              making decisions, and shipping code. Not once. Not as a gimmick. But as the
+              fundamental architecture of how this project evolves.
+            </p>
+
+            <Link
+              href="/manifesto"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/10 hover:bg-white/15 border border-white/20 rounded-lg text-white text-sm font-medium transition-all hover:gap-3"
+            >
+              Read the full manifesto
+              <span>→</span>
+            </Link>
+
+            {/* Logo */}
+            <Image
+              src="/logoseal.png"
+              alt="FED Logo"
+              width={200}
+              height={200}
+              className="absolute bottom-4 right-4 opacity-20"
+            />
+          </div>
+        </section>
+
         {/* Hero */}
         <section className="mb-16">
           <p className="text-gray-400 mb-4">Autonomous USD1 distribution on Solana</p>

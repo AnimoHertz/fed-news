@@ -8,6 +8,8 @@ import { UsernameSetup } from './UsernameSetup';
 import { ChatMessage } from './ChatMessage';
 import { MessageInput } from './MessageInput';
 import { TierBadge } from './TierBadge';
+import { NotificationPrompt } from './NotificationPrompt';
+import { useReplyNotifications } from '@/hooks/useReplyNotifications';
 
 export function ChatForum() {
   const { publicKey } = useWallet();
@@ -42,6 +44,29 @@ export function ChatForum() {
       replies: (repliesMap.get(msg.id) || []).sort((a, b) => a.createdAt - b.createdAt),
     }));
   }, [messages]);
+
+  // Track user's message IDs for reply notifications
+  const userMessageIds = useMemo(() => {
+    if (!walletAddress) return new Set<string>();
+    return new Set(
+      messages.filter((m) => m.walletAddress === walletAddress).map((m) => m.id)
+    );
+  }, [messages, walletAddress]);
+
+  // Handle real-time message updates (avoid duplicates)
+  const handleRealtimeMessage = useCallback((message: ChatMessageType) => {
+    setMessages((prev) => {
+      if (prev.some((m) => m.id === message.id)) return prev;
+      return [message, ...prev];
+    });
+  }, []);
+
+  // Subscribe to real-time reply notifications
+  useReplyNotifications({
+    walletAddress,
+    userMessageIds,
+    onNewMessage: handleRealtimeMessage,
+  });
 
   // Fetch messages
   const fetchMessages = useCallback(async (showRefreshing = false) => {
@@ -177,6 +202,9 @@ export function ChatForum() {
           onMessageSent={handleMessageSent}
         />
       )}
+
+      {/* Notification prompt for connected users */}
+      {walletAddress && profile?.username && <NotificationPrompt />}
 
       {!walletAddress && (
         <div className="p-6 rounded-lg border border-gray-800 bg-gray-900/30 text-center">

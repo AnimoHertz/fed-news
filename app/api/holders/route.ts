@@ -7,7 +7,7 @@ const TOTAL_SUPPLY = 1_000_000_000; // 1 billion tokens
 // USD1 token mint address on Solana
 const USD1_MINT = 'USD1ttGY1N17NEEHLmELoaybftRBUSErhqYiQzvEmuB';
 
-// FED distribution wallet - only transfers from this address count as rewards
+// FED distribution wallet
 const FED_DISTRIBUTION_WALLET = '4Br5iKfRkYMk8WMj6w8YASynuq7Eoas16rkyvWsAdL4P';
 
 interface TokenAccount {
@@ -50,11 +50,11 @@ async function fetchUsd1Earnings(
         if (tx.tokenTransfers) {
           for (const transfer of tx.tokenTransfers) {
             const isUSD1 = transfer.mint === USD1_MINT;
+            const isFromDistribution = transfer.fromUserAccount === FED_DISTRIBUTION_WALLET;
             const isRecipient = transfer.toUserAccount === walletAddress;
-            const isFromDistributionWallet = transfer.fromUserAccount === FED_DISTRIBUTION_WALLET;
             const hasAmount = transfer.tokenAmount > 0;
 
-            if (isUSD1 && isRecipient && isFromDistributionWallet && hasAmount) {
+            if (isUSD1 && isFromDistribution && isRecipient && hasAmount) {
               totalReceived += transfer.tokenAmount;
             }
           }

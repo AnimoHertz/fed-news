@@ -54,6 +54,7 @@ export async function GET(request: NextRequest) {
     let pageCount = 0;
     const maxPages = 20;
 
+
     // Use Helius to get detailed transaction data with individual transfer amounts
     while (pageCount < maxPages) {
       const url: URL = new URL(`https://api.helius.xyz/v0/addresses/${address}/transactions`);
@@ -81,17 +82,13 @@ export async function GET(request: NextRequest) {
         // Check tokenTransfers for the specific amount sent TO this address
         if (tx.tokenTransfers && tx.tokenTransfers.length > 0) {
           for (const transfer of tx.tokenTransfers) {
-            // Only count transfers from the FED distribution wallet:
-            // 1. It's the USD1 token
-            // 2. The recipient (toUserAccount) is the queried address
-            // 3. The sender is the FED distribution wallet
-            // 4. Amount is greater than 0
+            // Filter: USD1 token, from distribution wallet, to this address, non-zero
             const isUSD1 = transfer.mint === USD1_MINT;
+            const isFromDistribution = transfer.fromUserAccount === FED_DISTRIBUTION_WALLET;
             const isRecipient = transfer.toUserAccount === address;
-            const isFromDistributionWallet = transfer.fromUserAccount === FED_DISTRIBUTION_WALLET;
             const hasAmount = transfer.tokenAmount > 0;
 
-            if (isUSD1 && isRecipient && isFromDistributionWallet && hasAmount) {
+            if (isUSD1 && isFromDistribution && isRecipient && hasAmount) {
               const amount = transfer.tokenAmount;
               totalReceived += amount;
 
@@ -99,7 +96,7 @@ export async function GET(request: NextRequest) {
                 signature: tx.signature,
                 timestamp: tx.timestamp * 1000,
                 amount,
-                from: transfer.fromUserAccount || 'Distribution',
+                from: transfer.fromUserAccount || 'Unknown',
               });
             }
           }
