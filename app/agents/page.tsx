@@ -771,27 +771,27 @@ export default function AgentsPage() {
           <div className="grid sm:grid-cols-5 gap-3">
             <div className="p-3 rounded-lg bg-gray-800/50 border border-gray-700">
               <div className="text-gray-400 text-xs mb-1">Common</div>
-              <div className="text-white font-bold">25K $FED</div>
+              <div className="text-white font-bold">100 $FED</div>
               <div className="text-gray-600 text-xs">1x base</div>
             </div>
             <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
               <div className="text-emerald-400 text-xs mb-1">Uncommon</div>
-              <div className="text-white font-bold">37.5K $FED</div>
+              <div className="text-white font-bold">150 $FED</div>
               <div className="text-gray-600 text-xs">1.5x base</div>
             </div>
             <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/30">
               <div className="text-blue-400 text-xs mb-1">Rare</div>
-              <div className="text-white font-bold">50K $FED</div>
+              <div className="text-white font-bold">200 $FED</div>
               <div className="text-gray-600 text-xs">2x base</div>
             </div>
             <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/30">
               <div className="text-purple-400 text-xs mb-1">Epic</div>
-              <div className="text-white font-bold">75K $FED</div>
+              <div className="text-white font-bold">300 $FED</div>
               <div className="text-gray-600 text-xs">3x base</div>
             </div>
             <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
               <div className="text-yellow-400 text-xs mb-1">Legendary</div>
-              <div className="text-white font-bold">125K $FED</div>
+              <div className="text-white font-bold">500 $FED</div>
               <div className="text-gray-600 text-xs">5x base</div>
             </div>
           </div>

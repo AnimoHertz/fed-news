@@ -36,13 +36,13 @@ export function getConnection(): Connection {
  * Pricing structure for minting based on rarity
  */
 export const MINT_PRICING = {
-  basePrice: 25_000, // 25K $FED
+  basePrice: 100, // 100 $FED
   multipliers: {
-    Common: 1,
-    Uncommon: 1.5,
-    Rare: 2,
-    Epic: 3,
-    Legendary: 5,
+    Common: 1,      // 100 $FED
+    Uncommon: 1.5,  // 150 $FED
+    Rare: 2,        // 200 $FED
+    Epic: 3,        // 300 $FED
+    Legendary: 5,   // 500 $FED
   },
 } as const;
 
