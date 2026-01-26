@@ -125,8 +125,8 @@ export function ChatMessage({
           <span className="font-medium text-white">{message.username}</span>
           <TierBadge tier={message.tier} balance={message.balance} />
           {isOriginalAuthor && (
-            <span className="px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">
-              OP
+            <span className="px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide rounded bg-yellow-500/20 text-yellow-400 border border-yellow-500/30">
+              Author
             </span>
           )}
         </div>
