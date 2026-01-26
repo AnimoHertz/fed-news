@@ -127,17 +127,17 @@ function weightedRandom<T>(items: { weight: number }[] & T[]): T {
   return items[items.length - 1];
 }
 
+// Helper to calculate rarity within a category (0 = most common, 1 = rarest)
+function getTraitRarity(weight: number, weights: { weight: number }[]): number {
+  const maxWeight = Math.max(...weights.map(w => w.weight));
+  const minWeight = Math.min(...weights.map(w => w.weight));
+  if (maxWeight === minWeight) return 0.5;
+  // Most common (max weight) = 0, Rarest (min weight) = 1
+  return (maxWeight - weight) / (maxWeight - minWeight);
+}
+
 // Calculate rarity score (0-1000, higher = rarer)
 export function calculateRarityScore(char: CharacterProps & { tier: string }): number {
-  const headTotal = HEAD_WEIGHTS.reduce((s, h) => s + h.weight, 0);
-  const eyeTotal = EYE_WEIGHTS.reduce((s, e) => s + e.weight, 0);
-  const mouthTotal = MOUTH_WEIGHTS.reduce((s, m) => s + m.weight, 0);
-  const bodyTotal = BODY_WEIGHTS.reduce((s, b) => s + b.weight, 0);
-  const feetTotal = FEET_WEIGHTS.reduce((s, f) => s + f.weight, 0);
-  const accTotal = ACCESSORY_WEIGHTS.reduce((s, a) => s + a.weight, 0);
-  const bgTotal = BG_WEIGHTS.reduce((s, b) => s + b.weight, 0);
-  const paletteTotal = COLOR_PALETTES.reduce((s, p) => s + p.weight, 0);
-
   const headWeight = HEAD_WEIGHTS.find(h => h.style === char.headStyle)?.weight || 25;
   const eyeWeight = EYE_WEIGHTS.find(e => e.style === char.eyeStyle)?.weight || 25;
   const mouthWeight = MOUTH_WEIGHTS.find(m => m.style === char.mouthStyle)?.weight || 28;
@@ -145,20 +145,20 @@ export function calculateRarityScore(char: CharacterProps & { tier: string }): n
   const feetWeight = FEET_WEIGHTS.find(f => f.style === char.feetStyle)?.weight || 30;
   const accWeight = ACCESSORY_WEIGHTS.find(a => a.accessory === char.accessory)?.weight || 35;
   const bgWeight = BG_WEIGHTS.find(b => b.style === char.bgStyle)?.weight || 30;
-  const paletteWeight = COLOR_PALETTES.find(p => p.primary === char.primaryColor)?.weight || 25;
+  const paletteWeight = COLOR_PALETTES.find(p => p.primary === char.primaryColor)?.weight || 20;
 
-  // Convert weights to rarity (inverse - lower weight = higher rarity)
-  const headRarity = 1 - (headWeight / headTotal);
-  const eyeRarity = 1 - (eyeWeight / eyeTotal);
-  const mouthRarity = 1 - (mouthWeight / mouthTotal);
-  const bodyRarity = 1 - (bodyWeight / bodyTotal);
-  const feetRarity = 1 - (feetWeight / feetTotal);
-  const accRarity = 1 - (accWeight / accTotal);
-  const bgRarity = 1 - (bgWeight / bgTotal);
-  const paletteRarity = 1 - (paletteWeight / paletteTotal);
+  // Calculate rarity for each trait (0 = common, 1 = rare)
+  const headRarity = getTraitRarity(headWeight, HEAD_WEIGHTS);
+  const eyeRarity = getTraitRarity(eyeWeight, EYE_WEIGHTS);
+  const mouthRarity = getTraitRarity(mouthWeight, MOUTH_WEIGHTS);
+  const bodyRarity = getTraitRarity(bodyWeight, BODY_WEIGHTS);
+  const feetRarity = getTraitRarity(feetWeight, FEET_WEIGHTS);
+  const accRarity = getTraitRarity(accWeight, ACCESSORY_WEIGHTS);
+  const bgRarity = getTraitRarity(bgWeight, BG_WEIGHTS);
+  const paletteRarity = getTraitRarity(paletteWeight, COLOR_PALETTES);
 
-  // Average rarity, weighted slightly towards color (tier)
-  const avgRarity = (headRarity + eyeRarity + mouthRarity + bodyRarity + feetRarity + accRarity + bgRarity + paletteRarity * 2) / 9;
+  // Average rarity, weighted towards color/tier (palette counts 3x)
+  const avgRarity = (headRarity + eyeRarity + mouthRarity + bodyRarity + feetRarity + accRarity + bgRarity + paletteRarity * 3) / 10;
 
   return Math.round(avgRarity * 1000);
 }
