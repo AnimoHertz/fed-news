@@ -84,10 +84,13 @@ export function ChatForum() {
   });
 
   // Fetch messages
-  const fetchMessages = useCallback(async (showRefreshing = false) => {
+  const fetchMessages = useCallback(async (showRefreshing = false, wallet?: string | null) => {
     if (showRefreshing) setRefreshing(true);
     try {
-      const response = await fetch('/api/chat/messages?limit=100');
+      const url = wallet
+        ? `/api/chat/messages?limit=100&wallet=${wallet}`
+        : '/api/chat/messages?limit=100';
+      const response = await fetch(url);
       const data = await response.json();
       setMessages(data.messages || []);
     } catch (error) {
@@ -115,8 +118,8 @@ export function ChatForum() {
   }, [walletAddress]);
 
   useEffect(() => {
-    fetchMessages();
-  }, [fetchMessages]);
+    fetchMessages(false, walletAddress);
+  }, [fetchMessages, walletAddress]);
 
   useEffect(() => {
     fetchProfile();
@@ -138,8 +141,16 @@ export function ChatForum() {
     setMessages((prev) => prev.filter((m) => m.id !== messageId && m.parentId !== messageId));
   };
 
+  const handleUpvoteChange = (messageId: string, upvotes: number, upvoted: boolean) => {
+    setMessages((prev) =>
+      prev.map((m) =>
+        m.id === messageId ? { ...m, upvotes, upvotedByUser: upvoted } : m
+      )
+    );
+  };
+
   const handleRefresh = () => {
-    fetchMessages(true);
+    fetchMessages(true, walletAddress);
     if (walletAddress) {
       fetchProfile();
     }
@@ -247,6 +258,7 @@ export function ChatForum() {
               currentWallet={walletAddress}
               onDelete={handleMessageDeleted}
               onMessageSent={handleMessageSent}
+              onUpvoteChange={handleUpvoteChange}
               replyingToId={replyingToId}
               onSetReplyingTo={setReplyingToId}
             />

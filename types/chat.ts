@@ -24,6 +24,8 @@ export interface ChatMessage {
   createdAt: number;
   parentId?: string | null;
   replies?: ChatMessage[];
+  upvotes: number;
+  upvotedByUser?: boolean;
 }
 
 export interface UserProfile {

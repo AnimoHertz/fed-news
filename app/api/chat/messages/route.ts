@@ -4,9 +4,10 @@ import { fetchTokenBalance, getTierFromBalance } from '@/lib/token';
 
 export async function GET(request: NextRequest) {
   const limitParam = request.nextUrl.searchParams.get('limit');
+  const walletParam = request.nextUrl.searchParams.get('wallet');
   const limit = limitParam ? Math.min(parseInt(limitParam, 10), 100) : 100;
 
-  const messages = await getMessages(limit);
+  const messages = await getMessages(limit, walletParam);
 
   return NextResponse.json({ messages });
 }

@@ -10,6 +10,7 @@ interface ChatMessageProps {
   currentWallet?: string | null;
   onDelete?: (messageId: string) => void;
   onMessageSent?: (message: ChatMessageType) => void;
+  onUpvoteChange?: (messageId: string, upvotes: number, upvoted: boolean) => void;
   isReply?: boolean;
   replyingToId?: string | null;
   onSetReplyingTo?: (id: string | null) => void;
@@ -22,6 +23,7 @@ export function ChatMessage({
   currentWallet,
   onDelete,
   onMessageSent,
+  onUpvoteChange,
   isReply = false,
   replyingToId,
   onSetReplyingTo,
@@ -35,6 +37,9 @@ export function ChatMessage({
   const [replyContent, setReplyContent] = useState('');
   const [replyLoading, setReplyLoading] = useState(false);
   const [replyError, setReplyError] = useState('');
+  const [upvoting, setUpvoting] = useState(false);
+  const [localUpvotes, setLocalUpvotes] = useState(message.upvotes);
+  const [localUpvoted, setLocalUpvoted] = useState(message.upvotedByUser || false);
 
   const timeAgo = formatDistanceToNow(new Date(message.createdAt), { addSuffix: true });
   const isReplying = replyingToId === message.id;
@@ -118,6 +123,35 @@ export function ChatMessage({
     if (onSetReplyingTo) onSetReplyingTo(null);
   };
 
+  const handleUpvote = async () => {
+    if (!currentWallet || upvoting) return;
+
+    setUpvoting(true);
+    try {
+      const response = await fetch('/api/chat/upvote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messageId: message.id,
+          walletAddress: currentWallet,
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setLocalUpvotes(data.upvotes);
+        setLocalUpvoted(data.upvoted);
+        if (onUpvoteChange) {
+          onUpvoteChange(message.id, data.upvotes, data.upvoted);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to upvote:', error);
+    } finally {
+      setUpvoting(false);
+    }
+  };
+
   return (
     <div className={`p-4 rounded-lg border border-gray-800 bg-gray-900/30 ${isReply ? 'ml-8 border-l-2 border-l-gray-700' : ''}`}>
       <div className="flex items-start justify-between gap-2 mb-2">
@@ -161,6 +195,35 @@ export function ChatMessage({
         </div>
       </div>
       <p className="text-gray-300 whitespace-pre-wrap break-words">{message.content}</p>
+
+      {/* Upvote button */}
+      <div className="mt-3 flex items-center gap-2">
+        <button
+          onClick={handleUpvote}
+          disabled={!currentWallet || upvoting}
+          className={`flex items-center gap-1.5 px-2 py-1 text-xs rounded transition-colors ${
+            localUpvoted
+              ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+              : 'text-gray-500 border border-gray-700 hover:bg-gray-800 hover:text-gray-300'
+          } disabled:opacity-50 disabled:cursor-not-allowed`}
+          title={currentWallet ? (localUpvoted ? 'Remove upvote' : 'Upvote') : 'Connect wallet to upvote'}
+        >
+          <svg
+            className="w-3.5 h-3.5"
+            fill={localUpvoted ? 'currentColor' : 'none'}
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 15l7-7 7 7"
+            />
+          </svg>
+          <span className="font-mono">{localUpvotes}</span>
+        </button>
+      </div>
 
       {/* Inline reply input */}
       {isReplying && currentWallet && (
@@ -213,6 +276,7 @@ export function ChatMessage({
               currentWallet={currentWallet}
               onDelete={onDelete}
               onMessageSent={onMessageSent}
+              onUpvoteChange={onUpvoteChange}
               isReply={true}
               replyingToId={replyingToId}
               onSetReplyingTo={onSetReplyingTo}

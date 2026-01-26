@@ -83,7 +83,7 @@ export async function setUsername(
 }
 
 // Message operations
-export async function getMessages(limit: number = 100): Promise<ChatMessage[]> {
+export async function getMessages(limit: number = 100, currentWallet?: string | null): Promise<ChatMessage[]> {
   if (!isSupabaseConfigured()) return [];
 
   const { data, error } = await supabase
@@ -94,6 +94,35 @@ export async function getMessages(limit: number = 100): Promise<ChatMessage[]> {
 
   if (error || !data) return [];
 
+  // Get upvote counts for all messages
+  const messageIds = data.map(row => row.id);
+  const { data: upvoteCounts } = await supabase
+    .from('message_upvotes')
+    .select('message_id')
+    .in('message_id', messageIds);
+
+  // Count upvotes per message
+  const upvoteMap = new Map<string, number>();
+  if (upvoteCounts) {
+    for (const upvote of upvoteCounts) {
+      upvoteMap.set(upvote.message_id, (upvoteMap.get(upvote.message_id) || 0) + 1);
+    }
+  }
+
+  // Check which messages current user has upvoted
+  let userUpvotes = new Set<string>();
+  if (currentWallet) {
+    const { data: userUpvoteData } = await supabase
+      .from('message_upvotes')
+      .select('message_id')
+      .eq('wallet_address', currentWallet.toLowerCase())
+      .in('message_id', messageIds);
+
+    if (userUpvoteData) {
+      userUpvotes = new Set(userUpvoteData.map(u => u.message_id));
+    }
+  }
+
   return data.map((row) => ({
     id: row.id,
     walletAddress: row.wallet_address,
@@ -103,6 +132,8 @@ export async function getMessages(limit: number = 100): Promise<ChatMessage[]> {
     tier: row.tier as HolderTier,
     createdAt: new Date(row.created_at).getTime(),
     parentId: row.parent_id || null,
+    upvotes: upvoteMap.get(row.id) || 0,
+    upvotedByUser: userUpvotes.has(row.id),
   }));
 }
 
@@ -154,6 +185,8 @@ export async function addMessage(
     tier: data.tier as HolderTier,
     createdAt: new Date(data.created_at).getTime(),
     parentId: data.parent_id || null,
+    upvotes: 0,
+    upvotedByUser: false,
   };
 
   // Clean up old messages (keep only MAX_MESSAGES)
@@ -197,6 +230,55 @@ export async function deleteMessage(
   }
 
   return { success: true };
+}
+
+// Upvote operations
+export async function toggleUpvote(
+  messageId: string,
+  walletAddress: string
+): Promise<{ success: boolean; upvoted: boolean; upvotes: number; error?: string }> {
+  if (!isSupabaseConfigured()) {
+    return { success: false, upvoted: false, upvotes: 0, error: 'Database not configured' };
+  }
+
+  const wallet = walletAddress.toLowerCase();
+
+  // Check if user already upvoted
+  const { data: existing } = await supabase
+    .from('message_upvotes')
+    .select('id')
+    .eq('message_id', messageId)
+    .eq('wallet_address', wallet)
+    .single();
+
+  if (existing) {
+    // Remove upvote
+    await supabase
+      .from('message_upvotes')
+      .delete()
+      .eq('message_id', messageId)
+      .eq('wallet_address', wallet);
+  } else {
+    // Add upvote
+    await supabase
+      .from('message_upvotes')
+      .insert({
+        message_id: messageId,
+        wallet_address: wallet,
+      });
+  }
+
+  // Get updated count
+  const { count } = await supabase
+    .from('message_upvotes')
+    .select('*', { count: 'exact', head: true })
+    .eq('message_id', messageId);
+
+  return {
+    success: true,
+    upvoted: !existing,
+    upvotes: count || 0,
+  };
 }
 
 async function cleanupOldMessages() {

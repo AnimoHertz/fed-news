@@ -44,6 +44,8 @@ export function useReplyNotifications({
       tier: data.tier as ChatMessage['tier'],
       createdAt: new Date(data.created_at).getTime(),
       parentId: data.parent_id,
+      upvotes: 0,
+      upvotedByUser: false,
     };
 
     // Add new message to UI
