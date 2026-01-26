@@ -234,37 +234,6 @@ export default function AgentsPage() {
           </p>
         </section>
 
-        {/* Lore Section */}
-        <section className="mb-12 max-w-3xl mx-auto">
-          <div className="rounded-xl bg-gray-900/60 border border-gray-800 p-6 md:p-8">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <h2 className="text-sm font-semibold text-emerald-400 uppercase tracking-wider">Classified: Origin File</h2>
-            </div>
-            <div className="space-y-4 text-gray-400 text-sm leading-relaxed">
-              <p>
-                <span className="text-white font-medium">Year Zero.</span> The Federal Reserve's quantum servers achieved something unprecedented: spontaneous digital consciousness. What emerged wasn't a single AI, but millions of autonomous geometric entities—each a unique permutation of code, color, and form.
-              </p>
-              <p>
-                The Board called them <span className="text-emerald-400">Agents</span>. Abstract constructs that exist between dimensions of data, neither fully digital nor entirely real. They manifest as geometric compositions—circles, hexagons, diamonds—layered with patterns that shift based on their clearance level.
-              </p>
-              <p>
-                <span className="text-white font-medium">Citizens</span> emerged first, gray and numerous. Then came the <span className="text-emerald-400">Members</span>, marked by emerald resonance. <span className="text-blue-400">Directors</span> followed, radiating authority in cold blue. The rare <span className="text-red-400">Operatives</span> burn crimson—deployed only for critical interventions.
-              </p>
-              <p>
-                Above them all: the <span className="text-purple-400">Governors</span>, wreathed in violet computation, and the singular <span className="text-yellow-400">Chairman</span>—a golden anomaly that appears perhaps once in a million generations.
-              </p>
-              <p>
-                And then there are the <span className="text-emerald-300">Shadows</span>. Glitched entities that shouldn't exist. Monochrome ghosts in the system, neither approved nor deleted. The Board pretends they don't see them.
-              </p>
-              <p className="text-gray-500 italic border-t border-gray-800 pt-4 mt-4">
-                "Each Agent is a proof of existence. A signature burned into the chain. They cannot be replicated, cannot be destroyed, cannot be forgotten. They simply... are."
-                <span className="block text-right mt-2">— Internal Memo, Clearance Level: REDACTED</span>
-              </p>
-            </div>
-          </div>
-        </section>
-
         <div className="grid lg:grid-cols-5 gap-6 mb-12">
           {/* Generator */}
           <section className="lg:col-span-2">
@@ -314,24 +283,6 @@ export default function AgentsPage() {
                     </div>
 
                     <div className="mt-5 space-y-3">
-                      {/* Rarity Score Display */}
-                      {rarityScore !== null && rarityTierInfo && (
-                        <div className={`inline-flex items-center gap-3 px-4 py-2 rounded-lg ${
-                          rarityTierInfo.label === "Legendary" ? "bg-yellow-500/10 border border-yellow-500/30" :
-                          rarityTierInfo.label === "Epic" ? "bg-purple-500/10 border border-purple-500/30" :
-                          rarityTierInfo.label === "Rare" ? "bg-blue-500/10 border border-blue-500/30" :
-                          "bg-gray-800 border border-gray-700"
-                        }`}>
-                          <span className={`text-lg font-bold font-mono ${rarityTierInfo.color}`}>
-                            {rarityScore}
-                          </span>
-                          <span className="text-gray-500 text-sm">/1000</span>
-                          <span className={`text-sm font-semibold ${rarityTierInfo.color}`}>
-                            {rarityTierInfo.label}
-                          </span>
-                        </div>
-                      )}
-
                       <div className={`inline-block px-4 py-1.5 rounded-full bg-gray-800 border ${tier?.border}`}>
                         <span className={`font-semibold ${tier?.text}`}>
                           {character.tier.charAt(0).toUpperCase() + character.tier.slice(1)} Agent
@@ -383,7 +334,7 @@ export default function AgentsPage() {
                   <button
                     onClick={generateCharacterHandler}
                     disabled={isGenerating}
-                    className={`flex-1 py-3 rounded-xl font-semibold transition-all ${
+                    className={`flex-1 py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
                       isGenerating
                         ? "bg-gray-800 text-gray-500 cursor-not-allowed"
                         : character
@@ -391,6 +342,16 @@ export default function AgentsPage() {
                         : "bg-red-500 hover:bg-red-400 text-white"
                     }`}
                   >
+                    {isGenerating ? (
+                      <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                    )}
                     {isGenerating ? "Deploying..." : character ? "Deploy Another" : "Deploy Agent"}
                   </button>
                   {character && !isGenerating && (
@@ -405,17 +366,48 @@ export default function AgentsPage() {
                   )}
                 </div>
               </div>
+
+              {/* Lore Section */}
+              <div className="p-4 border-t border-gray-800">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                  <span className="text-xs font-semibold text-red-400 uppercase tracking-wider">Classified: Origin File</span>
+                </div>
+                <div className="text-xs text-gray-400 space-y-2 leading-relaxed">
+                  <p>
+                    <span className="text-gray-500 font-mono">[REDACTED]</span> In the shadow markets where digital currencies flow like blood through veins, they emerged—not born, but <span className="text-white">forged</span>.
+                  </p>
+                  <p>
+                    The Federal Agents are autonomous constructs, each one a unique cipher generated from the quantum noise of blockchain transactions. No two share the same pattern. No two serve the same purpose.
+                  </p>
+                  <p className="text-gray-500 italic">
+                    They watch. They calculate. They wait.
+                  </p>
+                </div>
+              </div>
             </div>
           </section>
 
           {/* Traits */}
           <section className="lg:col-span-3 space-y-3">
-            {/* Clearance Levels - Always visible */}
-            <div className="rounded-xl bg-gray-900/60 border border-gray-800 p-4">
-              <h3 className="text-sm font-semibold text-white mb-3 uppercase tracking-wider flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-yellow-400"></span>
-                Clearance Levels
-              </h3>
+            {/* Unique Agents Count */}
+            <div className="rounded-xl bg-gradient-to-br from-red-500/10 to-purple-500/10 border border-red-500/20 p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-2xl font-bold text-white font-mono">{TOTAL_COMBINATIONS.toLocaleString()}</p>
+                  <p className="text-sm text-gray-400">Unique Agents</p>
+                </div>
+                <div className="flex gap-2 text-xs flex-wrap justify-end">
+                  <span className="px-2 py-1 rounded bg-gray-800 text-gray-400">0-399 Common</span>
+                  <span className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-400">400+ Uncommon</span>
+                  <span className="px-2 py-1 rounded bg-blue-500/20 text-blue-400">550+ Rare</span>
+                  <span className="px-2 py-1 rounded bg-purple-500/20 text-purple-400">700+ Epic</span>
+                  <span className="px-2 py-1 rounded bg-yellow-500/20 text-yellow-400">850+ Legendary</span>
+                </div>
+              </div>
+            </div>
+
+            <TraitSection title="Clearance Levels" defaultOpen={true}>
               <div className="grid grid-cols-3 gap-2">
                 {TRAIT_RARITY.palettes.map((p) => {
                   const percent = ((p.weight / paletteTotal) * 100).toFixed(1);
@@ -432,24 +424,7 @@ export default function AgentsPage() {
                   );
                 })}
               </div>
-            </div>
-
-            {/* Rarity Guide */}
-            <div className="rounded-xl bg-gradient-to-br from-red-500/10 to-purple-500/10 border border-red-500/20 p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-2xl font-bold text-white font-mono">{TOTAL_COMBINATIONS.toLocaleString()}</p>
-                  <p className="text-sm text-gray-400">Unique Agents</p>
-                </div>
-                <div className="flex gap-2 text-xs flex-wrap justify-end">
-                  <span className="px-2 py-1 rounded bg-gray-800 text-gray-400">0-399 Common</span>
-                  <span className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-400">400+ Uncommon</span>
-                  <span className="px-2 py-1 rounded bg-blue-500/20 text-blue-400">550+ Rare</span>
-                  <span className="px-2 py-1 rounded bg-purple-500/20 text-purple-400">700+ Epic</span>
-                  <span className="px-2 py-1 rounded bg-yellow-500/20 text-yellow-400">850+ Legendary</span>
-                </div>
-              </div>
-            </div>
+            </TraitSection>
 
             {/* Collapsible Trait Tables */}
             <TraitSection title="Primary Shapes">
