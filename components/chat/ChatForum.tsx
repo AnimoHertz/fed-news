@@ -22,27 +22,42 @@ export function ChatForum() {
 
   const walletAddress = publicKey?.toBase58() || null;
 
-  // Organize messages into threads
+  // Organize messages into threads (supports nested replies)
   const threadedMessages = useMemo(() => {
-    const topLevel: ChatMessageType[] = [];
-    const repliesMap: Map<string, ChatMessageType[]> = new Map();
+    const messageMap = new Map<string, ChatMessageType & { replies: ChatMessageType[] }>();
+    const topLevel: (ChatMessageType & { replies: ChatMessageType[] })[] = [];
 
-    // First pass: separate top-level and replies
+    // First pass: create a map of all messages with empty replies arrays
     for (const msg of messages) {
-      if (msg.parentId) {
-        const existing = repliesMap.get(msg.parentId) || [];
-        existing.push(msg);
-        repliesMap.set(msg.parentId, existing);
-      } else {
-        topLevel.push(msg);
-      }
+      messageMap.set(msg.id, { ...msg, replies: [] });
     }
 
     // Second pass: attach replies to their parents
-    return topLevel.map((msg) => ({
-      ...msg,
-      replies: (repliesMap.get(msg.id) || []).sort((a, b) => a.createdAt - b.createdAt),
-    }));
+    for (const msg of messages) {
+      const messageWithReplies = messageMap.get(msg.id)!;
+      if (msg.parentId) {
+        const parent = messageMap.get(msg.parentId);
+        if (parent) {
+          parent.replies.push(messageWithReplies);
+        }
+      } else {
+        topLevel.push(messageWithReplies);
+      }
+    }
+
+    // Sort replies by creation time
+    const sortReplies = (msg: ChatMessageType & { replies: ChatMessageType[] }) => {
+      msg.replies.sort((a, b) => a.createdAt - b.createdAt);
+      msg.replies.forEach(reply => {
+        if ('replies' in reply) {
+          sortReplies(reply as ChatMessageType & { replies: ChatMessageType[] });
+        }
+      });
+    };
+
+    topLevel.forEach(sortReplies);
+
+    return topLevel;
   }, [messages]);
 
   // Track user's message IDs for reply notifications

@@ -13,6 +13,8 @@ interface ChatMessageProps {
   isReply?: boolean;
   replyingToId?: string | null;
   onSetReplyingTo?: (id: string | null) => void;
+  rootAuthorWallet?: string; // The original post author's wallet
+  rootMessageId?: string; // The root message ID for threading
 }
 
 export function ChatMessage({
@@ -23,7 +25,12 @@ export function ChatMessage({
   isReply = false,
   replyingToId,
   onSetReplyingTo,
+  rootAuthorWallet,
+  rootMessageId,
 }: ChatMessageProps) {
+  // For top-level messages, they are their own root
+  const effectiveRootAuthor = rootAuthorWallet || message.walletAddress;
+  const effectiveRootId = rootMessageId || message.id;
   const [deleting, setDeleting] = useState(false);
   const [replyContent, setReplyContent] = useState('');
   const [replyLoading, setReplyLoading] = useState(false);
@@ -115,13 +122,21 @@ export function ChatMessage({
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-gray-500 whitespace-nowrap">{timeAgo}</span>
-          {currentWallet && !isReply && !isReplying && (
-            <button
-              onClick={handleReplyClick}
-              className="px-2 py-1 text-xs text-gray-400 border border-gray-700 rounded hover:bg-gray-800 transition-colors"
-            >
-              Reply
-            </button>
+          {currentWallet && !isReplying && (
+            // Show Reply button for:
+            // - Top-level posts (anyone can reply)
+            // - Replies (only the original post author or the reply author can continue the thread)
+            (!isReply ||
+              currentWallet.toLowerCase() === effectiveRootAuthor.toLowerCase() ||
+              currentWallet.toLowerCase() === message.walletAddress.toLowerCase()
+            ) && (
+              <button
+                onClick={handleReplyClick}
+                className="px-2 py-1 text-xs text-gray-400 border border-gray-700 rounded hover:bg-gray-800 transition-colors"
+              >
+                Reply
+              </button>
+            )
           )}
           {isOwner && (
             <button
@@ -189,6 +204,10 @@ export function ChatMessage({
               onDelete={onDelete}
               onMessageSent={onMessageSent}
               isReply={true}
+              replyingToId={replyingToId}
+              onSetReplyingTo={onSetReplyingTo}
+              rootAuthorWallet={effectiveRootAuthor}
+              rootMessageId={effectiveRootId}
             />
           ))}
         </div>
