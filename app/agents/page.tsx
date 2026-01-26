@@ -17,14 +17,14 @@ const TIER_COLORS: Record<string, { border: string; glow: string; text: string; 
   shadow: { border: "border-emerald-500/50", glow: "shadow-emerald-500/30", text: "text-emerald-400", bg: "bg-emerald-500/10" },
 };
 
-// Preview characters with faces
+// Preview characters - abstract compositions
 const PREVIEW_CHARACTERS: (CharacterProps & { tier: string })[] = [
-  { headStyle: "round", eyeStyle: "round", mouthStyle: "smile", bodyStyle: "round", feetStyle: "pill", accessory: "badge", bgStyle: "gradient", primaryColor: "#dc2626", tier: "special" },
-  { headStyle: "horns", eyeStyle: "angry", mouthStyle: "teeth", bodyStyle: "wide", feetStyle: "split", accessory: "glow", bgStyle: "circuit", primaryColor: "#a855f7", tier: "governor" },
-  { headStyle: "square", eyeStyle: "wide", mouthStyle: "neutral", bodyStyle: "square", feetStyle: "square", accessory: "glasses", bgStyle: "grid", primaryColor: "#3b82f6", tier: "director" },
-  { headStyle: "pointed", eyeStyle: "slit", mouthStyle: "frown", bodyStyle: "split", feetStyle: "none", accessory: "glow", bgStyle: "stars", primaryColor: "#10b981", accentColor: "#10b981", tier: "shadow" },
-  { headStyle: "split", eyeStyle: "half", mouthStyle: "smirk", bodyStyle: "tall", feetStyle: "pill", bgStyle: "radial", primaryColor: "#fbbf24", tier: "chairman" },
-  { headStyle: "flat", eyeStyle: "wink", mouthStyle: "open", bodyStyle: "wide", feetStyle: "pill", accessory: "hat", bgStyle: "dots", primaryColor: "#f97316", tier: "special" },
+  { headStyle: "circle", eyeStyle: "dots", mouthStyle: "wave", bodyStyle: "blob", feetStyle: "orbs", accessory: "halo", bgStyle: "gradient", primaryColor: "#dc2626", tier: "special" },
+  { headStyle: "hexagon", eyeStyle: "rings", mouthStyle: "zigzag", bodyStyle: "layered", feetStyle: "triangles", accessory: "aura", bgStyle: "circuit", primaryColor: "#a855f7", tier: "governor" },
+  { headStyle: "square", eyeStyle: "lines", mouthStyle: "straight", bodyStyle: "geometric", feetStyle: "bars", accessory: "frame", bgStyle: "grid", primaryColor: "#3b82f6", tier: "director" },
+  { headStyle: "triangle", eyeStyle: "slits", mouthStyle: "none", bodyStyle: "fragmented", feetStyle: "none", accessory: "glitch", bgStyle: "stars", primaryColor: "#10b981", accentColor: "#10b981", tier: "shadow" },
+  { headStyle: "diamond", eyeStyle: "arcs", mouthStyle: "curve", bodyStyle: "minimal", feetStyle: "floating", bgStyle: "radial", primaryColor: "#fbbf24", tier: "chairman" },
+  { headStyle: "ring", eyeStyle: "crosses", mouthStyle: "dashes", bodyStyle: "layered", feetStyle: "floating", accessory: "orbits", bgStyle: "dots", primaryColor: "#f97316", tier: "special" },
 ];
 
 function getRarityLabel(weight: number, total: number): { label: string; color: string } {
@@ -415,7 +415,7 @@ export default function AgentsPage() {
             </div>
 
             {/* Collapsible Trait Tables */}
-            <TraitSection title="Head Styles">
+            <TraitSection title="Primary Shapes">
               <div className="space-y-1">
                 {TRAIT_RARITY.heads.map((h) => {
                   const percent = ((h.weight / headTotal) * 100).toFixed(1);
@@ -433,7 +433,7 @@ export default function AgentsPage() {
               </div>
             </TraitSection>
 
-            <TraitSection title="Eye Styles">
+            <TraitSection title="Accent Patterns">
               <div className="space-y-1">
                 {TRAIT_RARITY.eyes.map((e) => {
                   const percent = ((e.weight / eyeTotal) * 100).toFixed(1);
@@ -451,7 +451,7 @@ export default function AgentsPage() {
               </div>
             </TraitSection>
 
-            <TraitSection title="Mouth Expressions">
+            <TraitSection title="Connections">
               <div className="space-y-1">
                 {TRAIT_RARITY.mouths.map((m) => {
                   const percent = ((m.weight / mouthTotal) * 100).toFixed(1);
@@ -469,7 +469,7 @@ export default function AgentsPage() {
               </div>
             </TraitSection>
 
-            <TraitSection title="Body Types">
+            <TraitSection title="Secondary Forms">
               <div className="space-y-1">
                 {TRAIT_RARITY.bodies.map((b) => {
                   const percent = ((b.weight / bodyTotal) * 100).toFixed(1);
@@ -505,10 +505,10 @@ export default function AgentsPage() {
               </div>
             </TraitSection>
 
-            <TraitSection title="Feet & Accessories">
+            <TraitSection title="Base & Effects">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <p className="text-xs text-gray-500 uppercase mb-2">Feet</p>
+                  <p className="text-xs text-gray-500 uppercase mb-2">Base Elements</p>
                   {TRAIT_RARITY.feet.map((f) => {
                     const percent = ((f.weight / feetTotal) * 100).toFixed(1);
                     const rarity = getRarityLabel(f.weight, feetTotal);
@@ -524,13 +524,13 @@ export default function AgentsPage() {
                   })}
                 </div>
                 <div className="space-y-1">
-                  <p className="text-xs text-gray-500 uppercase mb-2">Accessories</p>
+                  <p className="text-xs text-gray-500 uppercase mb-2">Effects</p>
                   {TRAIT_RARITY.accessories.map((a) => {
                     const percent = ((a.weight / accTotal) * 100).toFixed(1);
                     const rarity = getRarityLabel(a.weight, accTotal);
                     return (
                       <div key={a.accessory} className="flex items-center justify-between text-sm">
-                        <span className="text-gray-400 capitalize">{a.accessory === "none" ? "standard" : a.accessory}</span>
+                        <span className="text-gray-400 capitalize">{a.accessory === "none" ? "clean" : a.accessory}</span>
                         <div className="flex items-center gap-2">
                           <span className={`text-xs ${rarity.color}`}>{rarity.label}</span>
                           <span className="text-gray-600 w-10 text-right">{percent}%</span>

@@ -5,57 +5,57 @@ import { ShapeCharacter, CHARACTER_PRESETS, CharacterProps, HeadStyle, EyeStyle,
 
 // Weighted trait pools
 const HEAD_WEIGHTS: { style: HeadStyle; weight: number }[] = [
-  { style: "round", weight: 25 },
+  { style: "circle", weight: 25 },
   { style: "square", weight: 20 },
-  { style: "flat", weight: 18 },
-  { style: "split", weight: 15 },
-  { style: "pointed", weight: 12 },
-  { style: "horns", weight: 10 },
+  { style: "triangle", weight: 18 },
+  { style: "diamond", weight: 15 },
+  { style: "hexagon", weight: 12 },
+  { style: "ring", weight: 10 },
 ];
 
 const EYE_WEIGHTS: { style: EyeStyle; weight: number }[] = [
-  { style: "dot", weight: 25 },
-  { style: "round", weight: 22 },
-  { style: "half", weight: 18 },
-  { style: "wide", weight: 15 },
-  { style: "slit", weight: 10 },
-  { style: "angry", weight: 6 },
-  { style: "wink", weight: 4 },
+  { style: "dots", weight: 25 },
+  { style: "lines", weight: 22 },
+  { style: "arcs", weight: 18 },
+  { style: "rings", weight: 15 },
+  { style: "slits", weight: 10 },
+  { style: "crosses", weight: 6 },
+  { style: "scatter", weight: 4 },
 ];
 
 const MOUTH_WEIGHTS: { style: MouthStyle; weight: number }[] = [
-  { style: "smile", weight: 28 },
-  { style: "neutral", weight: 22 },
-  { style: "smirk", weight: 18 },
-  { style: "open", weight: 14 },
-  { style: "frown", weight: 10 },
-  { style: "teeth", weight: 8 },
+  { style: "wave", weight: 28 },
+  { style: "straight", weight: 22 },
+  { style: "curve", weight: 18 },
+  { style: "zigzag", weight: 14 },
+  { style: "dashes", weight: 10 },
+  { style: "none", weight: 8 },
 ];
 
 const BODY_WEIGHTS: { style: BodyStyle; weight: number }[] = [
-  { style: "round", weight: 28 },
-  { style: "square", weight: 22 },
-  { style: "wide", weight: 20 },
-  { style: "tall", weight: 18 },
-  { style: "split", weight: 12 },
+  { style: "blob", weight: 28 },
+  { style: "geometric", weight: 22 },
+  { style: "layered", weight: 20 },
+  { style: "minimal", weight: 18 },
+  { style: "fragmented", weight: 12 },
 ];
 
 const FEET_WEIGHTS: { style: FeetStyle; weight: number }[] = [
-  { style: "pill", weight: 30 },
-  { style: "round", weight: 22 },
-  { style: "square", weight: 20 },
-  { style: "split", weight: 18 },
+  { style: "orbs", weight: 30 },
+  { style: "bars", weight: 22 },
+  { style: "triangles", weight: 20 },
+  { style: "floating", weight: 18 },
   { style: "none", weight: 10 },
 ];
 
 const ACCESSORY_WEIGHTS: { accessory: Accessory; weight: number }[] = [
   { accessory: "none", weight: 35 },
-  { accessory: "mark", weight: 18 },
-  { accessory: "glow", weight: 15 },
-  { accessory: "badge", weight: 12 },
-  { accessory: "glasses", weight: 10 },
-  { accessory: "hat", weight: 6 },
-  { accessory: "antenna", weight: 4 },
+  { accessory: "aura", weight: 18 },
+  { accessory: "sparks", weight: 15 },
+  { accessory: "halo", weight: 12 },
+  { accessory: "frame", weight: 10 },
+  { accessory: "orbits", weight: 6 },
+  { accessory: "glitch", weight: 4 },
 ];
 
 const BG_WEIGHTS: { style: BgStyle; weight: number }[] = [
