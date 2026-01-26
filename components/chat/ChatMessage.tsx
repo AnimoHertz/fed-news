@@ -42,6 +42,11 @@ export function ChatMessage({
   const isOwner = currentWallet &&
     message.walletAddress.toLowerCase() === currentWallet.toLowerCase();
 
+  // Check if this reply is from the original post author
+  const isOriginalAuthor = isReply &&
+    rootAuthorWallet &&
+    message.walletAddress.toLowerCase() === rootAuthorWallet.toLowerCase();
+
   const handleDelete = async () => {
     if (!confirm('Delete this message?')) return;
 
@@ -119,6 +124,11 @@ export function ChatMessage({
         <div className="flex items-center gap-2 flex-wrap">
           <span className="font-medium text-white">{message.username}</span>
           <TierBadge tier={message.tier} balance={message.balance} />
+          {isOriginalAuthor && (
+            <span className="px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">
+              OP
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <span className="text-xs text-gray-500 whitespace-nowrap">{timeAgo}</span>
