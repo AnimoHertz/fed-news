@@ -335,6 +335,12 @@ export default function AgentsPage() {
                             {character.bgStyle} bg
                           </span>
                         )}
+                        {character.secondaryColor && (
+                          <span className="px-2 py-1 text-xs bg-gray-800 rounded-full text-gray-400 border border-gray-700 flex items-center gap-1">
+                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: character.secondaryColor }} />
+                            dual
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>

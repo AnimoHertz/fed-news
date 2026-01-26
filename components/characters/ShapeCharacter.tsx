@@ -19,6 +19,7 @@ export interface CharacterProps {
   accessory?: Accessory;
   bgStyle?: BgStyle;
   primaryColor?: string;
+  secondaryColor?: string;
   accentColor?: string;
   size?: number;
   className?: string;
@@ -33,12 +34,14 @@ export function ShapeCharacter({
   accessory = "none",
   bgStyle = "solid",
   primaryColor = "#dc2626",
+  secondaryColor,
   accentColor = "#ffffff",
   size = 200,
   className = "",
 }: CharacterProps) {
   const centerX = 75;
   const centerY = 100;
+  const bodyColor = secondaryColor || primaryColor;
 
   // Background rendering
   const renderBackground = () => {
@@ -299,17 +302,17 @@ export function ShapeCharacter({
     switch (bodyStyle) {
       case "blob":
         return (
-          <ellipse cx={centerX} cy={y} rx={40} ry={30} fill={primaryColor} opacity="0.85" />
+          <ellipse cx={centerX} cy={y} rx={40} ry={30} fill={bodyColor} opacity="0.85" />
         );
       case "geometric":
         return (
-          <g fill={primaryColor} opacity="0.85">
+          <g fill={bodyColor} opacity="0.85">
             <rect x={centerX - 35} y={y - 25} width="70" height="50" rx="8" />
           </g>
         );
       case "layered":
         return (
-          <g fill={primaryColor}>
+          <g fill={bodyColor}>
             <ellipse cx={centerX} cy={y + 15} rx={45} ry={20} opacity="0.4" />
             <ellipse cx={centerX} cy={y} rx={35} ry={18} opacity="0.7" />
             <ellipse cx={centerX} cy={y - 12} rx={25} ry={14} opacity="1" />
@@ -317,7 +320,7 @@ export function ShapeCharacter({
         );
       case "fragmented":
         return (
-          <g fill={primaryColor}>
+          <g fill={bodyColor}>
             <rect x={centerX - 40} y={y - 20} width="25" height="35" rx="4" opacity="0.9" />
             <rect x={centerX - 10} y={y - 25} width="20" height="45" rx="4" opacity="0.8" />
             <rect x={centerX + 15} y={y - 15} width="25" height="30" rx="4" opacity="0.9" />
@@ -325,13 +328,13 @@ export function ShapeCharacter({
         );
       case "minimal":
         return (
-          <g fill={primaryColor} opacity="0.7">
+          <g fill={bodyColor} opacity="0.7">
             <circle cx={centerX - 20} cy={y} r="12" />
             <circle cx={centerX + 20} cy={y} r="12" />
           </g>
         );
       default:
-        return <ellipse cx={centerX} cy={y} rx={40} ry={30} fill={primaryColor} opacity="0.85" />;
+        return <ellipse cx={centerX} cy={y} rx={40} ry={30} fill={bodyColor} opacity="0.85" />;
     }
   };
 
@@ -342,21 +345,21 @@ export function ShapeCharacter({
     switch (feetStyle) {
       case "orbs":
         return (
-          <g fill={primaryColor}>
+          <g fill={bodyColor}>
             <circle cx={centerX - 25} cy={y} r="10" opacity="0.7" />
             <circle cx={centerX + 25} cy={y} r="10" opacity="0.7" />
           </g>
         );
       case "bars":
         return (
-          <g fill={primaryColor} opacity="0.7">
+          <g fill={bodyColor} opacity="0.7">
             <rect x={centerX - 40} y={y - 8} width="30" height="16" rx="4" />
             <rect x={centerX + 10} y={y - 8} width="30" height="16" rx="4" />
           </g>
         );
       case "triangles":
         return (
-          <g fill={primaryColor} opacity="0.7">
+          <g fill={bodyColor} opacity="0.7">
             <polygon points={`${centerX - 30},${y + 10} ${centerX - 15},${y + 10} ${centerX - 22},${y - 8}`} />
             <polygon points={`${centerX + 15},${y + 10} ${centerX + 30},${y + 10} ${centerX + 22},${y - 8}`} />
           </g>

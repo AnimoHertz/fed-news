@@ -98,6 +98,25 @@ const COLOR_PALETTES: { primary: string; accent: string; weight: number; tier: s
   { primary: "#ffffff", accent: "#0a0a0a", weight: 1, tier: "shadow" },
 ];
 
+// Secondary colors (for body - can be same or different from primary)
+const SECONDARY_COLORS: { color: string; weight: number }[] = [
+  { color: "", weight: 40 }, // Empty = same as primary
+  { color: "#6b7280", weight: 8 },
+  { color: "#4b5563", weight: 8 },
+  { color: "#10b981", weight: 6 },
+  { color: "#14b8a6", weight: 6 },
+  { color: "#3b82f6", weight: 5 },
+  { color: "#6366f1", weight: 5 },
+  { color: "#dc2626", weight: 4 },
+  { color: "#f97316", weight: 4 },
+  { color: "#a855f7", weight: 3 },
+  { color: "#ec4899", weight: 3 },
+  { color: "#fbbf24", weight: 2 },
+  { color: "#22c55e", weight: 2 },
+  { color: "#0ea5e9", weight: 2 },
+  { color: "#f43f5e", weight: 2 },
+];
+
 function weightedRandom<T>(items: { weight: number }[] & T[]): T {
   const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
   let random = Math.random() * totalWeight;
@@ -163,6 +182,7 @@ export function generateRandomCharacter(): CharacterProps & { tier: string } {
   const accessory = weightedRandom(ACCESSORY_WEIGHTS);
   const bg = weightedRandom(BG_WEIGHTS);
   const palette = weightedRandom(COLOR_PALETTES);
+  const secondary = weightedRandom(SECONDARY_COLORS);
 
   return {
     headStyle: head.style,
@@ -173,6 +193,7 @@ export function generateRandomCharacter(): CharacterProps & { tier: string } {
     accessory: accessory.accessory,
     bgStyle: bg.style,
     primaryColor: palette.primary,
+    secondaryColor: secondary.color || undefined, // Empty string = same as primary
     accentColor: palette.accent,
     tier: palette.tier,
   };
@@ -187,6 +208,7 @@ export const TRAIT_RARITY = {
   feet: FEET_WEIGHTS,
   accessories: ACCESSORY_WEIGHTS,
   backgrounds: BG_WEIGHTS,
+  secondaryColors: SECONDARY_COLORS,
   palettes: COLOR_PALETTES,
 };
 
@@ -199,6 +221,7 @@ export const TOTAL_COMBINATIONS =
   FEET_WEIGHTS.length *
   ACCESSORY_WEIGHTS.length *
   BG_WEIGHTS.length *
+  SECONDARY_COLORS.length *
   COLOR_PALETTES.length;
 
 export { ShapeCharacter, CHARACTER_PRESETS };
