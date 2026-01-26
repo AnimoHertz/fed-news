@@ -9,7 +9,6 @@ const navLinks = [
   { href: '/incentives', label: 'Incentives' },
   { href: '/payouts', label: 'Payouts' },
   { href: '/growth', label: 'Members' },
-  { href: '/forum', label: 'Forum' },
   { href: '/social', label: 'Social' },
   { href: '/manifesto', label: 'Manifesto' },
 ];
@@ -27,17 +26,25 @@ export function Header() {
           </Link>
 
           {/* Desktop navigation */}
-          <nav className="hidden md:flex gap-4 text-sm text-gray-400">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="hover:text-white transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
+          <div className="hidden md:flex items-center gap-6">
+            <nav className="flex gap-4 text-sm text-gray-400">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="hover:text-white transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+            <Link
+              href="/forum"
+              className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-sm px-4 py-2 rounded-lg transition-colors"
+            >
+              Forum
+            </Link>
+          </div>
 
           {/* Mobile hamburger button */}
           <button
@@ -71,6 +78,13 @@ export function Header() {
                   {link.label}
                 </Link>
               ))}
+              <Link
+                href="/forum"
+                className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-sm px-4 py-2 rounded-lg transition-colors text-center mt-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Forum
+              </Link>
             </div>
           </nav>
         )}
