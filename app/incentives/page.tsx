@@ -151,7 +151,7 @@ export default function IncentivesPage() {
           <h2 className="text-2xl text-white font-medium mb-8">Why This Works</h2>
 
           <div className="grid gap-6">
-            <div className="bg-gray-900/30 border border-gray-800 rounded-lg p-6">
+            <div className="bg-gray-900/30 animated-border animated-border-emerald animated-border-subtle rounded-lg p-6">
               <div className="flex items-start gap-4">
                 <div className="text-3xl">⏰</div>
                 <div>
@@ -164,7 +164,7 @@ export default function IncentivesPage() {
               </div>
             </div>
 
-            <div className="bg-gray-900/30 border border-gray-800 rounded-lg p-6">
+            <div className="bg-gray-900/30 animated-border animated-border-cyan animated-border-subtle rounded-lg p-6">
               <div className="flex items-start gap-4">
                 <div className="text-3xl">🤖</div>
                 <div>
@@ -177,7 +177,7 @@ export default function IncentivesPage() {
               </div>
             </div>
 
-            <div className="bg-gray-900/30 border border-gray-800 rounded-lg p-6">
+            <div className="bg-gray-900/30 animated-border animated-border-gold animated-border-subtle rounded-lg p-6">
               <div className="flex items-start gap-4">
                 <div className="text-3xl">💵</div>
                 <div>
@@ -190,7 +190,7 @@ export default function IncentivesPage() {
               </div>
             </div>
 
-            <div className="bg-gray-900/30 border border-gray-800 rounded-lg p-6">
+            <div className="bg-gray-900/30 animated-border animated-border-subtle rounded-lg p-6">
               <div className="flex items-start gap-4">
                 <div className="text-3xl">📊</div>
                 <div>
@@ -212,7 +212,7 @@ export default function IncentivesPage() {
             The system creates a positive feedback loop that benefits all participants:
           </p>
 
-          <div className="relative bg-gray-900/30 border border-gray-800 rounded-lg p-8">
+          <div className="relative bg-gray-900/30 animated-border animated-border-slow rounded-lg p-8">
             <div className="flex flex-col items-center gap-4">
               <div className="text-center p-4 bg-green-500/10 border border-green-500/30 rounded-lg w-full max-w-xs">
                 <p className="text-green-400 font-medium">More Trading Volume</p>
@@ -288,19 +288,19 @@ export default function IncentivesPage() {
           <h2 className="text-2xl text-white font-medium mb-6">By The Numbers</h2>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-gray-900/30 border border-gray-800 rounded-lg p-6 text-center">
+            <div className="bg-gray-900/30 animated-border animated-border-emerald animated-border-subtle rounded-lg p-6 text-center">
               <div className="text-3xl font-mono text-white mb-2">2 min</div>
               <div className="text-gray-500 text-sm">Distribution frequency</div>
             </div>
-            <div className="bg-gray-900/30 border border-gray-800 rounded-lg p-6 text-center">
+            <div className="bg-gray-900/30 animated-border animated-border-cyan animated-border-subtle rounded-lg p-6 text-center">
               <div className="text-3xl font-mono text-white mb-2">720</div>
               <div className="text-gray-500 text-sm">Distributions per day</div>
             </div>
-            <div className="bg-gray-900/30 border border-gray-800 rounded-lg p-6 text-center">
+            <div className="bg-gray-900/30 animated-border animated-border-gold animated-border-subtle rounded-lg p-6 text-center">
               <div className="text-3xl font-mono text-white mb-2">USD1</div>
               <div className="text-gray-500 text-sm">Reward token</div>
             </div>
-            <div className="bg-gray-900/30 border border-gray-800 rounded-lg p-6 text-center">
+            <div className="bg-gray-900/30 animated-border animated-border-subtle rounded-lg p-6 text-center">
               <div className="text-3xl font-mono text-white mb-2">24/7</div>
               <div className="text-gray-500 text-sm">Always running</div>
             </div>

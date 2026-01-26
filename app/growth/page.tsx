@@ -39,25 +39,25 @@ export default async function GrowthPage() {
             {/* Summary Stats */}
             <section className="mb-12">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="p-4 rounded-lg border border-gray-800 bg-gray-900/30">
+                <div className="animated-border animated-border-subtle p-4 rounded-lg bg-gray-900/30">
                   <p className="text-sm text-gray-500 mb-1">Total Holders</p>
                   <p className="text-2xl font-mono text-white">
                     {formatNumber(growthData.currentDistribution.total)}
                   </p>
                 </div>
-                <div className="p-4 rounded-lg border border-emerald-500/30 bg-emerald-500/10">
+                <div className="animated-border animated-border-emerald animated-border-subtle p-4 rounded-lg bg-emerald-500/10">
                   <p className="text-sm text-gray-500 mb-1">30d Growth</p>
                   <p className="text-2xl font-mono text-emerald-400">
                     +{formatNumber(growthData.totalGrowth)}
                   </p>
                 </div>
-                <div className="p-4 rounded-lg border border-blue-500/30 bg-blue-500/10">
+                <div className="animated-border animated-border-cyan animated-border-subtle p-4 rounded-lg bg-blue-500/10">
                   <p className="text-sm text-gray-500 mb-1">Growth Rate</p>
                   <p className="text-2xl font-mono text-blue-400">
                     +{growthData.growthPercent.toFixed(1)}%
                   </p>
                 </div>
-                <div className="p-4 rounded-lg border border-purple-500/30 bg-purple-500/10">
+                <div className="animated-border animated-border-subtle p-4 rounded-lg bg-purple-500/10">
                   <p className="text-sm text-gray-500 mb-1">Avg Daily</p>
                   <p className="text-2xl font-mono text-purple-400">
                     +{Math.round(growthData.totalGrowth / 30)}
@@ -110,7 +110,7 @@ export default async function GrowthPage() {
                   );
                 })}
               </div>
-              <div className="mt-4 p-4 rounded-lg border border-gray-800 bg-gray-900/50">
+              <div className="mt-4 p-4 rounded-lg animated-border animated-border-gold animated-border-slow bg-gray-900/50">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400">Total Distributed</span>
                   <span className="text-2xl font-mono text-white">{formatCurrency(growthData.totalDistributed)}</span>
@@ -198,7 +198,7 @@ export default async function GrowthPage() {
               <h2 className="text-sm text-gray-500 uppercase tracking-wide mb-6">
                 Top Holders
               </h2>
-              <div className="p-4 rounded-lg border border-gray-800 bg-gray-900/30">
+              <div className="p-4 rounded-lg animated-border animated-border-subtle animated-border-slow bg-gray-900/30">
                 <HoldersTable />
               </div>
             </section>

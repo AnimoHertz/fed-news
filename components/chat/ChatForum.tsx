@@ -164,7 +164,7 @@ export function ChatForum() {
 
       {/* Balance display when connected */}
       {walletAddress && profile && (
-        <div className="p-4 rounded-lg border border-gray-800 bg-gray-900/30">
+        <div className="p-4 rounded-lg animated-border animated-border-emerald animated-border-subtle bg-gray-900/30">
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-400">Your $FED Balance</span>
             <div className="flex items-center gap-3">

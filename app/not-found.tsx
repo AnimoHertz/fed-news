@@ -42,7 +42,7 @@ export default function NotFound() {
           </Link>
 
           {/* Status info */}
-          <div className="mt-16 p-4 rounded-lg border border-gray-800 bg-gray-900/30 inline-block">
+          <div className="mt-16 p-4 rounded-lg animated-border animated-border-subtle bg-gray-900/30 inline-block">
             <div className="flex items-center gap-6 text-sm font-mono">
               <div>
                 <span className="text-gray-500">Status</span>

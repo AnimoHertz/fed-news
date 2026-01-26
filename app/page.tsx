@@ -34,9 +34,7 @@ export default async function HomePage() {
       <main className="max-w-5xl mx-auto px-4 py-12">
         {/* Manifesto Excerpt */}
         <section className="mb-16">
-          <div className="relative rounded-xl bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 border border-gray-700/50 p-8 md:p-10 overflow-hidden">
-            {/* Subtle gradient accent */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500/50 via-blue-500/50 to-purple-500/50" />
+          <div className="animated-border animated-border-slow relative rounded-xl bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 p-8 md:p-10 overflow-hidden">
 
             <h1 className="text-3xl md:text-4xl font-medium text-white mb-3">
               The First Self-Evolving Crypto Mechanism
@@ -79,8 +77,8 @@ export default async function HomePage() {
 
           {/* Price Widget */}
           {price && (
-            <div className="mb-8">
-              <div className="flex flex-wrap items-center gap-6 p-4 rounded-t-lg border border-gray-800 bg-gray-900/30">
+            <div className="mb-8 animated-border animated-border-emerald animated-border-subtle">
+              <div className="flex flex-wrap items-center gap-6 p-4 rounded-t-lg bg-gray-900/30">
                 <div>
                   <span className="text-3xl font-mono text-white">{formatPrice(price.priceUsd)}</span>
                   <span className={`ml-3 text-sm font-mono ${price.priceChange24h >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
@@ -116,7 +114,7 @@ export default async function HomePage() {
                   </a>
                 </div>
               </div>
-              <div className="rounded-b-lg border border-t-0 border-gray-800 overflow-hidden">
+              <div className="rounded-b-lg border-t border-gray-800 overflow-hidden">
                 <iframe
                   src="https://dexscreener.com/solana/132STreShuLRNgkyF1QECv37yP9Cdp8JBAgnKBgKafed?embed=1&theme=dark&info=0&trades=0&chartLeftToolbar=0&chartDefaultOnMobile=1"
                   className="w-full h-[400px]"

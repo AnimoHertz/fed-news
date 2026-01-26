@@ -132,7 +132,7 @@ export default function PayoutsPage() {
         {data && (
           <section>
             {/* Stats */}
-            <div className="border border-gray-800 rounded-lg p-6 mb-8 bg-gray-900/50">
+            <div className="animated-border animated-border-emerald rounded-lg p-6 mb-8 bg-gray-900/50">
               <div className="flex flex-wrap gap-8 font-mono text-2xl">
                 <div>
                   <span className="text-white">{formatCurrency(data.totalReceived)}</span>
@@ -152,13 +152,13 @@ export default function PayoutsPage() {
               </h2>
 
               {/* Current Tier */}
-              <div className={`p-4 rounded-lg border mb-4 ${
-                data.tier === 'chairman' ? 'bg-yellow-500/10 border-yellow-500/30' :
-                data.tier === 'governor' ? 'bg-purple-500/10 border-purple-500/30' :
-                data.tier === 'director' ? 'bg-blue-500/10 border-blue-500/30' :
-                data.tier === 'member' ? 'bg-emerald-500/10 border-emerald-500/30' :
-                data.tier === 'citizen' ? 'bg-gray-500/10 border-gray-500/30' :
-                'bg-gray-800/30 border-gray-700/30'
+              <div className={`p-4 rounded-lg mb-4 ${
+                data.tier === 'chairman' ? 'animated-border animated-border-gold bg-yellow-500/10' :
+                data.tier === 'governor' ? 'animated-border bg-purple-500/10' :
+                data.tier === 'director' ? 'animated-border animated-border-cyan bg-blue-500/10' :
+                data.tier === 'member' ? 'animated-border animated-border-emerald bg-emerald-500/10' :
+                data.tier === 'citizen' ? 'border border-gray-500/30 bg-gray-500/10' :
+                'border border-gray-700/30 bg-gray-800/30'
               }`}>
                 <div className="flex items-center justify-between">
                   <div>

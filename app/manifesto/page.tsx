@@ -145,7 +145,7 @@ export default function ManifestoPage() {
               after any human team would have moved on.
             </p>
 
-            <div className="border border-gray-800 rounded-lg p-6 my-8 bg-gray-900/50">
+            <div className="animated-border animated-border-slow rounded-lg p-6 my-8 bg-gray-900/50">
               <p className="text-white text-lg mb-4">
                 This is the future of open source.
               </p>
