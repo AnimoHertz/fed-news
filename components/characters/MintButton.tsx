@@ -8,6 +8,59 @@ import { useMintAgent, STATUS_MESSAGES, STATUS_PROGRESS } from '@/hooks/useMintA
 import { formatBalance } from '@/lib/token';
 import { generateTraitHash, characterToTraits } from '@/lib/agent-hash';
 
+// Confetti particle component
+function MintSuccessAnimation() {
+  const [particles, setParticles] = useState<Array<{
+    id: number;
+    x: number;
+    y: number;
+    color: string;
+    size: number;
+    rotation: number;
+    delay: number;
+  }>>([]);
+
+  useEffect(() => {
+    const colors = ['#10b981', '#fbbf24', '#a855f7', '#3b82f6', '#ec4899', '#f97316'];
+    const newParticles = Array.from({ length: 50 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      size: Math.random() * 8 + 4,
+      rotation: Math.random() * 360,
+      delay: Math.random() * 0.5,
+    }));
+    setParticles(newParticles);
+
+    const timer = setTimeout(() => setParticles([]), 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl">
+      {particles.map((p) => (
+        <div
+          key={p.id}
+          className="absolute animate-confetti"
+          style={{
+            left: `${p.x}%`,
+            top: '-10%',
+            width: p.size,
+            height: p.size,
+            backgroundColor: p.color,
+            transform: `rotate(${p.rotation}deg)`,
+            animationDelay: `${p.delay}s`,
+            borderRadius: Math.random() > 0.5 ? '50%' : '2px',
+          }}
+        />
+      ))}
+      {/* Glow effect */}
+      <div className="absolute inset-0 bg-gradient-to-b from-emerald-500/20 via-transparent to-transparent animate-pulse" />
+    </div>
+  );
+}
+
 interface MintButtonProps {
   character: CharacterProps & { tier: string };
   rarityScore: number;
@@ -140,33 +193,43 @@ export function MintButton({
   // Render different states
   if (state.status === 'success') {
     return (
-      <div className="space-y-3">
-        <div className="flex items-center gap-2 text-emerald-400">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span className="font-medium">Successfully Minted!</span>
-        </div>
+      <div className="relative space-y-4">
+        <MintSuccessAnimation />
 
-        {state.paymentTx && (
-          <a
-            href={`https://solscan.io/tx/${state.paymentTx}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300"
-          >
-            View Transaction
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          </a>
-        )}
+        {/* Success card */}
+        <div className="relative p-4 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 border border-emerald-500/30 animate-scale-in">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center animate-bounce-slow">
+              <svg className="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <h4 className="font-bold text-emerald-400 text-lg">Minted!</h4>
+              <p className="text-sm text-gray-400">Your agent is now on-chain</p>
+            </div>
+          </div>
+
+          {state.paymentTx && (
+            <a
+              href={`https://solscan.io/tx/${state.paymentTx}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-400 text-sm font-medium transition-all"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              View on Solscan
+            </a>
+          )}
+        </div>
 
         <button
           onClick={reset}
-          className="text-sm text-gray-400 hover:text-gray-300"
+          className="w-full py-2 text-sm text-gray-400 hover:text-white transition-colors"
         >
-          Mint Another
+          Mint Another Agent
         </button>
       </div>
     );
