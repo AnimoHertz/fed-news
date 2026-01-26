@@ -6,9 +6,11 @@ import { fetchTokenPrice, formatPrice, formatLargeNumber, JUPITER_SWAP_URL, DEXS
 import { getCommentCounts } from '@/lib/update-comments';
 import { CommitList } from '@/components/commits/CommitList';
 import { CopyAddress } from '@/components/ui/CopyAddress';
-import { FAQ } from '@/components/home/FAQ';
 import { Header } from '@/components/layout/Header';
 import { BackgroundAnimation } from '@/components/home/BackgroundAnimation';
+import { StatsDisplay } from '@/components/home/StatsDisplay';
+import { ResearchBanner } from '@/components/home/ResearchBanner';
+import { ForumCard } from '@/components/home/ForumCard';
 
 export const revalidate = 60;
 
@@ -21,6 +23,10 @@ export default async function HomePage() {
   const commits = rawCommits.map(parseCommit);
   const stats = getLatestStats(commits);
   const recentCommits = filterCommits(commits, { hideStats: true }).slice(0, 15);
+
+  // Get research commits for the banner
+  const researchCommits = commits.filter(c => c.category === 'research');
+  const latestResearch = researchCommits[0] || null;
 
   // Fetch comment counts for displayed commits
   const commentCounts = await getCommentCounts(recentCommits.map(c => c.sha));
@@ -63,7 +69,16 @@ export default async function HomePage() {
 
         {/* Hero */}
         <section className="mb-16">
-          <p className="text-gray-400 mb-4">Autonomous USD1 distribution on Solana</p>
+          {/* Stats */}
+          {(stats || holderCount) && (
+            <div className="mb-8">
+              <StatsDisplay
+                distributed={stats?.distributed ?? 0}
+                distributions={stats?.distributions ?? 0}
+                holders={holderCount ?? 0}
+              />
+            </div>
+          )}
 
           {/* Price Widget */}
           {price && (
@@ -113,43 +128,22 @@ export default async function HomePage() {
               </div>
             </div>
           )}
-
-          {/* Stats */}
-          {(stats || holderCount) && (
-            <div className="flex flex-wrap gap-4 sm:gap-8 font-mono text-xl sm:text-2xl mb-8">
-              {stats && (
-                <>
-                  <div>
-                    <span className="text-white">{formatCurrency(stats.distributed)}</span>
-                    <span className="text-gray-500 text-xs sm:text-sm ml-2">distributed</span>
-                  </div>
-                  <div>
-                    <span className="text-white">{formatNumber(stats.distributions)}</span>
-                    <span className="text-gray-500 text-xs sm:text-sm ml-2">distributions</span>
-                  </div>
-                </>
-              )}
-              {holderCount && (
-                <div>
-                  <span className="text-white">{formatNumber(holderCount)}</span>
-                  <span className="text-gray-500 text-xs sm:text-sm ml-2">holders</span>
-                </div>
-              )}
-            </div>
-          )}
-
-          <p className="text-gray-400 leading-relaxed">
-            $FED is the first crypto project built entirely by AI in real-time. An autonomous agent runs 24/7,
-            writing code, making decisions, and distributing stablecoin rewards to holders every 2 minutes.
-            No human team. No roadmap delays. Just a machine that never stops building.
-          </p>
         </section>
+
+        {/* Forum Card */}
+        <ForumCard />
+
+        {/* Research Banner */}
+        <ResearchBanner latestResearch={latestResearch} totalCount={researchCommits.length} />
 
         {/* Updates */}
         <section>
-          <h2 className="text-sm text-gray-500 uppercase tracking-wide mb-6">
-            Recent Updates
+          <h2 className="text-2xl sm:text-3xl font-medium text-white mb-3">
+            Autonomous Github Commits
           </h2>
+          <p className="text-gray-400 text-sm sm:text-base mb-6">
+            Every line of code below was written by an AI agent working autonomously. Watch the project evolve in real-time as Ralph ships features, fixes bugs, and builds new mechanisms.
+          </p>
 
           <CommitList commits={recentCommits} commentCounts={commentCounts} />
 
@@ -163,13 +157,6 @@ export default async function HomePage() {
           </div>
         </section>
 
-        {/* FAQ */}
-        <section className="mt-16">
-          <h2 className="text-sm text-gray-500 uppercase tracking-wide mb-6">
-            Frequently Asked Questions
-          </h2>
-          <FAQ />
-        </section>
       </main>
 
       {/* Footer */}
