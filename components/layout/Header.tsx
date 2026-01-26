@@ -7,6 +7,7 @@ const navLinks = [
   { href: '/incentives', label: 'How it Works' },
   { href: '/payouts', label: 'Payouts' },
   { href: '/growth', label: 'Stats' },
+  { href: '/agents', label: 'Agents' },
   { href: '/manifesto', label: 'Manifesto' },
 ];
 
@@ -28,7 +29,7 @@ export function Header() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="hover:text-white transition-colors"
+                  className="relative hover:text-white transition-all hover:scale-105 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1px] after:bg-emerald-500 after:transition-all hover:after:w-full"
                 >
                   {link.label}
                 </Link>
@@ -36,8 +37,11 @@ export function Header() {
             </nav>
             <Link
               href="/forum"
-              className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-sm px-4 py-2 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-sm px-4 py-2 rounded-lg transition-all hover:scale-105 hover:shadow-lg hover:shadow-emerald-500/25 active:scale-95"
             >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
               Forum
             </Link>
           </div>
@@ -76,9 +80,12 @@ export function Header() {
               ))}
               <Link
                 href="/forum"
-                className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-sm px-4 py-2 rounded-lg transition-colors text-center mt-2"
+                className="inline-flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-sm px-4 py-2 rounded-lg transition-all hover:scale-105 active:scale-95 mt-2"
                 onClick={() => setIsMenuOpen(false)}
               >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
                 Forum
               </Link>
             </div>
