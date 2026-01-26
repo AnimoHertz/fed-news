@@ -38,15 +38,12 @@ export function Header() {
                 </Link>
               ))}
             </nav>
-            <div className="flex flex-col items-center">
-              <Link
-                href="/forum"
-                className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-sm px-4 py-2 rounded-lg transition-colors"
-              >
-                Forum
-              </Link>
-              <span className="text-[10px] text-gray-500 mt-1">No tx signing required</span>
-            </div>
+            <Link
+              href="/forum"
+              className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-sm px-4 py-2 rounded-lg transition-colors"
+            >
+              Forum
+            </Link>
           </div>
 
           {/* Mobile hamburger button */}
@@ -81,16 +78,13 @@ export function Header() {
                   {link.label}
                 </Link>
               ))}
-              <div className="flex flex-col items-center mt-2">
-                <Link
-                  href="/forum"
-                  className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-sm px-4 py-2 rounded-lg transition-colors text-center w-full"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Forum
-                </Link>
-                <span className="text-[10px] text-gray-500 mt-1">No tx signing required</span>
-              </div>
+              <Link
+                href="/forum"
+                className="bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-sm px-4 py-2 rounded-lg transition-colors text-center mt-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Forum
+              </Link>
             </div>
           </nav>
         )}

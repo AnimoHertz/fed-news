@@ -19,6 +19,9 @@ export default function ForumPage() {
           <p className="text-gray-400">
             Connect your wallet to join the conversation. Your $FED balance determines your tier badge.
           </p>
+          <p className="text-sm text-gray-500 mt-2">
+            Connecting your wallet is safe and does not require signing any transactions.
+          </p>
         </section>
 
         {/* Chat Forum */}
