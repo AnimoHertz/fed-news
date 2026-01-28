@@ -10,6 +10,7 @@ import { TierBadge } from '@/components/chat/TierBadge';
 import { UserProfile } from '@/types/chat';
 import { getTierInfo } from '@/lib/token';
 import { ShapeCharacter, CharacterProps } from '@/components/characters/ShapeCharacter';
+import { AchievementGrid } from '@/components/achievements/AchievementCard';
 
 interface ProfileNft {
   id: string;
@@ -32,6 +33,23 @@ interface ProfileNft {
   createdAt?: string;
 }
 
+interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  category: 'minting' | 'collection' | 'forum' | 'holder' | 'special';
+  tier: 'bronze' | 'silver' | 'gold' | 'diamond';
+  unlocked: boolean;
+  progress?: number;
+  maxProgress?: number;
+}
+
+interface AchievementsData {
+  achievements: Achievement[];
+  stats: { total: number; unlocked: number; points: number };
+}
+
 function ProfileContent() {
   const { publicKey } = useWallet();
   const router = useRouter();
@@ -42,6 +60,7 @@ function ProfileContent() {
   const [ownedAgents, setOwnedAgents] = useState<ProfileNft[]>([]);
   const [showNftSelector, setShowNftSelector] = useState(false);
   const [savingNft, setSavingNft] = useState(false);
+  const [achievements, setAchievements] = useState<AchievementsData | null>(null);
 
   const connectedWallet = publicKey?.toBase58() || null;
   // Use query param wallet if provided, otherwise use connected wallet
@@ -56,9 +75,10 @@ function ProfileContent() {
 
     const fetchProfile = async () => {
       try {
-        const [profileRes, nftRes] = await Promise.all([
+        const [profileRes, nftRes, achievementsRes] = await Promise.all([
           fetch(`/api/chat/profile?wallet=${targetWallet}`),
           fetch(`/api/chat/profile-nft?wallet=${targetWallet}`),
+          fetch(`/api/achievements?wallet=${targetWallet}`),
         ]);
 
         const profileData = await profileRes.json();
@@ -67,6 +87,11 @@ function ProfileContent() {
         const nftData = await nftRes.json();
         setProfileNft(nftData.profileNft || null);
         setOwnedAgents(nftData.ownedAgents || []);
+
+        if (achievementsRes.ok) {
+          const achievementsData = await achievementsRes.json();
+          setAchievements(achievementsData);
+        }
       } catch (error) {
         console.error('Failed to fetch profile:', error);
       } finally {
@@ -399,6 +424,30 @@ function ProfileContent() {
                 </p>
               </div>
             </div>
+
+            {/* Achievements Section */}
+            {achievements && achievements.stats.unlocked > 0 && (
+              <div className="p-4 sm:p-5 rounded-lg border border-gray-800 bg-gray-900/30">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-xs text-gray-400 uppercase tracking-wide">
+                    Achievements ({achievements.stats.unlocked}/{achievements.stats.total})
+                  </p>
+                  <span className="text-xs text-emerald-400 font-mono">{achievements.stats.points} pts</span>
+                </div>
+                <AchievementGrid
+                  achievements={achievements.achievements.filter(a => a.unlocked).slice(0, 4)}
+                  compact
+                />
+                {achievements.stats.unlocked > 4 && (
+                  <button
+                    onClick={() => router.push(`/achievements?wallet=${targetWallet}`)}
+                    className="mt-3 text-sm text-gray-400 hover:text-white w-full text-center"
+                  >
+                    View all {achievements.stats.unlocked} achievements &rarr;
+                  </button>
+                )}
+              </div>
+            )}
 
             {/* Minted Agents Section */}
             {isOwnProfile && ownedAgents.length > 0 && (
