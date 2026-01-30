@@ -16,7 +16,11 @@ export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header>
+    <>
+      <div className="bg-gradient-to-r from-emerald-500 via-emerald-400 to-emerald-500 text-black text-center py-2 px-4 text-sm font-semibold">
+        the new fed is here
+      </div>
+      <header>
       <div className="max-w-5xl mx-auto px-4 py-6">
         <div className="flex items-center justify-between">
           <Link href="/" className="hover:opacity-80 transition-opacity">
@@ -95,5 +99,6 @@ export function Header() {
       </div>
       <div className="animated-gradient-line" />
     </header>
+    </>
   );
 }
